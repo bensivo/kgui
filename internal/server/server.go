@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/julienschmidt/httprouter"
+	"gitlab.com/bensivo/kgui/internal/controller"
 )
 
 func New() *httprouter.Router {
@@ -28,16 +29,23 @@ func New() *httprouter.Router {
 		}
 		log.Println("Client connected" + conn.LocalAddr().String())
 
+		var stateController = &controller.StateController{
+			Conn: conn,
+		}
+
 		for {
 			_, p, err := conn.ReadMessage()
 			if err != nil {
 				log.Println(err)
+				conn.Close()
 				return
 			}
 
 			payload := make(map[string]interface{})
 			dec := json.NewDecoder(strings.NewReader(string(p)))
 			dec.Decode(&payload)
+
+			stateController.Handle(payload)
 
 			log.Printf("Message: %v\n", payload)
 		}
