@@ -32,6 +32,9 @@ func New() *httprouter.Router {
 		var stateController = &controller.ClusterController{
 			Conn: conn,
 		}
+		var messageController = &controller.MessageController{
+			Conn: conn,
+		}
 
 		for {
 			_, p, err := conn.ReadMessage()
@@ -48,6 +51,7 @@ func New() *httprouter.Router {
 			log.Printf("Message: %v\n", msg)
 
 			stateController.Handle(msg)
+			messageController.Handle(msg)
 
 		}
 	})

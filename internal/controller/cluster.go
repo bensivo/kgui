@@ -5,33 +5,18 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
+	"gitlab.com/bensivo/kgui/internal/kafka"
 )
 
 type ClusterController struct {
 	Conn *websocket.Conn
 }
 
-type Cluster struct {
-	Name                 string
-	BootstrapServer      string
-	Timeout              int64
-	SaslMechanism        string
-	SaslUsername         string
-	SaslPassword         string
-	SSLEnabled           bool
-	SSLCaCertificatePath string
-	SSLSkipVerification  bool
-}
-
-type RemoveClusterPayload struct {
-	Name string
-}
-
-var state map[string]Cluster = make(map[string]Cluster)
+var state map[string]kafka.Cluster = make(map[string]kafka.Cluster)
 
 type ListClustersResponse struct {
 	Topic string
-	Data  []Cluster
+	Data  []kafka.Cluster
 }
 
 func (c *ClusterController) Handle(msg Message) {
@@ -48,7 +33,7 @@ func (c *ClusterController) Handle(msg Message) {
 func (c *ClusterController) listClusters() {
 	log.Println("Listing clusters")
 
-	clusters := make([]Cluster, 0, len(state))
+	clusters := make([]kafka.Cluster, 0, len(state))
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
@@ -57,7 +42,7 @@ func (c *ClusterController) listClusters() {
 
 func (c *ClusterController) addCluster(data interface{}) {
 
-	var cluster Cluster
+	var cluster kafka.Cluster
 	err := mapstructure.Decode(data, &cluster)
 	if err != nil {
 		log.Fatal(err)
@@ -67,12 +52,16 @@ func (c *ClusterController) addCluster(data interface{}) {
 
 	state[cluster.Name] = cluster
 
-	clusters := make([]Cluster, 0, len(state))
+	clusters := make([]kafka.Cluster, 0, len(state))
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
 
 	write(*c.Conn, "res.clusters.add", clusters)
+}
+
+type RemoveClusterPayload struct {
+	Name string
 }
 
 func (c *ClusterController) removeCluster(data interface{}) {
@@ -88,7 +77,7 @@ func (c *ClusterController) removeCluster(data interface{}) {
 
 	delete(state, payload.Name)
 
-	clusters := make([]Cluster, 0, len(state))
+	clusters := make([]kafka.Cluster, 0, len(state))
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
