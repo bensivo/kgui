@@ -50,7 +50,7 @@ describe('send', () => {
 
     it('send message', async () => {
         await reqRes(ws, {
-            Topic: 'req.message.send',
+            Topic: 'req.messages.send',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",
@@ -64,6 +64,18 @@ describe('send', () => {
                 Status: 'OK'
             }
         })
+    });
+
+    it('read messages', async () => {
+        ws.send(JSON.stringify({
+            Topic: 'req.messages.read',
+            Data: {
+                ClusterName: "cluster1",
+                Topic: "messages",
+                Partition: 0,
+                Offset: -1000,
+            }
+        }))
     });
 });
 

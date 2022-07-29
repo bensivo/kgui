@@ -7,7 +7,10 @@ import (
 	kgo "github.com/segmentio/kafka-go"
 )
 
-func Produce(conn *kgo.Conn, message string) {
+func (c *Cluster) Produce(topic string, partition int, message string) {
+	conn := c.DialLeader(topic, partition)
+	defer conn.Close()
+
 	var bytes []byte = []byte(message)
 	_, err := conn.WriteMessages(
 		kgo.Message{Value: bytes},

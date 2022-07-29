@@ -30,7 +30,7 @@ type Cluster struct {
 }
 
 func (c *Cluster) Dial() *kgo.Conn {
-	dialer := c.getDialer()
+	dialer := c.GetDialer()
 
 	conn, err := dialer.Dial("tcp", c.BootstrapServer)
 	if err != nil {
@@ -42,7 +42,7 @@ func (c *Cluster) Dial() *kgo.Conn {
 }
 
 func (c *Cluster) DialLeader(topic string, partition int) *kgo.Conn {
-	dialer := c.getDialer()
+	dialer := c.GetDialer()
 
 	fmt.Println("Dialing leader for cluster " + c.BootstrapServer)
 	ctx, _ := context.WithTimeout(context.Background(), time.Duration(c.Timeout)*time.Second)
@@ -55,7 +55,7 @@ func (c *Cluster) DialLeader(topic string, partition int) *kgo.Conn {
 	return conn
 }
 
-func (c *Cluster) getDialer() *kgo.Dialer {
+func (c *Cluster) GetDialer() *kgo.Dialer {
 	dialer := &kgo.Dialer{
 		Timeout:       time.Second * 10,
 		DualStack:     true,
