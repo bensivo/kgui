@@ -27,9 +27,9 @@ func New() *httprouter.Router {
 			log.Println(err)
 			return
 		}
-		log.Println("Client connected" + conn.LocalAddr().String())
+		log.Println("Client connected " + conn.LocalAddr().String())
 
-		var stateController = &controller.StateController{
+		var stateController = &controller.ClusterController{
 			Conn: conn,
 		}
 
@@ -41,13 +41,14 @@ func New() *httprouter.Router {
 				return
 			}
 
-			payload := make(map[string]interface{})
+			var msg controller.Message
 			dec := json.NewDecoder(strings.NewReader(string(p)))
-			dec.Decode(&payload)
+			dec.Decode(&msg)
 
-			stateController.Handle(payload)
+			log.Printf("Message: %v\n", msg)
 
-			log.Printf("Message: %v\n", payload)
+			stateController.Handle(msg)
+
 		}
 	})
 

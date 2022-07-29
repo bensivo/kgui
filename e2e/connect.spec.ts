@@ -1,5 +1,4 @@
 import WebSocket from 'ws';
-import waitForExpect from 'wait-for-expect';
 
 /**
  * Preconditions for this test:
@@ -36,23 +35,4 @@ describe('connect', () => {
     it('should connect', async () => {
         expect(ws.readyState).toEqual(WebSocket.OPEN);
     });
-
-    it('should read state', async () => {
-        const callback = jest.fn();
-        ws.on('message', (buffer) => {
-            callback(JSON.parse(buffer.toString()))
-        });
-
-        ws.send(JSON.stringify({
-            Event: 'state.read',
-
-        }));
-
-        await waitForExpect(() => {
-            expect(callback).toHaveBeenCalledWith({
-                "key":"value"
-            });
-        });
-    });
-
 });
