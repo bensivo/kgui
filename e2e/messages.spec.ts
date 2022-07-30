@@ -5,8 +5,6 @@ import WebSocket from 'ws';
  * Preconditions for this test:
  * - kafka is running
  * - server is running
- * - the topic 'messages' has at least 1 message on it
- * - streamview.json is an empty json object
  */
 describe('send', () => {
     let ws: WebSocket;

@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"gitlab.com/bensivo/kgui/internal/server"
 )
 
 // App struct
@@ -21,6 +24,13 @@ func NewApp() *App {
 func (b *App) startup(ctx context.Context) {
 	// Perform your setup here
 	b.ctx = ctx
+
+	router := server.New()
+	err := http.ListenAndServe(":8080", router)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 }
 
 // domReady is called after the front-end dom has been loaded
