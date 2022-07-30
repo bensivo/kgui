@@ -5,39 +5,37 @@ import (
 	"log"
 
 	"github.com/segmentio/kafka-go"
+	kgo "github.com/segmentio/kafka-go"
 )
 
-func (c *Cluster) Consume(topic string, partition int, offset int) {
-	conn := c.DialLeader(topic, partition)
-	var err error
+type ConsumeArgs struct {
+	Topic     string
+	Partition int
+	Offset    int
+}
 
-	var seekPos int
-	if offset > 0 {
-		seekPos = kafka.SeekStart
-	} else {
-		seekPos = kafka.SeekEnd
-	}
+func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) {
+	defer close(res)
 
-	fmt.Printf("Seeking position %d\n", offset)
-	_, err = conn.Seek(AbsInt(int64(offset)), seekPos)
-	if err != nil {
-		fmt.Println("Failed to seek offset", err)
-		return
-	}
+	conn := c.DialLeader(args.Topic, args.Partition)
 
-	last, err := conn.ReadLastOffset()
+	lastOffset, err := conn.ReadLastOffset()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-
-	fmt.Printf("Found offset %d\n", last)
-	if last == 0 {
-		fmt.Printf("No messages on partition %d\n", partition)
+	if lastOffset == 0 {
+		fmt.Printf("No messages on partition %d\n", args.Partition)
 		return
 	}
 
-	// Read messages
+	currentOffset, err := seekRelativeOffset(conn, int64(args.Offset))
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Printf("Reading messages %d-%d\n", currentOffset, lastOffset)
+
 	for {
 		msg, err := conn.ReadMessage(10e6)
 		if err != nil {
@@ -45,14 +43,31 @@ func (c *Cluster) Consume(topic string, partition int, offset int) {
 			break
 		}
 
-		fmt.Printf("Consumed message p(%d):%d - %s\n", partition, msg.Offset, string(msg.Value))
-		// result <- string(msg.Value)
+		fmt.Printf("%d - %s\n", msg.Offset, string(msg.Value))
+		res <- msg
 
-		if msg.Offset == last-1 {
-			fmt.Printf("Consumed all messages on partition %d\n", partition)
+		if msg.Offset == lastOffset-1 {
+			fmt.Printf("Consumed all messages on partition %d\n", args.Partition)
 			return
 		}
 	}
+}
+
+func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {
+	var seekPos int
+	if offset >= 0 {
+		seekPos = kafka.SeekStart
+	} else {
+		seekPos = kafka.SeekEnd
+	}
+
+	offset, err := conn.Seek(AbsInt(offset), seekPos)
+	if err != nil {
+		fmt.Println("Failed to seek offset", err)
+		return -1, err
+	}
+
+	return offset, nil
 }
 
 func AbsInt(n int64) int64 {

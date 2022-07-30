@@ -8,7 +8,6 @@ import WebSocket from 'ws';
  * - the topic 'messages' has at least 1 message on it
  * - streamview.json is an empty json object
  */
-
 describe('send', () => {
     let ws: WebSocket;
 
@@ -23,15 +22,15 @@ describe('send', () => {
         ws.send(JSON.stringify({
             Topic: 'req.clusters.add',
             Data: {
-        Name: "cluster1",
-        BootstrapServer: "localhost:9092",
-        Timeout: 10,
-        SaslMechanism: "",
-        SaslUsername: "",
-        SaslPassword: "",
-        SSLEnabled: false,
-        SSLCaCertificatePath: "",
-        SSLSkipVerification: true,
+                Name: "cluster1",
+                BootstrapServer: "localhost:9092",
+                Timeout: 10,
+                SaslMechanism: "",
+                SaslUsername: "",
+                SaslPassword: "",
+                SSLEnabled: false,
+                SSLCaCertificatePath: "",
+                SSLSkipVerification: true,
             }
         }))
     });
@@ -41,7 +40,6 @@ describe('send', () => {
             ws.on('close', () => {
                 resolve();
             });
-            // ws.terminate();
             ws.close(1000); // Code for normal closure
         });
 
@@ -50,12 +48,12 @@ describe('send', () => {
 
     it('send message', async () => {
         await reqRes(ws, {
-            Topic: 'req.messages.send',
+            Topic: 'req.messages.produce',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",
                 Partition: 0,
-                Message:"Hello"
+                Message: new Date(Date.now()).toTimeString()
             }
         }, {
             Topic: 'res.message.send',
@@ -67,18 +65,26 @@ describe('send', () => {
     });
 
     it('read messages', async () => {
-        ws.send(JSON.stringify({
-            Topic: 'req.messages.read',
+        await reqRes(ws,{
+            Topic: 'req.messages.consume',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",
                 Partition: 0,
-                Offset: -1000,
+                Offset: -3,
             }
-        }))
+
+        }, {
+            Topic: 'req.messages.consume',
+            Data: {
+                ClusterName: "cluster1",
+                Topic: "messages",
+                Partition: 0,
+                Message: "hi"
+            }
+        })
     });
 });
-
 
 async function reqRes(ws: WebSocket, req: any, res: any) {
     const callback = jest.fn();
