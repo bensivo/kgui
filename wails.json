@@ -1,0 +1,14 @@
+{
+    "name": "kgui",
+    "assetdir": "frontend/dist",
+    "frontend:build": "npm run build",
+    "frontend:install": "npm install",
+    "frontend:dev": "npm run build:dev",
+    "frontend:dev:watcher": "npm run build:watch",
+    "wailsjsdir": "./frontend",
+    "outputfilename": "kgui",
+    "Author": {
+        "name": "Ben Sivoravong",
+        "email": "bensivo@gmail.com"
+    }
+}
