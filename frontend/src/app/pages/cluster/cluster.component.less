@@ -1,0 +1,32 @@
+@import "~ng-zorro-antd/ng-zorro-antd.less";
+
+#clusters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+nz-card {
+    min-height:200px;
+    width: 300px;
+}
+
+nz-card.add-cluster {
+
+    text-align: center;
+    position: relative;
+    span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%)
+    }
+
+    cursor: pointer;
+    transition: 0.5s;
+    &:hover {
+        color: @blue-6;
+        border: 1px solid @blue-6;
+        transition: 0.5s;
+    }
+}

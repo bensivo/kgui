@@ -1,0 +1,26 @@
+<div id="clusters">
+    <nz-card *ngFor="let cluster of clusters" [nzTitle]="cluster.Name" [nzExtra]="extraTemplate">
+        <div>
+            Bootstrap Server: {{cluster.BootstrapServer}}
+        </div>
+        <div>
+            Sasl Mechanism: {{cluster.SaslMechanism ? cluster.SaslMechanism : '-'}}
+        </div>
+        <div>
+            Sasl Credentials: {{ cluster.SaslMechanism ? cluster.SaslUsername + ':' + cluster.SaslPassword : '-'}}
+        </div>
+        <div>
+            SSL: {{cluster.SSLEnabled ? 'enabled' : 'disabled'}}
+        </div>
+
+    </nz-card>
+    <nz-card class="add-cluster" (click)="addCluster()">
+        <span>
+            Add Cluster +
+        </span>
+    </nz-card>
+</div>
+
+<ng-template #extraTemplate>
+    <a>More</a>
+</ng-template>
