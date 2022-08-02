@@ -36,6 +36,7 @@
                             }
                         ],
                         "styles": [
+                            "src/theme.less",
                             "src/styles.less"
                         ],
                         "scripts": []
