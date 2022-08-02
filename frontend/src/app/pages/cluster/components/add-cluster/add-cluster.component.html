@@ -1,0 +1,90 @@
+<div id="add-cluster-container">
+
+    <form nz-form [formGroup]="formGroup">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzFor="name">
+                Name
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input formControlName="name">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzFor="bootstrapServer">
+                Bootstrap Server
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input formControlName="bootstrapServer">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <label nz-checkbox formControlName="saslEnabled">
+                SASL Enabled
+                </label>
+            </nz-form-control>
+        </nz-form-item>
+
+        <ng-container *ngIf="this.formGroup.value.saslEnabled">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="saslMechanism">
+                    sasl-mechanism
+                </nz-form-label>
+
+                <nz-form-control [nzSpan]="14">
+                    <nz-select formControlName="saslMechanism">
+                        <nz-option nzValue="plain" nzLabel="plain">Plain</nz-option>
+                        <nz-option nzValue="scram-sha-256" nzLabel="scram-sha-256">scram-sha-256</nz-option>
+                        <nz-option nzValue="scram-sha-512" nzLabel="scram-sha-512">scram-sha-512</nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="saslUsername">
+                    SASL Username
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input nz-input formControlName="saslUsername">
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6" nzFor="saslPassword">
+                    SASL Password
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input nz-input formControlName="saslPassword">
+                </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+
+
+        <nz-form-item>
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <label nz-checkbox formControlName="sslEnabled">
+                SSL Enabled
+            </label>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="this.formGroup.value.sslEnabled">
+            <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                <label nz-checkbox formControlName="sslSkipVerification">
+               SSL Skip Verification 
+            </label>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control [nzOffset]="6">
+                <nz-space>
+                    <button *nzSpaceItem nz-button nzType="default" (click)="cancel()">Cancel</button>
+                    <button *nzSpaceItem nz-button nzType="primary" (click)="submit()">Submit</button>
+                </nz-space>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>

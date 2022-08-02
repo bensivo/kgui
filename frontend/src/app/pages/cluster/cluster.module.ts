@@ -1,19 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { ClusterRoutingModule } from './cluster-routing.module';
-import { ClusterComponent } from './cluster.component';
-
-
+import { AddClusterComponent } from './components/add-cluster/add-cluster.component';
+import { ClusterComponent } from './components/cluster/cluster.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    ClusterComponent
+    ClusterComponent,
+    AddClusterComponent,
   ],
   imports: [
     ClusterRoutingModule,
     CommonModule,
+    ReactiveFormsModule,
     NzCardModule,
+    NzFormModule,
+    NzCheckboxModule,
+    NzSelectModule,
+    NzButtonModule,
+    NzInputModule,
+    NzSpaceModule,
   ]
 })
 export class ClusterModule { }

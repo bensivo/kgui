@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Message, SocketService } from 'src/app/socket/socket.service';
 
 export interface Cluster {
@@ -20,7 +21,7 @@ export interface Cluster {
 export class ClusterComponent implements OnInit {
   clusters: Cluster[] = [];
 
-  constructor(private socketService: SocketService) { }
+  constructor(private socketService: SocketService, private router: Router) { }
 
   async ngOnInit(): Promise<void> {
     this.socketService.stream<Cluster[]>('res.clusters.add').subscribe(m => {
@@ -29,15 +30,6 @@ export class ClusterComponent implements OnInit {
   }
   
   addCluster() {
-    this.clusters.push({
-      Name: "cluster" + (this.clusters.length + 1),
-      BootstrapServer: "localhost:9092",
-      SaslMechanism: "",
-      SaslUsername: "",
-      SaslPassword: "",
-      SSLEnabled: false,
-      SSLCaCertificatePath: "",
-      SSLSkipVerification: true,
-    });
+    this.router.navigate(['/clusters/add']);
   }
 }

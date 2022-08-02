@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/clusters' },
   { path: 'clusters', loadChildren: () => import('./pages/cluster/cluster.module').then(m => m.ClusterModule) },
-  // { path: 'welcome', loadChildren: () => import('./pages/cluster/cluster.module').then(m => m.ClusterModule) }
 ];
 
 @NgModule({
