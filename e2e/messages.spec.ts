@@ -22,7 +22,6 @@ describe('send', () => {
             Data: {
                 Name: "cluster1",
                 BootstrapServer: "localhost:9092",
-                Timeout: 10,
                 SaslMechanism: "",
                 SaslUsername: "",
                 SaslPassword: "",
@@ -73,7 +72,7 @@ describe('send', () => {
             }
 
         }, {
-            Topic: 'req.messages.consume',
+            Topic: 'res.messages.consume',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",

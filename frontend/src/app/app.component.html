@@ -4,10 +4,10 @@
             <h1>KGui</h1>
         </div>
         <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-            <li nz-menu-item ngMatchRouter>
-                <i nz-icon nzType="appstore"></i>
+            <li *ngFor="let link of links" nz-menu-item ngMatchRouter>
+                <i nz-icon [nzType]="link.icon"></i>
                 <span>
-                    <a routerLink="/clusters">Clusters</a>
+                    <a [routerLink]="link.route">{{link.text}}</a>
                 </span>
             </li>
             <!-- <li nz-menu-item>

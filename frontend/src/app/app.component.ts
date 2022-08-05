@@ -10,6 +10,19 @@ import { ClusterState, ClusterStore } from './store/cluster.store';
 export class AppComponent implements OnInit {
   isCollapsed = false;
 
+  links = [
+    {
+      text: 'Clusters',
+      route: '/clusters',
+      icon: 'appstore',
+    },
+    {
+      text: 'Consumers',
+      route: '/consumers',
+      icon: 'api',
+    },
+  ]
+
   constructor(private socketService: SocketService, private clusterStore: ClusterStore) { }
 
   async ngOnInit() {
@@ -22,5 +35,29 @@ export class AppComponent implements OnInit {
           clusters,
         }))
       });
+
+    this.socketService.send({
+      Topic: 'clusters.refresh',
+      Data: null,
+    });
+
+    this.seed();
+  }
+
+
+  seed() {
+    this.socketService.send({
+      Topic: 'clusters.add',
+      Data: {
+        Name: "qa-stress-test",
+        BootstrapServer: "10.0.0.62:30100",
+        SaslMechanism: "scram-sha-512",
+        SaslUsername: "admin-user",
+        SaslPassword: "kafkapassword",
+        SSLEnabled: true,
+        SSLCaCertificatePath: "",
+        SSLSkipVerification: true,
+      },
+    });
   }
 }

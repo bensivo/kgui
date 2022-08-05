@@ -1,0 +1,39 @@
+<div>
+    <label>Cluster</label>
+    <nz-select [(ngModel)]="clusterInput">
+        <nz-option *ngFor="let cluster of clusters" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
+    </nz-select>
+</div>
+
+<div>
+    <label>Topic</label>
+    <input nz-input placeholder="Topic" [formControl]="topicInput" />
+</div>
+
+<div>
+    <label>Offset</label>
+    <input nz-input placeholder="-10" [formControl]="offsetInput" type="number" />
+</div>
+
+<button (click)="consume()">Consume</button>
+
+
+<div>
+    <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource">
+        <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
+            <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
+            <nz-tree-node-option [nzDisabled]="node.disabled" [nzSelected]="selectListSelection.isSelected(node)" (nzClick)="selectListSelection.toggle(node)">
+                {{ node.name }}
+            </nz-tree-node-option>
+        </nz-tree-node>
+
+        <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
+            <nz-tree-node-toggle>
+                <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
+            </nz-tree-node-toggle>
+            <nz-tree-node-option [nzDisabled]="node.disabled" [nzSelected]="selectListSelection.isSelected(node)" (nzClick)="selectListSelection.toggle(node)">
+                {{ node.name }}
+            </nz-tree-node-option>
+        </nz-tree-node>
+    </nz-tree-view>
+</div>

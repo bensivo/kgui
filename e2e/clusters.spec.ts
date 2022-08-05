@@ -28,7 +28,6 @@ describe('connect', () => {
     const cluster1 = {
         Name: "cluster1",
         BootstrapServer: "localhost:9092",
-        Timeout: 10,
         SaslMechanism: "",
         SaslUsername: "",
         SaslPassword: "",
@@ -40,7 +39,6 @@ describe('connect', () => {
     const cluster2 = {
         Name: "cluster2",
         BootstrapServer: "localhost:9092",
-        Timeout: 10,
         SaslMechanism: "",
         SaslUsername: "",
         SaslPassword: "",

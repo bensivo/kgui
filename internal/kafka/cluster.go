@@ -20,7 +20,6 @@ import (
 type Cluster struct {
 	Name                 string
 	BootstrapServer      string
-	Timeout              int64
 	SaslMechanism        string
 	SaslUsername         string
 	SaslPassword         string
@@ -44,8 +43,8 @@ func (c *Cluster) Dial() *kgo.Conn {
 func (c *Cluster) DialLeader(topic string, partition int) *kgo.Conn {
 	dialer := c.GetDialer()
 
-	fmt.Println("Dialing leader for cluster " + c.BootstrapServer)
-	ctx, _ := context.WithTimeout(context.Background(), time.Duration(c.Timeout)*time.Second)
+	fmt.Printf("Dialing leader for cluster %v", c)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	conn, err := dialer.DialLeader(ctx, "tcp", c.BootstrapServer, topic, partition)
 	if err != nil {
 		fmt.Println("Failed to dial leader", err)

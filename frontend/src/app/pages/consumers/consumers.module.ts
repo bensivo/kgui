@@ -1,0 +1,27 @@
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
+import { ConsumersComponent } from './components/consumers.component';
+import { ConsumersRoutingModule } from './consumers-routing.module';
+import { NzTreeModule } from 'ng-zorro-antd/tree';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
+
+@NgModule({
+  declarations: [
+    ConsumersComponent
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    ConsumersRoutingModule,
+    NzSelectModule,
+    NzTreeViewModule,
+    NzIconModule,
+    NzTreeModule,
+  ]
+})
+export class ConsumersModule { }

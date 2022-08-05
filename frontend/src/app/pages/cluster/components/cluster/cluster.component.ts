@@ -28,11 +28,6 @@ export class ClusterComponent implements OnInit {
     this.clusterStore.store.subscribe((state: ClusterState) => {
       this.clusters = state.clusters
     });
-
-    this.socketService.send({
-      Topic: 'clusters.refresh',
-      Data: null,
-    });
   }
   
   addCluster() {
