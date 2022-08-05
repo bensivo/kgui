@@ -53,10 +53,10 @@ describe('connect', () => {
         await reqRes(
             ws,
             {
-                Topic: 'req.clusters.list',
+                Topic: 'clusters.refresh',
             },
             {
-                Topic: 'res.clusters.list',
+                Topic: 'clusters.changed',
                 Data: []
 
             }
@@ -67,11 +67,11 @@ describe('connect', () => {
         await reqRes(
             ws,
             {
-                Topic: 'req.clusters.add',
+                Topic: 'clusters.add',
                 Data: cluster1,
             },
             {
-                Topic: 'res.clusters.add',
+                Topic: 'clusters.changed',
                 Data: [
                     cluster1
                 ]
@@ -82,11 +82,11 @@ describe('connect', () => {
         await reqRes(
             ws,
             {
-                Topic: 'req.clusters.add',
+                Topic: 'clusters.add',
                 Data: cluster2,
             },
             {
-                Topic: 'res.clusters.add',
+                Topic: 'clusters.changed',
                 Data: [cluster1, cluster2]
             })
     });
@@ -95,13 +95,13 @@ describe('connect', () => {
         await reqRes(
             ws,
             {
-                Topic: 'req.clusters.remove',
+                Topic: 'clusters.remove',
                 Data: {
                     Name: cluster2.Name
                 },
             },
             {
-                Topic: 'res.clusters.remove',
+                Topic: 'clusters.changed',
                 Data: [cluster1]
             })
     });

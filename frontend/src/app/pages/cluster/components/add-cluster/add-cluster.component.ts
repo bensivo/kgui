@@ -13,7 +13,7 @@ export class AddClusterComponent implements OnInit {
 
   formGroup!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private socketService: SocketService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private socketService: SocketService, private router: Router ) { }
 
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
@@ -31,12 +31,10 @@ export class AddClusterComponent implements OnInit {
   cancel() {
     this.router.navigate(['/clusters']);
   }
-  submit() {
-    console.log(this.formGroup.value);
-    console.log(this.formGroup);
 
+  submit() {
     this.socketService.send<Cluster>({
-      Topic: 'req.clusters.add',
+      Topic: 'clusters.add',
       Data: {
         Name: this.formGroup.value.name,
         BootstrapServer: this.formGroup.value.bootstrapServer,

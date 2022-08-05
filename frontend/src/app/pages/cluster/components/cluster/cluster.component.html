@@ -1,5 +1,9 @@
 <div id="clusters">
     <nz-card *ngFor="let cluster of clusters" [nzTitle]="cluster.Name" [nzExtra]="extraTemplate">
+        <ng-template #extraTemplate>
+            <i nz-icon nzType="delete" nzTheme="outline" (click)="deleteCluster(cluster)"></i>
+        </ng-template>
+
         <div>
             Bootstrap Server: {{cluster.BootstrapServer}}
         </div>
@@ -20,7 +24,3 @@
         </span>
     </nz-card>
 </div>
-
-<ng-template #extraTemplate>
-    <a>More</a>
-</ng-template>

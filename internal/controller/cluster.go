@@ -21,11 +21,11 @@ type ListClustersResponse struct {
 
 func (c *ClusterController) Handle(msg Message) {
 	switch msg.Topic {
-	case "req.clusters.list":
+	case "clusters.refresh":
 		c.listClusters()
-	case "req.clusters.add":
+	case "clusters.add":
 		c.addCluster(msg.Data)
-	case "req.clusters.remove":
+	case "clusters.remove":
 		c.removeCluster(msg.Data)
 	}
 }
@@ -37,7 +37,7 @@ func (c *ClusterController) listClusters() {
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	write(*c.Conn, "res.clusters.list", clusters)
+	write(*c.Conn, "clusters.changed", clusters)
 }
 
 func (c *ClusterController) addCluster(data interface{}) {
@@ -57,7 +57,7 @@ func (c *ClusterController) addCluster(data interface{}) {
 		clusters = append(clusters, value)
 	}
 
-	write(*c.Conn, "res.clusters.add", clusters)
+	write(*c.Conn, "clusters.changed", clusters)
 }
 
 type RemoveClusterPayload struct {
@@ -81,5 +81,5 @@ func (c *ClusterController) removeCluster(data interface{}) {
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	write(*c.Conn, "res.clusters.remove", clusters)
+	write(*c.Conn, "clusters.changed", clusters)
 }

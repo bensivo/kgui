@@ -18,7 +18,7 @@ describe('send', () => {
         });
 
         ws.send(JSON.stringify({
-            Topic: 'req.clusters.add',
+            Topic: 'clusters.add',
             Data: {
                 Name: "cluster1",
                 BootstrapServer: "localhost:9092",

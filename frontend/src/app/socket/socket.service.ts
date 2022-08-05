@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable,  } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 export interface Message<T> {
   Topic: string;
@@ -49,9 +49,10 @@ export class SocketService {
     this.ws.send(JSON.stringify(msg));
   }
 
-  public stream<T>(topic: string): Observable<Message<T>> {
+  public stream<T>(topic: string): Observable<T> {
     return this.$messages.pipe(
-      filter((m) => m.Topic === topic)
+      filter((m) => m.Topic === topic),
+      map((m) => m.Data)
     );
   }
 }
