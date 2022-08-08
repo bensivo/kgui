@@ -50,7 +50,11 @@ describe('send', () => {
                 ClusterName: "cluster1",
                 Topic: "messages",
                 Partition: 0,
-                Message: new Date(Date.now()).toTimeString()
+                Message: JSON.stringify({
+                    year: 2022,
+                    month: 8,
+                    day: 8,
+                }),
             }
         }, {
             Topic: 'res.message.send',
@@ -59,10 +63,10 @@ describe('send', () => {
                 Status: 'OK'
             }
         })
-    });
+    })
 
     it('read messages', async () => {
-        await reqRes(ws,{
+        await reqRes(ws, {
             Topic: 'req.messages.consume',
             Data: {
                 ClusterName: "cluster1",

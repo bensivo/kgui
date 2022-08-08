@@ -7,11 +7,15 @@ import { ConsumersComponent } from './components/consumers.component';
 import { ConsumersRoutingModule } from './consumers-routing.module';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { MessageTreeComponent } from './components/message-tree/message-tree.component';
 
 
 @NgModule({
   declarations: [
-    ConsumersComponent
+    ConsumersComponent,
+    MessageTreeComponent,
   ],
   imports: [
     CommonModule,
@@ -22,6 +26,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzTreeViewModule,
     NzIconModule,
     NzTreeModule,
+    NzInputModule,
+    NzInputNumberModule,
   ]
 })
 export class ConsumersModule { }

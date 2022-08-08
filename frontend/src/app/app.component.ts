@@ -49,14 +49,14 @@ export class AppComponent implements OnInit {
     this.socketService.send({
       Topic: 'clusters.add',
       Data: {
-        Name: "qa-stress-test",
-        BootstrapServer: "10.0.0.62:30100",
-        SaslMechanism: "scram-sha-512",
-        SaslUsername: "admin-user",
-        SaslPassword: "kafkapassword",
-        SSLEnabled: true,
+        Name: "localhost",
+        BootstrapServer: "localhost:9092",
+        SaslMechanism: "",
+        SaslUsername: "",
+        SaslPassword: "",
+        SSLEnabled: false,
         SSLCaCertificatePath: "",
-        SSLSkipVerification: true,
+        SSLSkipVerification: false,
       },
     });
   }
