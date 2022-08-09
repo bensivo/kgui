@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { combineLatest, } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { ConsumerStore } from 'src/app/store/consumer.store';
@@ -13,7 +13,7 @@ import { MessagesStore } from 'src/app/store/messages.store';
   templateUrl: './consumers.component.html',
   styleUrls: ['./consumers.component.less']
 })
-export class ConsumersComponent implements OnInit {
+export class ConsumersComponent{
   constructor(
     private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
@@ -40,10 +40,12 @@ export class ConsumersComponent implements OnInit {
         console.log(`Consumer ${params.name} not found`)
         return undefined;
       }
+
+      console.log('Consumer', consumer)
       this.topicInput = consumer.topic;
       this.offsetInput = consumer.offset;
       return consumer;
-    })
+    }),
   )
 
   messages$ = combineLatest([
@@ -51,51 +53,37 @@ export class ConsumersComponent implements OnInit {
     this.messagesStore.store
   ]).pipe(
     map(([params, messages]) => {
+      console.log(messages);
       return messages[params.name]
     })
   )
 
-  ngOnInit(): void {
-    // Listens for messages coming from the backend, and adds them
-    // to the proper location in the messages store
-    // 
-    // NOTE: This could probably in a service, not in this component
-    combineLatest([
-      this.consumer$,
-      this.socketService.stream<any>('res.messages.consume'),
-    ])
-      .subscribe(([consumer, message]) => {
-        console.log(`Message on consumer ${consumer?.name} - ${message}`)
-        if (!consumer) {
+  async consume() {
+    this.route.params
+    .pipe(first())
+    .subscribe(params => {
+        if (!params|| !this.clusterInput) {
+          console.log('Invalid inputs', params, this.clusterInput)
           return;
         }
 
-        this.messagesStore.store.update((state) => {
-          const messages = state[consumer.name] ?? [];
-          const newMsg = atob(message.Message.Value);
-          messages.push(newMsg);
+        this.messagesStore.store.update((s) => ({
+          ...s,
+          [params.name]: [],
+        }))
 
-          return {
-            ...state,
-            [consumer.name]: messages
+        this.socketService.send({
+          Topic: 'req.messages.consume',
+          Data: {
+            ConsumerName: params.name,
+            ClusterName: this.clusterInput.Name,
+            Topic: this.topicInput,
+            Partition: 0,
+            Offset: this.offsetInput,
           }
-        })
-      });
+        });
+    })
   }
-
-  consume() {
-    if (!this.clusterInput) {
-      return;
-    }
-
-    this.socketService.send({
-      Topic: 'req.messages.consume',
-      Data: {
-        ClusterName: this.clusterInput.Name,
-        Topic: this.topicInput,
-        Partition: 0,
-        Offset: this.offsetInput,
-      }
-    });
-  }
+  
 }
+

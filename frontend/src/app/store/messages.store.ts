@@ -1,15 +1,36 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
+import { SocketService } from '../socket/socket.service';
 
 export interface MessagesState {
-    [consumerName: string]: any[];
+  [consumerName: string]: any[];
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class MessagesStore {
-    store = createStore({
-        name: 'messages'
-    }, withProps<MessagesState>({}));
+  constructor(private socketService: SocketService) {
+    this.init();
+  }
+
+  store = createStore({
+    name: 'messages'
+  }, withProps<MessagesState>({}));
+
+
+  init() {
+    this.socketService.stream<any>('res.messages.consume')
+      .subscribe((message: any) => {
+        const consumerName = message.ConsumerName;
+        const newMsg = atob(message.Message.Value);
+        const allMsgs = this.store.getValue()[consumerName] ?? [];
+        allMsgs.push(newMsg);
+
+        this.store.update((state) => ({
+          ...state,
+          [consumerName]: allMsgs
+        }))
+      });
+  }
 }

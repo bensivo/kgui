@@ -46,10 +46,11 @@ func (c *MessageController) Produce(data interface{}) {
 }
 
 type ConsumePayload struct {
-	ClusterName string
-	Topic       string
-	Partition   int
-	Offset      int
+	ConsumerName string
+	ClusterName  string
+	Topic        string
+	Partition    int
+	Offset       int
 }
 
 func (c *MessageController) Consume(data interface{}) {
@@ -73,10 +74,11 @@ func (c *MessageController) Consume(data interface{}) {
 		for msg := range results {
 			fmt.Println("Writing")
 			write(*c.Conn, "res.messages.consume", map[string]interface{}{
-				"ClusterName": payload.ClusterName,
-				"Topic":       payload.Topic,
-				"Partition":   payload.Partition,
-				"Message":     msg,
+				"ConsumerName": payload.ConsumerName,
+				"ClusterName":  payload.ClusterName,
+				"Topic":        payload.Topic,
+				"Partition":    payload.Partition,
+				"Message":      msg,
 			})
 		}
 

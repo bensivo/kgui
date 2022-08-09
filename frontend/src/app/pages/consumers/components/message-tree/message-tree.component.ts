@@ -41,6 +41,8 @@ export class MessageTreeComponent implements OnInit{
   ngOnInit() {
     const treeNode = jsonToTreeNode(``, JSON.parse(this.value));
     this.datasource.setData([treeNode]);
+
+    this.treeControl.expandAll();
   }
 
   private transformer(node: TreeNode, level: number): FlatNode {
