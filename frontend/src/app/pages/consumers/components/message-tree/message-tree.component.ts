@@ -54,7 +54,6 @@ export class MessageTreeComponent implements OnInit{
   hasChild(_: number, node: FlatNode): boolean {
     return node.expandable;
   }
-
 }
 
 const jsonToTreeNode = (key: string, value: any): TreeNode => {

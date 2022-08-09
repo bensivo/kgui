@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { SocketService } from './socket/socket.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
+import { ConsumerStore } from './store/consumer.store';
+import { select } from '@ngneat/elf';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,20 +14,11 @@ import { ClusterState, ClusterStore } from './store/cluster.store';
 export class AppComponent implements OnInit {
   isCollapsed = false;
 
-  links = [
-    {
-      text: 'Clusters',
-      route: '/clusters',
-      icon: 'appstore',
-    },
-    {
-      text: 'Consumers',
-      route: '/consumers',
-      icon: 'api',
-    },
-  ]
+  consumers$: Observable<any[]> = this.consumerStore.store.pipe(
+    select((consumers) => Object.values(consumers))
+  );
 
-  constructor(private socketService: SocketService, private clusterStore: ClusterStore) { }
+  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private consumerStore: ConsumerStore) { }
 
   async ngOnInit() {
     await this.socketService.initialize();
@@ -44,7 +39,6 @@ export class AppComponent implements OnInit {
     this.seed();
   }
 
-
   seed() {
     this.socketService.send({
       Topic: 'clusters.add',
@@ -59,5 +53,22 @@ export class AppComponent implements OnInit {
         SSLSkipVerification: false,
       },
     });
+
+    this.consumerStore.store.update((_s) => ({
+      Logs: {
+        name: 'Logs',
+        topic: 'logs',
+        offset: -1,
+
+        messages: [],
+      },
+      Messages: {
+        name: 'Messages',
+        topic: 'messages',
+        offset: 0,
+
+        messages: [],
+      }
+    }));
   }
 }

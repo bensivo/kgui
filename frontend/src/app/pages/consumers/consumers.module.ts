@@ -10,6 +10,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { MessageTreeComponent } from './components/message-tree/message-tree.component';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { MessageTreeComponent } from './components/message-tree/message-tree.com
     NzTreeModule,
     NzInputModule,
     NzInputNumberModule,
+    NzMenuModule,
   ]
 })
 export class ConsumersModule { }

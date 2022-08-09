@@ -4,20 +4,24 @@
             <h1>KGui</h1>
         </div>
         <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-            <li *ngFor="let link of links" nz-menu-item ngMatchRouter>
-                <i nz-icon [nzType]="link.icon"></i>
+
+            <li nz-menu-item ngMatchRouter>
+                <i nz-icon nzType="appstore"></i>
                 <span>
-                    <a [routerLink]="link.route">{{link.text}}</a>
+                    <a routerLink="/clusters">Clusters</a>
                 </span>
             </li>
-            <!-- <li nz-menu-item>
-                <i nz-icon nzType="home"></i>
-                <span>
-                    <a routerLink="/welcome">Welcome</a>
-                </span>
-            </li> -->
-        </ul>
 
+            <li nz-submenu nzIcon="api" nzTitle="Consumers">
+                <ul>
+                    <li *ngFor="let consumer of consumers$ | async" nz-menu-item>
+                        <span>
+                            <a routerLink="/consumers/{{consumer.name}}">{{consumer.name}}</a>
+                        </span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </nz-sider>
     <nz-layout>
         <nz-header>

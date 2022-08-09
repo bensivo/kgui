@@ -1,19 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { select } from '@ngneat/elf';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
-import { ClusterStore } from 'src/app/store/cluster.store';
-
-
-
-interface TreeNode {
-  name: string;
-  children?: TreeNode[];
-}
-
-interface FlatNode {
-  expandable: boolean;
-  name: string;
-  level: number;
-}
+import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { ConsumerStore } from 'src/app/store/consumer.store';
+import { MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
   selector: 'app-consumers',
@@ -21,31 +14,80 @@ interface FlatNode {
   styleUrls: ['./consumers.component.less']
 })
 export class ConsumersComponent implements OnInit {
+  constructor(
+    private clusterStore: ClusterStore,
+    private consumerStore: ConsumerStore,
+    private messagesStore: MessagesStore,
+    private socketService: SocketService,
+    private route: ActivatedRoute
+  ) { }
+
   topicInput = '';
-  clusterInput: any;
-  offsetInput = -1;
+  clusterInput!: Cluster | undefined;
+  offsetInput = 0;
 
-  clusters: any[] = []
-  messages: string[] = [];
+  clusters$ = this.clusterStore.store.pipe(
+    select(s => s.clusters)
+  );
 
+  consumer$ = combineLatest([
+    this.route.params,
+    this.consumerStore.store,
+  ]).pipe(
+    map(([params, consumers]) => {
+      const consumer = consumers[params.name];
+      if (!consumer) {
+        console.log(`Consumer ${params.name} not found`)
+        return undefined;
+      }
+      this.topicInput = consumer.topic;
+      this.offsetInput = consumer.offset;
+      return consumer;
+    })
+  )
 
-  constructor(private clusterStore: ClusterStore, private socketService: SocketService) { }
+  messages$ = combineLatest([
+    this.route.params,
+    this.messagesStore.store
+  ]).pipe(
+    map(([params, messages]) => {
+      return messages[params.name]
+    })
+  )
 
   ngOnInit(): void {
-    this.clusterStore.store
-      .subscribe((state) => {
-        console.log(state);
-        this.clusters = state.clusters;
-      })
+    // Listens for messages coming from the backend, and adds them
+    // to the proper location in the messages store
+    // 
+    // NOTE: This could probably in a service, not in this component
+    combineLatest([
+      this.consumer$,
+      this.socketService.stream<any>('res.messages.consume'),
+    ])
+      .subscribe(([consumer, message]) => {
+        console.log(`Message on consumer ${consumer?.name} - ${message}`)
+        if (!consumer) {
+          return;
+        }
 
-    this.socketService.stream('res.messages.consume')
-      .subscribe((msg: any) => {
-        const value = atob(msg.Message.Value);
-        this.messages.push(value);
-      })
+        this.messagesStore.store.update((state) => {
+          const messages = state[consumer.name] ?? [];
+          const newMsg = atob(message.Message.Value);
+          messages.push(newMsg);
+
+          return {
+            ...state,
+            [consumer.name]: messages
+          }
+        })
+      });
   }
 
   consume() {
+    if (!this.clusterInput) {
+      return;
+    }
+
     this.socketService.send({
       Topic: 'req.messages.consume',
       Data: {

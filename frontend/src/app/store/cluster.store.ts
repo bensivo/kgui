@@ -1,8 +1,19 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 
+export interface Cluster {
+    BootstrapServer: string;
+    Name: string;
+    SSLCaCertificatePath: string;
+    SSLEnabled: boolean;
+    SSLSkipVerification: boolean;
+    SaslMechanism: string;
+    SaslPassword: string;
+    SaslUsername: string;
+}
+
 export interface ClusterState {
-    clusters: any[];
+    clusters: Cluster[];
 }
 
 @Injectable({

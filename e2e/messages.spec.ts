@@ -44,11 +44,12 @@ describe('send', () => {
     });
 
     it('send message', async () => {
+        for(let i=0; i<100; i++)
         await reqRes(ws, {
             Topic: 'req.messages.produce',
             Data: {
                 ClusterName: "cluster1",
-                Topic: "messages",
+                Topic: "logs",
                 Partition: 0,
                 Message: JSON.stringify({
                     year: 2022,
