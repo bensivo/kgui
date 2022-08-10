@@ -7,9 +7,9 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { NavModule } from './components/nav/nav.module';
 import { IconsProviderModule } from './icons-provider.module';
 import { SocketModule } from './socket/socket.module';
-import { SocketService } from './socket/socket.service';
 
 @NgModule({
   declarations: [
@@ -25,6 +25,7 @@ import { SocketService } from './socket/socket.service';
     NzLayoutModule,
     NzMenuModule,
     SocketModule,
+    NavModule,
   ],
   providers: [
   ],

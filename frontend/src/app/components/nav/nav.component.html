@@ -1,0 +1,28 @@
+<ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+    <li nz-menu-item ngMatchRouter>
+        <i nz-icon nzType="appstore"></i>
+        <span>
+            <a routerLink="/clusters">Clusters</a>
+        </span>
+    </li>
+
+    <li nz-submenu nzIcon="api" nzTitle="Consumers">
+        <ul>
+            <li *ngFor="let consumer of consumers$ | async" nz-menu-item>
+                <span>
+                    <a routerLink="/consumers/{{consumer.name}}">{{consumer.name}}</a>
+                </span>
+            </li>
+        </ul>
+    </li>
+
+    <li nz-submenu nzIcon="send" nzTitle="Producers">
+        <ul>
+            <li *ngFor="let producer of producers$ | async" nz-menu-item>
+                <span>
+                    <a routerLink="/producers/{{producer.name}}">{{producer.name}}</a>
+                </span>
+            </li>
+        </ul>
+    </li>
+</ul>
