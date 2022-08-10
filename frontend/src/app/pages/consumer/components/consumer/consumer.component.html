@@ -1,41 +1,46 @@
-<div *ngIf="consumer$ | async as consumer">
-    <h1>
-        {{consumer.name}}
-    </h1>
-    <div class="form-section">
-        <div class="form-label">
-            <label>Cluster</label>
+<div class="content" *ngIf="consumer$ | async as consumer">
+
+
+    <div class="content-left">
+        <h1>
+            {{consumer.name}}
+        </h1>
+        <div class="form-section">
+            <div class="form-label">
+                <label>Cluster</label>
+            </div>
+            <div class="form-input">
+                <nz-select [(ngModel)]="clusterInput">
+                    <nz-option *ngFor="let cluster of clusters$ | async" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
+                </nz-select>
+            </div>
         </div>
-        <div>
-            <nz-select [(ngModel)]="clusterInput">
-                <nz-option *ngFor="let cluster of clusters$ | async" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
-            </nz-select>
+
+        <div class="form-section">
+            <div class="form-label">
+                <label>Topic</label>
+            </div>
+            <div class="form-input">
+                <input nz-input placeholder="Topic" [(ngModel)]="topicInput" />
+            </div>
         </div>
+
+        <div class="form-section">
+            <div class="form-label">
+                <label>Offset</label>
+            </div>
+            <div class="form-input">
+                <nz-input-number [(ngModel)]="offsetInput" [nzStep]="1"></nz-input-number>
+            </div>
+        </div>
+
+        <button (click)="consume()">Consume</button>
     </div>
 
-    <div class="form-section">
-        <div class="form-label">
-            <label>Topic</label>
+    <div class="content-right">
+        <div *ngFor="let message of messages$ | async">
+            <!-- <app-message-tree *ngFor="let message of messages$ | async" [value]="message"></app-message-tree> -->
+            <code>{{message}}</code>
         </div>
-        <div>
-
-            <input nz-input placeholder="Topic" [(ngModel)]="topicInput" />
-        </div>
-    </div>
-
-    <div class="form-section">
-        <div class="form-label">
-            <label>Offset</label>
-        </div>
-        <div>
-            <nz-input-number [(ngModel)]="offsetInput" [nzStep]="1"></nz-input-number>
-        </div>
-    </div>
-
-    <button (click)="consume()">Consume</button>
-
-    <div *ngFor="let message of messages$ | async">
-        <!-- <app-message-tree *ngFor="let message of messages$ | async" [value]="message"></app-message-tree> -->
-        <code>{{message}}</code>
     </div>
 </div>
