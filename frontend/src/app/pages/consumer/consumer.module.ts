@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
-import { ConsumersComponent } from './components/consumers.component';
-import { ConsumersRoutingModule } from './consumers-routing.module';
+import { ConsumerComponent } from './components/consumer/consumer.component';
+import { ConsumersRoutingModule } from './consumer-routing.module';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -15,7 +15,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 @NgModule({
   declarations: [
-    ConsumersComponent,
+    ConsumerComponent,
     MessageTreeComponent,
   ],
   imports: [
@@ -32,4 +32,4 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
     NzMenuModule,
   ]
 })
-export class ConsumersModule { }
+export class ConsumerModule { }

@@ -1,12 +1,12 @@
-<div *ngIf="consumer$ | async as consumer">
+<div *ngIf="producer$ | async as producer">
     <h1>
-        {{consumer.name}}
+        {{producer.name}}
     </h1>
     <div class="form-section">
         <div class="form-label">
             <label>Cluster</label>
         </div>
-        <div>
+        <div class="form-input">
             <nz-select [(ngModel)]="clusterInput">
                 <nz-option *ngFor="let cluster of clusters$ | async" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
             </nz-select>
@@ -17,24 +17,28 @@
         <div class="form-label">
             <label>Topic</label>
         </div>
-        <div>
-
+        <div class="form-input">
             <input nz-input placeholder="Topic" [(ngModel)]="topicInput" />
         </div>
     </div>
 
     <div class="form-section">
         <div class="form-label">
-            <label>Offset</label>
+            <label>Partition</label>
         </div>
-        <div>
-            <nz-input-number [(ngModel)]="offsetInput" [nzStep]="1"></nz-input-number>
+        <div class="form-input">
+            <nz-input-number [(ngModel)]="partitionInput" [nzStep]="1"></nz-input-number>
         </div>
     </div>
 
-    <button (click)="consume()">Consume</button>
-
-    <div>
-        <app-message-tree *ngFor="let message of messages$ | async" [value]="message"></app-message-tree>
+    <div class="form-section">
+        <div class="form-label">
+            <label>Message</label>
+        </div>
+        <div class="form-input">
+            <textarea rows="10" nz-input [(ngModel)]="messageInput"></textarea>
+        </div>
     </div>
+
+    <button (click)="produce()">produce</button>
 </div>

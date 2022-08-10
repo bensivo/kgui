@@ -4,7 +4,7 @@ import { SocketService } from './socket/socket.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
 import { ConsumerStore } from './store/consumer.store';
 import { select } from '@ngneat/elf';
-import { ActivatedRoute } from '@angular/router';
+import { ProducerStore } from './store/producer.store';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     select((consumers) => Object.values(consumers))
   );
 
-  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private consumerStore: ConsumerStore) { }
+  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private consumerStore: ConsumerStore, private producerStore: ProducerStore) { }
 
   async ngOnInit() {
     await this.socketService.initialize();
@@ -68,6 +68,21 @@ export class AppComponent implements OnInit {
         offset: 0,
 
         messages: [],
+      }
+    }));
+
+    this.producerStore.store.update((_s) => ({
+      Log: {
+        name: 'Log',
+        topic: 'logs',
+        message: '',
+      },
+      Message: {
+        name: 'Message',
+        topic: 'messages',
+        message: JSON.stringify({
+          date: new Date().toISOString(),
+        }, null, 2),
       }
     }));
   }

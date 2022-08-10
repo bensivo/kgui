@@ -10,10 +10,10 @@ import { MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
   selector: 'app-consumers',
-  templateUrl: './consumers.component.html',
-  styleUrls: ['./consumers.component.less']
+  templateUrl: './consumer.component.html',
+  styleUrls: ['./consumer.component.less']
 })
-export class ConsumersComponent{
+export class ConsumerComponent{
   constructor(
     private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
