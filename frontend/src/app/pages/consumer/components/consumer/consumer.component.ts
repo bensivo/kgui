@@ -73,7 +73,7 @@ export class ConsumerComponent{
         }))
 
         this.socketService.send({
-          Topic: 'req.messages.consume',
+          Topic: 'message.consume',
           Data: {
             ConsumerName: params.name,
             ClusterName: this.clusterInput.Name,

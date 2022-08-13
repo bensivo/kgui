@@ -20,7 +20,7 @@ export class MessagesStore {
 
 
   init() {
-    this.socketService.stream<any>('res.messages.consume')
+    this.socketService.stream<any>('message.consumed')
       .subscribe((message: any) => {
         const consumerName = message.ConsumerName;
         const newMsg = atob(message.Message.Value);

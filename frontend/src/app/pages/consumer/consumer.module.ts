@@ -9,14 +9,12 @@ import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import { MessageTreeComponent } from './components/message-tree/message-tree.component';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 
 
 @NgModule({
   declarations: [
     ConsumerComponent,
-    MessageTreeComponent,
   ],
   imports: [
     CommonModule,

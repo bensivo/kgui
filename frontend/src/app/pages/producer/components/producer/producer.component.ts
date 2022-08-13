@@ -1,3 +1,4 @@
+import * as uuid from 'uuid';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -56,8 +57,9 @@ export class ProducerComponent {
 
     this.socketService.send(
       {
-        Topic: 'req.messages.produce',
+        Topic: 'message.produce',
         Data: {
+          CorrelationId: uuid.v4(),
           ClusterName: this.clusterInput.Name,
           Topic: this.topicInput,
           Partition: this.partitionInput,
@@ -66,5 +68,4 @@ export class ProducerComponent {
       }
     );
   }
-
 }

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { SocketService } from 'src/app/socket/socket.service';
+import { ClusterStore } from 'src/app/store/cluster.store';
 
 import { ClusterComponent } from './cluster.component';
 
@@ -8,7 +11,21 @@ describe('ClusterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClusterComponent ]
+      declarations: [ ClusterComponent ],
+      providers: [
+        {
+          provide: SocketService,
+          useValue: {},
+        },
+        {
+          provide: ClusterStore,
+          useValue: {},
+        },
+        {
+          provide: Router,
+          useValue: {},
+        }
+      ]
     })
     .compileComponents();
   });
