@@ -46,7 +46,7 @@ describe('send', () => {
     it('send message', async () => {
         for(let i=0; i<100; i++)
         await reqRes(ws, {
-            Topic: 'req.messages.produce',
+            Topic: 'message.produce',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "logs",
@@ -58,7 +58,7 @@ describe('send', () => {
                 }),
             }
         }, {
-            Topic: 'res.message.send',
+            Topic: 'message.produced',
             Data: {
                 // TODO: need some kind of message identifier
                 Status: 'OK'
@@ -68,7 +68,7 @@ describe('send', () => {
 
     it('read messages', async () => {
         await reqRes(ws, {
-            Topic: 'req.messages.consume',
+            Topic: 'message.consume',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",
@@ -77,7 +77,7 @@ describe('send', () => {
             }
 
         }, {
-            Topic: 'res.messages.consume',
+            Topic: 'message.consumed',
             Data: {
                 ClusterName: "cluster1",
                 Topic: "messages",

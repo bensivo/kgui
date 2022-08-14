@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { combineLatest, } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { ConsumerStore } from 'src/app/store/consumer.store';
@@ -13,19 +14,15 @@ import { MessagesStore } from 'src/app/store/messages.store';
   templateUrl: './consumer.component.html',
   styleUrls: ['./consumer.component.less']
 })
-export class ConsumerComponent{
+export class ConsumerComponent {
   constructor(
     private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
     private messagesStore: MessagesStore,
     private socketService: SocketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
   ) { }
-
-  topicInput = '';
-  clusterInput!: Cluster | undefined;
-  offsetInput = 0;
-
   clusters$ = this.clusterStore.store.pipe(
     select(s => s.clusters)
   );
@@ -35,16 +32,7 @@ export class ConsumerComponent{
     this.consumerStore.store,
   ]).pipe(
     map(([params, consumers]) => {
-      const consumer = consumers[params.name];
-      if (!consumer) {
-        console.log(`Consumer ${params.name} not found`)
-        return undefined;
-      }
-
-      console.log('Consumer', consumer)
-      this.topicInput = consumer.topic;
-      this.offsetInput = consumer.offset;
-      return consumer;
+      return consumers[params.name];
     }),
   )
 
@@ -58,32 +46,41 @@ export class ConsumerComponent{
     })
   )
 
-  async consume() {
-    this.route.params
-    .pipe(first())
-    .subscribe(params => {
-        if (!params|| !this.clusterInput) {
-          console.log('Invalid inputs', params, this.clusterInput)
-          return;
-        }
+  data$ = combineLatest([
+    this.clusters$,
+    this.consumer$,
+    this.messages$,
+  ]).pipe(
+    map(([clusters, consumer, messages]) => ({
+      clusters,
+      consumer,
+      messages,
+      formGroup: this.formBuilder.group({
+        cluster: new FormControl(clusters[0]),
+        topic: new FormControl(consumer.topic),
+        partition: new FormControl(0),
+        offset: new FormControl(consumer.offset),
+      })
+    }))
+  )
 
-        this.messagesStore.store.update((s) => ({
-          ...s,
-          [params.name]: [],
-        }))
+  async consume(event: any) {
+    this.messagesStore.store.update((s) => ({
+      ...s,
+      [event.consumer.name]: [],
+    }))
 
-        this.socketService.send({
-          Topic: 'message.consume',
-          Data: {
-            ConsumerName: params.name,
-            ClusterName: this.clusterInput.Name,
-            Topic: this.topicInput,
-            Partition: 0,
-            Offset: this.offsetInput,
-          }
-        });
-    })
+    this.socketService.send({
+      Topic: 'message.consume',
+      Data: {
+        ConsumerName: event.consumer.name,
+        ClusterName: event.cluster.Name,
+        Topic: event.topic,
+        Partition: event.partition,
+        Offset: event.offset,
+      }
+    });
   }
-  
+
 }
 

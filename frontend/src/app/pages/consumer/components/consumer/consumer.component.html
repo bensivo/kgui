@@ -1,46 +1,5 @@
-<div class="content" *ngIf="consumer$ | async as consumer">
+<div class="content" *ngIf="data$ | async as data">
 
+    <app-consumer-view [consumer]="data.consumer" [clusters]="data.clusters" [messages]="data.messages" [formGroup]="data.formGroup" (onConsume)="consume($event)"></app-consumer-view>
 
-    <div class="content-left">
-        <h1>
-            {{consumer.name}}
-        </h1>
-        <div class="form-section">
-            <div class="form-label">
-                <label>Cluster</label>
-            </div>
-            <div class="form-input">
-                <nz-select [(ngModel)]="clusterInput">
-                    <nz-option *ngFor="let cluster of clusters$ | async" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
-                </nz-select>
-            </div>
-        </div>
-
-        <div class="form-section">
-            <div class="form-label">
-                <label>Topic</label>
-            </div>
-            <div class="form-input">
-                <input nz-input placeholder="Topic" [(ngModel)]="topicInput" />
-            </div>
-        </div>
-
-        <div class="form-section">
-            <div class="form-label">
-                <label>Offset</label>
-            </div>
-            <div class="form-input">
-                <nz-input-number [(ngModel)]="offsetInput" [nzStep]="1"></nz-input-number>
-            </div>
-        </div>
-
-        <button (click)="consume()">Consume</button>
-    </div>
-
-    <div class="content-right">
-        <div *ngFor="let message of messages$ | async">
-            <!-- <app-message-tree *ngFor="let message of messages$ | async" [value]="message"></app-message-tree> -->
-            <code>{{message}}</code>
-        </div>
-    </div>
 </div>

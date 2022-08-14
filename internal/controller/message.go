@@ -16,18 +16,19 @@ type MessageController struct {
 
 func (c *MessageController) Handle(msg Message) {
 	switch msg.Topic {
-	case "req.messages.produce":
+	case "message.produce":
 		c.Produce(msg.Data)
-	case "req.messages.consume":
+	case "message.consume":
 		c.Consume(msg.Data)
 	}
 }
 
 type ProducePayload struct {
-	ClusterName string
-	Topic       string
-	Partition   int
-	Message     string
+	CorrelationId string
+	ClusterName   string
+	Topic         string
+	Partition     int
+	Message       string
 }
 
 func (c *MessageController) Produce(data interface{}) {
@@ -40,8 +41,9 @@ func (c *MessageController) Produce(data interface{}) {
 	var cluster kafka.Cluster = state[payload.ClusterName]
 	cluster.Produce(payload.Topic, payload.Partition, payload.Message)
 
-	write(*c.Conn, "res.message.send", map[string]interface{}{
-		"Status": "OK",
+	write(*c.Conn, "message.produced", map[string]interface{}{
+		"CorrelationId": payload.CorrelationId,
+		"Status":        "SUCCESS",
 	})
 }
 
@@ -73,7 +75,7 @@ func (c *MessageController) Consume(data interface{}) {
 	go func() {
 		for msg := range results {
 			fmt.Println("Writing")
-			write(*c.Conn, "res.messages.consume", map[string]interface{}{
+			write(*c.Conn, "message.consumed", map[string]interface{}{
 				"ConsumerName": payload.ConsumerName,
 				"ClusterName":  payload.ClusterName,
 				"Topic":        payload.Topic,

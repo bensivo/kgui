@@ -11,7 +11,6 @@ import * as uuid from 'uuid';
 @Component({
   selector: 'app-producer',
   templateUrl: './producer.component.html',
-  styleUrls: ['./producer.component.less']
 })
 export class ProducerComponent {
 

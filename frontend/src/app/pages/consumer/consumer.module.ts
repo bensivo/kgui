@@ -10,11 +10,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { ConsumerViewComponent } from './components/consumer-view/consumer-view.component';
 
 
 @NgModule({
   declarations: [
     ConsumerComponent,
+    ConsumerViewComponent,
   ],
   imports: [
     CommonModule,
