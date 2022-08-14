@@ -15,14 +15,22 @@ describe('ProducerComponent', () => {
     store: of({})
   };
 
+  const producerStore = {
+    getProducer: jasmine.createSpy('getProducer')
+  }
+
+  const activatedRoute = {
+    params: of({})
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ ProducerComponent ],
       providers: [
         { provide: ClusterStore, useValue: clusterStore},
-        { provide: ProducerStore, useValue: {}},
+        { provide: ProducerStore, useValue: producerStore},
         { provide: SocketService, useValue: {}},
-        { provide: ActivatedRoute, useValue: {}},
+        { provide: ActivatedRoute, useValue: activatedRoute},
       ],
     })
     .compileComponents();

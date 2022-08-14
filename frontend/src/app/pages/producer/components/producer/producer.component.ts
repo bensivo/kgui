@@ -1,11 +1,12 @@
-import * as uuid from 'uuid';
 import { Component } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { ClusterStore } from 'src/app/store/cluster.store';
 import { ProducerStore } from 'src/app/store/producer.store';
+import * as uuid from 'uuid';
 
 @Component({
   selector: 'app-producer',
@@ -18,52 +19,49 @@ export class ProducerComponent {
     private clusterStore: ClusterStore,
     private producerStore: ProducerStore,
     private socketService: SocketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
   ) { }
-
-  topicInput = '';
-  clusterInput!: Cluster | undefined;
-  partitionInput = 0;
-  messageInput = '';
 
   clusters$ = this.clusterStore.store.pipe(
     map(s => s.clusters)
-  );
-
-  producer$ = combineLatest([
-    this.route.params,
-    this.producerStore.store,
-  ]).pipe(
-    map(([params, producers]) => {
-      const producer = producers[params.name];
-      if (!producer) {
-        console.log(`Producer ${params.name} not found in list`, producers)
-        return undefined;
-      }
-
-      console.log('Producer', producer)
-      this.topicInput = producer.topic;
-      this.partitionInput = 0;
-      this.messageInput = producer.message;
-      return producer;
-    }),
   )
 
+  producerName$ = this.route.params.pipe(
+    map(params => params.name)
+  )
 
-  produce() {
-    if (!this.clusterInput) {
-      return;
-    }
+  producerViewData$ = combineLatest([
+    this.clusters$,
+    this.producerStore.getProducer(this.producerName$),
+  ]).pipe(
+    map(([clusters, producer]) => {
 
+      const formGroup = this.formBuilder.group({
+        cluster: new FormControl(clusters[0]),
+        topic: new FormControl(producer.topic),
+        partition: new FormControl(0),
+        message: new FormControl(producer.message),
+      });
+
+      return {
+        clusters,
+        producer,
+        formGroup,
+      }
+    })
+  );
+
+  produce(value: any) {
     this.socketService.send(
       {
         Topic: 'message.produce',
         Data: {
           CorrelationId: uuid.v4(),
-          ClusterName: this.clusterInput.Name,
-          Topic: this.topicInput,
-          Partition: this.partitionInput,
-          Message: this.messageInput,
+          ClusterName: value.cluster.Name,
+          Topic: value.topic,
+          Partition: value.partition,
+          Message: value.message,
         }
       }
     );

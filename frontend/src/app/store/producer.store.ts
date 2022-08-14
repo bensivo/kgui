@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
+import { combineLatest, Observable } from 'rxjs';
+import { flatMap, map, mergeMap } from 'rxjs/operators';
 
 export interface Producer {
     name: string;
@@ -16,6 +18,17 @@ export interface ProducerState {
 })
 export class ProducerStore {
     store = createStore({
-        name: 'consumer'
+        name: 'producer'
     }, withProps<ProducerState>({}));
+
+    getProducer(name$: Observable<string>): Observable<Producer > {
+        return combineLatest([
+            name$,
+            this.store.asObservable()
+        ]) .pipe(
+            map(([name, state]) => {
+                return state[name]
+            })
+        )
+    }
 }

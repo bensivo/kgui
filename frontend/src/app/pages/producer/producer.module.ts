@@ -11,12 +11,14 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { ConsumersRoutingModule } from '../consumer/consumer-routing.module';
+import { ProducerViewComponent } from './components/producer-view/producer-view.component';
 
 
 
 @NgModule({
   declarations: [
-    ProducerComponent
+    ProducerComponent,
+    ProducerViewComponent,
   ],
   imports: [
     ProducersRoutingModule,
