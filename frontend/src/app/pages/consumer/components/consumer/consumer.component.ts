@@ -5,7 +5,7 @@ import { select } from '@ngneat/elf';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { ClusterStore } from 'src/app/store/cluster.store';
 import { ConsumerStore } from 'src/app/store/consumer.store';
 import { MessagesStore } from 'src/app/store/messages.store';
 
@@ -41,7 +41,6 @@ export class ConsumerComponent {
     this.messagesStore.store
   ]).pipe(
     map(([params, messages]) => {
-      console.log(messages);
       return messages[params.name]
     })
   )
@@ -81,6 +80,4 @@ export class ConsumerComponent {
       }
     });
   }
-
 }
-

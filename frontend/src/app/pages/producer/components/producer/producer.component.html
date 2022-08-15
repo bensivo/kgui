@@ -1,5 +1,5 @@
 <div class="content" *ngIf="producerViewData$ | async as data">
 
-    <app-producer-view [producer]="data.producer" [clusters]="data.clusters" [formGroup]="data.formGroup" (onProduce)="produce($event)"></app-producer-view>
+    <app-producer-view [producer]="data.producer" [clusters]="data.clusters" [formGroup]="data.formGroup" [requests]="data.requests"></app-producer-view>
 
 </div>

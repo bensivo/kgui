@@ -23,9 +23,10 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     await this.socketService.initialize();
 
+
+
     this.socketService.stream<any[]>('clusters.changed')
       .subscribe((clusters: any[]) => {
-        console.log('New Clusters', clusters);
         this.clusterStore.store.update((_state: ClusterState) => ({
           clusters,
         }))

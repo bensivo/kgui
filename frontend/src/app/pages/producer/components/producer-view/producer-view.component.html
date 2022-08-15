@@ -1,46 +1,56 @@
-<div>
-    <h1>
-        {{producer.name}}
-    </h1>
-    <form nz-form [formGroup]="formGroup">
-        <div class="form-section">
-            <div class="form-label">
-                <label>Cluster</label>
-            </div>
-            <div class="form-input">
-                <nz-select formControlName="cluster">
-                    <nz-option *ngFor="let cluster of clusters" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
-                </nz-select>
-            </div>
-        </div>
+<div class="content">
+    <div class="content-left">
 
-        <div class="form-section">
-            <div class="form-label">
-                <label>Topic</label>
+        <h1>
+            {{producer.name}}
+        </h1>
+        <form nz-form [formGroup]="formGroup">
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Cluster</label>
+                </div>
+                <div class="form-input">
+                    <nz-select formControlName="cluster">
+                        <nz-option *ngFor="let cluster of clusters" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
+                    </nz-select>
+                </div>
             </div>
-            <div class="form-input">
-                <input nz-input formControlName="topic" placeholder="Topic" />
-            </div>
-        </div>
 
-        <div class="form-section">
-            <div class="form-label">
-                <label>Partition</label>
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Topic</label>
+                </div>
+                <div class="form-input">
+                    <input nz-input formControlName="topic" placeholder="Topic" />
+                </div>
             </div>
-            <div class="form-input">
-                <nz-input-number formControlName="partition" [nzStep]="1"></nz-input-number>
-            </div>
-        </div>
 
-        <div class="form-section">
-            <div class="form-label">
-                <label>Message</label>
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Partition</label>
+                </div>
+                <div class="form-input">
+                    <nz-input-number formControlName="partition" [nzStep]="1"></nz-input-number>
+                </div>
             </div>
-            <div class="form-input">
-                <textarea formControlName="message" rows="10" nz-input></textarea>
-            </div>
-        </div>
-    </form>
 
-    <button (click)="produce()">Produce</button>
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Message</label>
+                </div>
+                <div class="form-input">
+                    <textarea formControlName="message" rows="10" nz-input></textarea>
+                </div>
+            </div>
+        </form>
+
+
+        <button (click)="produce()">Produce</button>
+    </div>
+
+    <div class="content-right">
+        <div *ngFor="let request of requests">
+            <code>{{request.data.Message }} - {{request.status}}</code>
+        </div>
+    </div>
 </div>

@@ -30,7 +30,7 @@ export class SocketService {
       });
 
       this.ws.addEventListener('message', (m: MessageEvent) => {
-        console.log(JSON.parse(m.data));
+        console.log('Receive', JSON.parse(m.data));
         this.messages.next(JSON.parse(m.data));
       });
     });
