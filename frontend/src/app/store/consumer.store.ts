@@ -5,7 +5,7 @@ export interface Consumer {
     name: string;
     topic: string;
     offset: number;
-    messages: any[];
+    filters: string[];
 }
 
 export interface ConsumerState {

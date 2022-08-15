@@ -56,19 +56,14 @@ export class AppComponent implements OnInit {
     });
 
     this.consumerStore.store.update((_s) => ({
-      Logs: {
-        name: 'Logs',
-        topic: 'logs',
-        offset: -1,
-
-        messages: [],
-      },
       Messages: {
         name: 'Messages',
         topic: 'messages',
         offset: 0,
-
-        messages: [],
+        filters: [
+          'date',
+          '08-15',
+        ],
       }
     }));
 

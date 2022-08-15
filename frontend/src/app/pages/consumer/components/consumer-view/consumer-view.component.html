@@ -32,13 +32,23 @@
                     <nz-input-number formControlName="offset" [nzStep]="1"></nz-input-number>
                 </div>
             </div>
+
+            <div class="form-section" *ngFor="let filter of consumer.filters; let i = index">
+                <div class="form-label">
+                    <label *ngIf="i===0">Filters</label>
+                </div>
+                <div class="form-input">
+                    <input nz-input [formControlName]="'filter'+i" />
+                </div>
+            </div>
         </form>
+
 
         <button (click)="consume()">Consume</button>
     </div>
 
     <div class="content-right">
-        <div *ngFor="let message of messages ">
+        <div class="message-text" *ngFor="let message of messages">
             <code>{{message}}</code>
         </div>
     </div>

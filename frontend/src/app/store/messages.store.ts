@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
+import { combineLatest } from 'rxjs';
 import { SocketService } from '../socket/socket.service';
+import { ConsumerStore } from './consumer.store';
 
 export interface MessagesState {
   [consumerName: string]: any[];
@@ -10,7 +12,10 @@ export interface MessagesState {
   providedIn: 'root'
 })
 export class MessagesStore {
-  constructor(private socketService: SocketService) {
+  constructor(
+    private socketService: SocketService,
+    private consumerStore: ConsumerStore,
+    ) {
     this.init();
   }
 
@@ -20,17 +25,31 @@ export class MessagesStore {
 
 
   init() {
-    this.socketService.stream<any>('message.consumed')
-      .subscribe((message: any) => {
+    combineLatest([
+      this.consumerStore.store, 
+      this.socketService.stream<any>('message.consumed')
+    ])
+
+    .subscribe(([consumers, message]) => {
         const consumerName = message.ConsumerName;
+        const consumer = consumers[consumerName];
+        if (!consumer) {
+          console.error('Message for unknown consumer', consumerName);
+        }
+
         const newMsg = atob(message.Message.Value);
+        for(const filter of consumer.filters) {
+          if (!newMsg.includes(filter)) {
+            return;
+          }  
+        }
+
         const allMsgs = this.store.getValue()[consumerName] ?? [];
         allMsgs.push(newMsg);
-
         this.store.update((state) => ({
           ...state,
           [consumerName]: allMsgs
         }))
-      });
+    })
   }
 }

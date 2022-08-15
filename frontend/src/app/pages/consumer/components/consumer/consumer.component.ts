@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
 import { combineLatest } from 'rxjs';
@@ -50,17 +50,28 @@ export class ConsumerComponent {
     this.consumer$,
     this.messages$,
   ]).pipe(
-    map(([clusters, consumer, messages]) => ({
-      clusters,
-      consumer,
-      messages,
-      formGroup: this.formBuilder.group({
-        cluster: new FormControl(clusters[0]),
-        topic: new FormControl(consumer.topic),
-        partition: new FormControl(0),
-        offset: new FormControl(consumer.offset),
+    map(([clusters, consumer, messages]) => {
+
+      const formGroup: FormGroup = this.formBuilder.group({
+          cluster: new FormControl(clusters[0]),
+          topic: new FormControl(consumer.topic),
+          partition: new FormControl(0),
+          offset: new FormControl(consumer.offset),
       })
-    }))
+
+      for(let i=0; i<consumer.filters.length; i++) {
+        formGroup.addControl('filter'+i, new FormControl(consumer.filters[i]));
+      }
+
+      console.log(formGroup.value)
+
+      return {
+        clusters,
+        consumer,
+        messages,
+        formGroup
+      }
+    })
   )
 
   async consume(event: any) {
