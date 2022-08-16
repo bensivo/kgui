@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
-import { ClusterStore } from 'src/app/store/cluster.store';
-import { ConsumerStore } from 'src/app/store/consumer.store';
+import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { MessagesStore } from 'src/app/store/messages.store';
+import { ConsumerItem } from '../consumer-item/consumer-item.component';
 
 @Component({
   selector: 'app-consumers',
@@ -23,11 +24,11 @@ export class ConsumerComponent {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
   ) { }
-  clusters$ = this.clusterStore.store.pipe(
+  clusters$: Observable<Cluster[]> = this.clusterStore.store.pipe(
     select(s => s.clusters)
   );
 
-  consumer$ = combineLatest([
+  consumer$: Observable<Consumer> = combineLatest([
     this.route.params,
     this.consumerStore.store,
   ]).pipe(
@@ -36,51 +37,21 @@ export class ConsumerComponent {
     }),
   )
 
-  messages$ = combineLatest([
+  items$: Observable<ConsumerItem[]> = combineLatest([
     this.route.params,
     this.messagesStore.store
   ]).pipe(
-    map(([params, messages]) => {
+    select(([params, messages]) => {
       return messages[params.name] ?? []
-    })
-  )
-
-  filteredMessages$ = combineLatest([
-    this.messages$,
-    this.consumer$
-  ]).pipe(
-    map(([messages, consumer]) => {
-      let filteredMessages = [];
-      let skipCounter = 0;
-
-      fe_msg: for(const message of messages) {
-        for(const filter of consumer.filters) {
-          if (!message.includes(filter)) {
-            if (skipCounter === 0) {
-              filteredMessages.push(`...skipped ${++skipCounter}`);
-            } else {
-              filteredMessages[filteredMessages.length - 1] = `...skipped ${++skipCounter}`;
-            }
-            console.log('skip')
-            continue fe_msg
-          }
-        } 
-
-        console.log('push')
-        skipCounter = 0;
-        filteredMessages.push(message);
-      }
-
-      return filteredMessages
     })
   )
 
   data$ = combineLatest([
     this.clusters$,
     this.consumer$,
-    this.filteredMessages$,
+    this.items$,
   ]).pipe(
-    map(([clusters, consumer, messages]) => {
+    map(([clusters, consumer, items]) => {
 
       const formGroup: FormGroup = this.formBuilder.group({
           cluster: new FormControl(clusters[0]),
@@ -93,13 +64,11 @@ export class ConsumerComponent {
         formGroup.addControl('filter'+i, new FormControl(consumer.filters[i]));
       }
 
-      console.log(formGroup.value)
-
       return {
         clusters,
         consumer,
-        messages,
-        formGroup
+        formGroup,
+        items,
       }
     })
   )

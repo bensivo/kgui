@@ -23,8 +23,6 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     await this.socketService.initialize();
 
-
-
     this.socketService.stream<any[]>('clusters.changed')
       .subscribe((clusters: any[]) => {
         this.clusterStore.store.update((_state: ClusterState) => ({
@@ -71,7 +69,6 @@ export class AppComponent implements OnInit {
         offset: 0,
         filters: [
           '1',
-          '2',
         ],
       }
     }));

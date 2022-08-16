@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer } from 'src/app/store/consumer.store';
+import { ConsumerItem } from '../consumer-item/consumer-item.component';
 
 @Component({
   selector: 'app-consumer-view',
@@ -17,7 +18,7 @@ export class ConsumerViewComponent {
   clusters!: Cluster[];
 
   @Input()
-  messages!: any[];
+  items!: ConsumerItem[];
 
   @Input()
   formGroup!: FormGroup;

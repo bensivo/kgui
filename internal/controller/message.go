@@ -81,8 +81,17 @@ func (c *MessageController) Consume(data interface{}) {
 				"Topic":        payload.Topic,
 				"Partition":    payload.Partition,
 				"Message":      msg,
+				"ESO":          false,
 			})
 		}
+
+		write(*c.Conn, "message.consumed", map[string]interface{}{
+			"ConsumerName": payload.ConsumerName,
+			"ClusterName":  payload.ClusterName,
+			"Topic":        payload.Topic,
+			"Partition":    payload.Partition,
+			"EOS":          true,
+		})
 
 		fmt.Printf("Closing stream on Topic: %s\b", payload.Topic)
 	}()

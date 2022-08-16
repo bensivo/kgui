@@ -48,8 +48,8 @@
     </div>
 
     <div class="content-right">
-        <div class="message-text" *ngFor="let message of messages">
-            <code>{{message}}</code>
+        <div class="message-text" *ngFor="let item of items">
+            <app-consumer-item [item]="item"></app-consumer-item>
         </div>
     </div>
 </div>
