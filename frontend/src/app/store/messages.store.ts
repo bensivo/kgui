@@ -38,11 +38,7 @@ export class MessagesStore {
         }
 
         const newMsg = atob(message.Message.Value);
-        for(const filter of consumer.filters) {
-          if (!newMsg.includes(filter)) {
-            return;
-          }  
-        }
+
 
         const allMsgs = this.store.getValue()[consumerName] ?? [];
         allMsgs.push(newMsg);

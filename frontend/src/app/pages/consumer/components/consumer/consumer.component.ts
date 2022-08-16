@@ -41,14 +41,44 @@ export class ConsumerComponent {
     this.messagesStore.store
   ]).pipe(
     map(([params, messages]) => {
-      return messages[params.name]
+      return messages[params.name] ?? []
+    })
+  )
+
+  filteredMessages$ = combineLatest([
+    this.messages$,
+    this.consumer$
+  ]).pipe(
+    map(([messages, consumer]) => {
+      let filteredMessages = [];
+      let skipCounter = 0;
+
+      fe_msg: for(const message of messages) {
+        for(const filter of consumer.filters) {
+          if (!message.includes(filter)) {
+            if (skipCounter === 0) {
+              filteredMessages.push(`...skipped ${++skipCounter}`);
+            } else {
+              filteredMessages[filteredMessages.length - 1] = `...skipped ${++skipCounter}`;
+            }
+            console.log('skip')
+            continue fe_msg
+          }
+        } 
+
+        console.log('push')
+        skipCounter = 0;
+        filteredMessages.push(message);
+      }
+
+      return filteredMessages
     })
   )
 
   data$ = combineLatest([
     this.clusters$,
     this.consumer$,
-    this.messages$,
+    this.filteredMessages$,
   ]).pipe(
     map(([clusters, consumer, messages]) => {
 

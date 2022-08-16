@@ -43,7 +43,7 @@ func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) {
 			break
 		}
 
-		fmt.Printf("%d - %s\n", msg.Offset, string(msg.Value))
+		// fmt.Printf("%d - %s\n", msg.Offset, string(msg.Value))
 		res <- msg
 
 		if msg.Offset == lastOffset-1 {

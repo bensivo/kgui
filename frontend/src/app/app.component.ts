@@ -64,6 +64,15 @@ export class AppComponent implements OnInit {
           'date',
           '08-15',
         ],
+      },
+      Numbers: {
+        name: 'Numbers',
+        topic: 'numbers',
+        offset: 0,
+        filters: [
+          '1',
+          '2',
+        ],
       }
     }));
 

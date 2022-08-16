@@ -73,8 +73,8 @@ func (c *MessageController) Consume(data interface{}) {
 	go cluster.Consume(args, results)
 
 	go func() {
+		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
 		for msg := range results {
-			fmt.Println("Writing")
 			write(*c.Conn, "message.consumed", map[string]interface{}{
 				"ConsumerName": payload.ConsumerName,
 				"ClusterName":  payload.ClusterName,
@@ -84,6 +84,6 @@ func (c *MessageController) Consume(data interface{}) {
 			})
 		}
 
-		fmt.Println("Closing")
+		fmt.Printf("Closing stream on Topic: %s\b", payload.Topic)
 	}()
 }
