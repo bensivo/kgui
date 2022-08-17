@@ -37,10 +37,14 @@
                 <div class="form-label">
                     <label *ngIf="i===0">Filters</label>
                 </div>
-                <div class="form-input">
+                <div class="form-input filter-input">
                     <input nz-input [formControlName]="i" />
+                    <div>
+                        <i nz-icon nzType="minus-circle" nzTheme="outline" (click)="deleteFilter(i)"></i>
+                    </div>
                 </div>
             </div>
+
             <div class="form-section">
                 <div class="form-label"> </div>
                 <div class="form-input">
@@ -48,7 +52,6 @@
                 </div>
             </div>
         </form>
-
 
         <button (click)="consume()">Consume</button>
     </div>

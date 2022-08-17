@@ -1,3 +1,4 @@
+@import "~ng-zorro-antd/ng-zorro-antd.less";
 .content {
     display: flex;
     flex-direction: row;
@@ -15,7 +16,7 @@
     padding: 1em;
 }
 
-.message-text{
+.message-text {
     margin-bottom: 1em;
 }
 
@@ -31,7 +32,7 @@
         text-align: right;
         margin-right: 1em;
 
-        ::after{
+        ::after {
             content: ':'
         }
     }
@@ -41,6 +42,32 @@
 
         * {
             width: 100%
+        }
+    }
+
+    .filter-input {
+        display: flex;
+
+        input {
+            flex-grow: 1
+        }
+
+        div {
+            position: relative;
+            width: 0;
+
+            i {
+                width: fit-content;
+                position: absolute;
+
+                top: 50%;
+                transform: translate(50%, -50%);
+            }
+
+            i:hover {
+                cursor: pointer;
+                color: @blue-6;
+            }
         }
     }
 }

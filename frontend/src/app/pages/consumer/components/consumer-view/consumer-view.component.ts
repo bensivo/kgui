@@ -47,6 +47,11 @@ export class ConsumerViewComponent {
     this.updateConsumer();
   }
 
+  deleteFilter(index: number) {
+    this.filters.removeAt(index)
+    this.updateConsumer();
+  }
+
   updateConsumer() {
     const value = this.formGroup.value;
     const newConsumer: Consumer = {
