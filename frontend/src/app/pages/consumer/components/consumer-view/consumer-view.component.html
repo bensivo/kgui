@@ -33,12 +33,18 @@
                 </div>
             </div>
 
-            <div class="form-section" *ngFor="let filter of consumer.filters; let i = index">
+            <div formArrayName="filters" class="form-section" *ngFor="let filter of filters.controls; let i = index">
                 <div class="form-label">
                     <label *ngIf="i===0">Filters</label>
                 </div>
                 <div class="form-input">
-                    <input nz-input [formControlName]="'filter'+i" />
+                    <input nz-input [formControlName]="i" />
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-label"> </div>
+                <div class="form-input">
+                    <button (click)="addFilter()">Add Filter</button>
                 </div>
             </div>
         </form>

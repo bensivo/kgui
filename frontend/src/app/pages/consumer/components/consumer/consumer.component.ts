@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
@@ -58,11 +58,8 @@ export class ConsumerComponent {
           topic: new FormControl(consumer.topic),
           partition: new FormControl(0),
           offset: new FormControl(consumer.offset),
+          filters: new FormArray(consumer.filters.map(filter => new FormControl(filter)))
       })
-
-      for(let i=0; i<consumer.filters.length; i++) {
-        formGroup.addControl('filter'+i, new FormControl(consumer.filters[i]));
-      }
 
       return {
         clusters,
