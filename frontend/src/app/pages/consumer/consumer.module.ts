@@ -12,6 +12,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { ConsumerViewComponent } from './components/consumer-view/consumer-view.component';
 import { ConsumerItemComponent } from './components/consumer-item/consumer-item.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { ConsumerItemComponent } from './components/consumer-item/consumer-item.
     NzTreeModule,
     NzInputModule,
     NzInputNumberModule,
+    NzButtonModule,
     NzMenuModule,
   ]
 })

@@ -1,5 +1,5 @@
 <div class="content" *ngIf="data$ | async as data">
 
-    <app-consumer-view [consumer]="data.consumer" [clusters]="data.clusters" [items]="data.items" [formGroup]="data.formGroup" (onConsume)="consume($event)"></app-consumer-view>
+    <app-consumer-view [consumer]="data.consumer" [clusters]="data.clusters" [items]="data.items" [formGroup]="data.formGroup"></app-consumer-view>
 
 </div>

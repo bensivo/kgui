@@ -20,7 +20,6 @@ export class ConsumerComponent {
     private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
     private messagesStore: MessagesStore,
-    private socketService: SocketService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
   ) { }
@@ -33,6 +32,7 @@ export class ConsumerComponent {
     this.consumerStore.store,
   ]).pipe(
     map(([params, consumers]) => {
+      console.log('data')
       return consumers[params.name];
     }),
   )
@@ -69,22 +69,4 @@ export class ConsumerComponent {
       }
     })
   )
-
-  async consume(event: any) {
-    this.messagesStore.store.update((s) => ({
-      ...s,
-      [event.consumer.name]: [],
-    }))
-
-    this.socketService.send({
-      Topic: 'message.consume',
-      Data: {
-        ConsumerName: event.consumer.name,
-        ClusterName: event.cluster.Name,
-        Topic: event.topic,
-        Partition: event.partition,
-        Offset: event.offset,
-      }
-    });
-  }
 }

@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
+import { MessagesStore } from 'src/app/store/messages.store';
 import { ConsumerItem } from '../consumer-item/consumer-item.component';
 
 @Component({
@@ -11,7 +13,11 @@ import { ConsumerItem } from '../consumer-item/consumer-item.component';
 })
 export class ConsumerViewComponent {
 
-  constructor( private consumerStore: ConsumerStore) { }
+  constructor(
+    private consumerStore: ConsumerStore,
+    private socketService: SocketService,
+    private messagesStore: MessagesStore
+  ) { }
 
   @Input()
   consumer!: Consumer;
@@ -25,21 +31,28 @@ export class ConsumerViewComponent {
   @Input()
   formGroup!: FormGroup;
 
-  @Output()
-  onConsume = new EventEmitter<any>();
-
   get filters() {
     return this.formGroup.get('filters') as FormArray
   }
 
   consume() {
-    console.log(this.formGroup.value)
     this.updateConsumer();
 
-    this.onConsume.emit({
-      consumer: this.consumer,
-      ...this.formGroup.value
-    })
+    this.messagesStore.store.update((s) => ({
+      ...s,
+      [this.consumer.name]: [],
+    }))
+
+    this.socketService.send({
+      Topic: 'message.consume',
+      Data: {
+        ConsumerName: this.consumer.name,
+        ClusterName: this.formGroup.value.cluster.Name,
+        Topic: this.formGroup.value.topic,
+        Partition: 0,
+        Offset: this.formGroup.value.offset
+      }
+    });
   }
 
   addFilter() {
@@ -65,7 +78,7 @@ export class ConsumerViewComponent {
 
     this.consumerStore.store.update((s) => ({
       ...s,
-      [this.consumer.name]:newConsumer 
+      [this.consumer.name]: newConsumer
     }))
   }
 }

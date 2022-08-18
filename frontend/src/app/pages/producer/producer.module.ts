@@ -12,6 +12,7 @@ import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { ConsumersRoutingModule } from '../consumer/consumer-routing.module';
 import { ProducerViewComponent } from './components/producer-view/producer-view.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 
 
@@ -33,6 +34,7 @@ import { ProducerViewComponent } from './components/producer-view/producer-view.
     NzInputModule,
     NzInputNumberModule,
     NzMenuModule,
+    NzButtonModule,
   ]
 })
 export class ProducerModule { }
