@@ -3,8 +3,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
-import { MessagesStore } from 'src/app/store/messages.store';
-import { ConsumerItem } from '../consumer-item/consumer-item.component';
+import { Message, MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
   selector: 'app-consumer-view',
@@ -26,7 +25,7 @@ export class ConsumerViewComponent {
   clusters!: Cluster[];
 
   @Input()
-  items!: ConsumerItem[];
+  messages!: Message[];
 
   @Input()
   formGroup!: FormGroup;

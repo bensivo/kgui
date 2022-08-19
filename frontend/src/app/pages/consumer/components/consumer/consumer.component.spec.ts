@@ -4,8 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
-import { MessagesStore } from 'src/app/store/messages.store';
-import { ConsumerItem } from '../consumer-item/consumer-item.component';
+import { MessagesStore, Message } from 'src/app/store/messages.store';
 import { ConsumerComponent } from './consumer.component';
 
 
@@ -19,7 +18,7 @@ describe('ConsumersComponent', () => {
   const consumers = [{
     name: 'test',
   }] as Consumer[];
-  const messages = [] as ConsumerItem[];
+  const messages = [] as Message[];
   const params = {
     name: 'test'
   } as Consumer;

@@ -62,8 +62,8 @@
     </div>
 
     <div class="content-right">
-        <div class="message-text" *ngFor="let item of items">
-            <app-consumer-item [item]="item"></app-consumer-item>
+        <div class="message-text" *ngFor="let message of messages">
+            <app-message [message]="message"></app-message>
         </div>
     </div>
 </div>

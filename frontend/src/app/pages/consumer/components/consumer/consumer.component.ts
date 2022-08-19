@@ -4,11 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { select } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
-import { MessagesStore } from 'src/app/store/messages.store';
-import { ConsumerItem } from '../consumer-item/consumer-item.component';
+import { Message, MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
   selector: 'app-consumers',
@@ -37,7 +35,7 @@ export class ConsumerComponent {
     }),
   )
 
-  items$: Observable<ConsumerItem[]> = combineLatest([
+  messages$: Observable<Message[]> = combineLatest([
     this.route.params,
     this.messagesStore.store
   ]).pipe(
@@ -49,9 +47,9 @@ export class ConsumerComponent {
   data$ = combineLatest([
     this.clusters$,
     this.consumer$,
-    this.items$,
+    this.messages$,
   ]).pipe(
-    map(([clusters, consumer, items]) => {
+    map(([clusters, consumer, messages]) => {
 
       const formGroup: FormGroup = this.formBuilder.group({
           cluster: new FormControl(clusters[0]),
@@ -65,7 +63,7 @@ export class ConsumerComponent {
         clusters,
         consumer,
         formGroup,
-        items,
+        messages,
       }
     })
   )

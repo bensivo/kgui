@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
 import { combineLatest } from 'rxjs';
-import { ConsumerItem, ConsumerItemType } from '../pages/consumer/components/consumer-item/consumer-item.component';
 import { SocketService } from '../socket/socket.service';
 import { ConsumerStore } from './consumer.store';
 
-export interface Message {
+export interface KafkaMessage {
   ConsumerName: string;
   ClusterName: string;
   Topic: string;
@@ -14,6 +13,16 @@ export interface Message {
   Message?: {
     Value: string;
   }
+}
+
+export enum MessageType {
+  MESSAGE = 'MESSAGE', // Message from kafka
+  INFO = 'INFO', // Information for the user, not a message
+}
+
+export interface Message {
+  type: MessageType;
+  data: string;
 }
 
 export interface MessagesState {
@@ -39,7 +48,7 @@ export class MessagesStore {
   init() {
     combineLatest([
       this.consumerStore.store,
-      this.socketService.stream<Message>('message.consumed')
+      this.socketService.stream<KafkaMessage>('message.consumed')
     ])
       .subscribe(([consumers, message]) => {
         const consumerName = message.ConsumerName;
@@ -50,10 +59,10 @@ export class MessagesStore {
         }
 
         const items = this.store.getValue()[consumerName] ?? [];
-        let item: ConsumerItem | undefined;
+        let item: Message | undefined;
         if (message.EOS) {
           item = {
-            type: ConsumerItemType.INFO,
+            type: MessageType.INFO,
             data: 'End of Topic'
           };
         }
@@ -67,12 +76,12 @@ export class MessagesStore {
           const value = atob(message.Message.Value);
           item = this.passesFilter(value, consumer.filters) ?
             {
-              type: ConsumerItemType.MESSAGE,
+              type: MessageType.MESSAGE,
               data: value,
             }
             :
             {
-              type: ConsumerItemType.INFO,
+              type: MessageType.INFO,
               data: '...',
             };
         }

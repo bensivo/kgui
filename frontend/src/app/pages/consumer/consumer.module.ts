@@ -11,7 +11,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { ConsumerViewComponent } from './components/consumer-view/consumer-view.component';
-import { ConsumerItemComponent } from './components/consumer-item/consumer-item.component';
+import { MessageComponent } from './components/message/message.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
 
@@ -19,7 +19,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   declarations: [
     ConsumerComponent,
     ConsumerViewComponent,
-    ConsumerItemComponent,
+    MessageComponent,
   ],
   imports: [
     CommonModule,
