@@ -1,2 +1,3 @@
 <code *ngIf="message.type === MessageType.MESSAGE">{{message.data}}</code>
-<span *ngIf="message.type === MessageType.INFO">{{message.data}}</span>
+<span *ngIf="message.type === MessageType.EOS">{{message.data}}</span>
+<span *ngIf="message.type === MessageType.SKIP">...Skipped {{message.data}}</span>

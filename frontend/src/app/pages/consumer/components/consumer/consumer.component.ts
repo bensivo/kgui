@@ -30,19 +30,11 @@ export class ConsumerComponent {
     this.consumerStore.store,
   ]).pipe(
     map(([params, consumers]) => {
-      console.log('data')
       return consumers[params.name];
     }),
   )
 
-  messages$: Observable<Message[]> = combineLatest([
-    this.route.params,
-    this.messagesStore.store
-  ]).pipe(
-    select(([params, messages]) => {
-      return messages[params.name] ?? []
-    })
-  )
+  messages$: Observable<Message[]> = this.messagesStore.forConsumer(this.consumer$);
 
   data$ = combineLatest([
     this.clusters$,
