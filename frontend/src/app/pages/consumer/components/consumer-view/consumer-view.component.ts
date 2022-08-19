@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SocketService } from 'src/app/socket/socket.service';
-import { Cluster } from 'src/app/store/cluster.store';
+import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
 
@@ -14,6 +14,7 @@ export class ConsumerViewComponent {
 
   constructor(
     private consumerStore: ConsumerStore,
+    private clusterStore: ClusterStore,
     private socketService: SocketService,
     private messagesStore: MessagesStore
   ) { }

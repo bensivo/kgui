@@ -53,6 +53,20 @@ export class AppComponent implements OnInit {
       },
     });
 
+    this.socketService.send({
+      Topic: 'clusters.add',
+      Data: {
+        Name: "local",
+        BootstrapServer: "localhost:9092",
+        SaslMechanism: "",
+        SaslUsername: "",
+        SaslPassword: "",
+        SSLEnabled: false,
+        SSLCaCertificatePath: "",
+        SSLSkipVerification: false,
+      },
+    });
+
     this.consumerStore.store.update((_s) => ({
       Messages: {
         name: 'Messages',

@@ -21,8 +21,13 @@ export class ConsumerComponent {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
   ) { }
+
   clusters$: Observable<Cluster[]> = this.clusterStore.store.pipe(
     select(s => s.clusters)
+  );
+
+  cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
+    select(s => s.active)
   );
 
   consumer$: Observable<Consumer> = combineLatest([
@@ -38,21 +43,30 @@ export class ConsumerComponent {
 
   data$ = combineLatest([
     this.clusters$,
+    this.cluster$,
     this.consumer$,
     this.messages$,
   ]).pipe(
-    map(([clusters, consumer, messages]) => {
+    map(([clusters, cluster, consumer, messages]) => {
 
       const formGroup: FormGroup = this.formBuilder.group({
-          cluster: new FormControl(clusters[0]),
+          cluster: new FormControl(cluster),
           topic: new FormControl(consumer.topic),
           partition: new FormControl(0),
           offset: new FormControl(consumer.offset),
           filters: new FormArray(consumer.filters.map(filter => new FormControl(filter)))
       })
+      
+      formGroup.valueChanges.subscribe((value) => {
+        this.clusterStore.store.update((s) => ({
+          ...s,
+          active: value.cluster
+        }))
+      })
 
       return {
         clusters,
+        cluster,
         consumer,
         formGroup,
         messages,

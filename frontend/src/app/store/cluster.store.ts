@@ -14,6 +14,7 @@ export interface Cluster {
 
 export interface ClusterState {
     clusters: Cluster[];
+    active?: Cluster;
 }
 
 @Injectable({
@@ -23,6 +24,6 @@ export class ClusterStore {
     store = createStore({
         name: 'cluster'
     }, withProps<ClusterState>({
-        clusters: []
+        clusters: [],
     }));
 }
