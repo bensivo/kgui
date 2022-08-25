@@ -5,6 +5,7 @@ import { ClusterState, ClusterStore } from './store/cluster.store';
 import { ConsumerStore } from './store/consumer.store';
 import { select } from '@ngneat/elf';
 import { ProducerStore } from './store/producer.store';
+import { nanoid } from 'nanoid';
 
 @Component({
   selector: 'app-root',
@@ -67,24 +68,29 @@ export class AppComponent implements OnInit {
       },
     });
 
-    this.consumerStore.store.update((_s) => ({
-      Messages: {
-        name: 'Messages',
-        topic: 'messages',
-        offset: 0,
-        filters: [
-          'date',
-          '08-15',
-        ],
-      },
-      Numbers: {
+    const messages = {
+      id: nanoid(),
+      name: 'Messages',
+      topic: 'messages',
+      offset: 0,
+      filters: [
+        'date',
+        '08-15',
+      ],
+    };
+
+    const numbers = {
+        id: nanoid(),
         name: 'Numbers',
         topic: 'numbers',
         offset: 0,
         filters: [
           '1',
         ],
-      }
+    };
+    this.consumerStore.store.update((_s) => ({
+      [messages.id]: messages,
+      [numbers.id]: numbers,
     }));
 
     this.producerStore.store.update((_s) => ({

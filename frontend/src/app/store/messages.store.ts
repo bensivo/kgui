@@ -6,7 +6,7 @@ import { SocketService } from '../socket/socket.service';
 import { Consumer, ConsumerStore } from './consumer.store';
 
 export interface KafkaMessage {
-  ConsumerName: string;
+  ConsumerId: string;
   ClusterName: string;
   Topic: string;
   Partition: number;
@@ -28,7 +28,7 @@ export interface Message {
 }
 
 export interface MessagesState {
-  [consumerName: string]: any[];
+  [consumerId: string]: any[];
 }
 
 @Injectable({
@@ -50,10 +50,10 @@ export class MessagesStore {
       this.socketService.stream<KafkaMessage>('message.consumed')
     ])
       .subscribe(([message]) => {
-        const consumerName = message.ConsumerName;
+        const consumerId = message.ConsumerId;
 
         if (message.EOS) {
-          this.pushMessage(consumerName, {
+          this.pushMessage(consumerId, {
             type: MessageType.EOS,
             data: 'End of Topic'
           })
@@ -62,7 +62,7 @@ export class MessagesStore {
 
         if (message.Message) {
           const value = atob(message.Message.Value);
-          this.pushMessage(consumerName, {
+          this.pushMessage(consumerId, {
             type: MessageType.MESSAGE,
             data: value,
           });
@@ -73,13 +73,13 @@ export class MessagesStore {
       })
   }
 
-  pushMessage(consumerName: string, message: Message) {
+  pushMessage(consumerId: string, message: Message) {
     const state = this.store.getValue()
-    const messages = state[consumerName] ?? [];
+    const messages = state[consumerId] ?? [];
     messages.push(message);
     this.store.update(() => ({
       ...state,
-      [consumerName]: messages
+      [consumerId]: messages
     }));
   }
 
@@ -89,7 +89,7 @@ export class MessagesStore {
       this.store,
     ]).pipe(
       map(([consumer, state]) => {
-        const messages = state[consumer.name] ?? [];
+        const messages = state[consumer.id] ?? [];
         const filterFunctions = consumer.filters.map(filterString => (text: string) => {
           return text.includes(filterString)
         });

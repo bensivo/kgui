@@ -31,6 +31,9 @@ export class ConsumerViewComponent {
   @Input()
   formGroup!: FormGroup;
 
+  isEditingTitle: boolean = false;
+  titleInput = '';
+
   get filters() {
     return this.formGroup.get('filters') as FormArray
   }
@@ -40,13 +43,13 @@ export class ConsumerViewComponent {
 
     this.messagesStore.store.update((s) => ({
       ...s,
-      [this.consumer.name]: [],
+      [this.consumer.id]: [],
     }))
 
     this.socketService.send({
       Topic: 'message.consume',
       Data: {
-        ConsumerName: this.consumer.name,
+        ConsumerId: this.consumer.id,
         ClusterName: this.formGroup.value.cluster.Name,
         Topic: this.formGroup.value.topic,
         Partition: 0,
@@ -68,17 +71,33 @@ export class ConsumerViewComponent {
   updateConsumer() {
     const value = this.formGroup.value;
     const newConsumer: Consumer = {
+      id: this.consumer.id,
       topic: value.topic,
-      name: this.consumer.name,
+      name: this.titleInput,
       offset: value.offset,
       filters: value.filters,
     };
 
-    console.log('Consumer', newConsumer)
+    this.consumerStore.updateConsumer(this.consumer.id, newConsumer);
+  }
 
-    this.consumerStore.store.update((s) => ({
-      ...s,
-      [this.consumer.name]: newConsumer
-    }))
+  deleteConsumer() {
+    this.consumerStore.store.update(s  => {
+      const newState = {...s}
+      delete newState[this.consumer.id];
+      return newState;
+    })
+  }
+
+  editTitle() {
+    this.titleInput = this.consumer.name;
+    this.isEditingTitle = true
+  }
+
+  saveTitle() {
+    this.isEditingTitle = false;
+    console.log('Setting title to ', this.titleInput);
+    this.updateConsumer();
+
   }
 }

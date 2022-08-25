@@ -10,7 +10,12 @@
         <ul>
             <li *ngFor="let consumer of consumers$ | async" nz-menu-item>
                 <span>
-                    <a routerLink="/consumers/{{consumer.name}}">{{consumer.name}}</a>
+                    <a routerLink="/consumers/{{consumer.id}}">{{consumer.name}}</a>
+                </span>
+            </li>
+            <li nz-menu-item (click)="addConsumer()">
+                <span>
+                    Add Consumer +
                 </span>
             </li>
         </ul>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { select } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -20,6 +20,7 @@ export class ConsumerComponent {
     private messagesStore: MessagesStore,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
+    private router: Router,
   ) { }
 
   clusters$: Observable<Cluster[]> = this.clusterStore.store.pipe(
@@ -35,7 +36,11 @@ export class ConsumerComponent {
     this.consumerStore.store,
   ]).pipe(
     map(([params, consumers]) => {
-      return consumers[params.name];
+      const consumer = consumers[params.id];
+      if (!consumer) {
+        this.router.navigate(['/consumers']);
+      }
+      return consumer;
     }),
   )
 

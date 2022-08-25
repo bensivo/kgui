@@ -10,20 +10,28 @@ import { ProducerStore } from 'src/app/store/producer.store';
   styleUrls: ['./nav.component.less']
 })
 export class NavComponent {
+  constructor(
+    private consumerStore: ConsumerStore,
+    private producerStore: ProducerStore,
+  ) { }
 
   isCollapsed = false;
 
   consumers$: Observable<any[]> = this.consumerStore.store.pipe(
-    map((consumers) => Object.values(consumers))
+    map((consumers) => {
+      console.log(consumers)
+        const values = Object.values(consumers)
+        values.sort();
+      console.log(values)
+        return values;
+    })
   );
 
   producers$: Observable<any[]> = this.producerStore.store.pipe(
     map((producers) => Object.values(producers))
   );
 
-  constructor(
-    private consumerStore: ConsumerStore,
-    private producerStore: ProducerStore,
-  ) { }
-
+  addConsumer() {
+    this.consumerStore.addConsumer();
+  }
 }

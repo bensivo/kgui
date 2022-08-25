@@ -1,1 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~ng-zorro-antd/ng-zorro-antd.less";
+
+
+.clickable:hover {
+    cursor: pointer;
+    color: @blue-6;
+}
+
+
+.center-parent {
+    position: relative;
+}
+
+.vcenter{
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.hcenter{
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, 0);
+}
+
+.center{
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hidden {
+    display:none;
+}

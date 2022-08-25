@@ -1,4 +1,3 @@
-@import "~ng-zorro-antd/ng-zorro-antd.less";
 .content {
     display: flex;
     flex-direction: row;
@@ -8,6 +7,27 @@
 .content-left {
     flex: 1;
     max-width: 500px;
+
+    div.title {
+        width: 88%;
+
+        input {
+            width: fit-content;
+            font-size: 2em;
+            padding: 0;
+        }
+
+        i {
+            &.edit {
+                right: 5em;
+            }
+
+            &.delete {
+                right: 3em;
+            }
+        }
+    }
+
 }
 
 .content-right {
@@ -54,21 +74,8 @@
         }
 
         div {
-            position: relative;
             width: 0;
-
-            i {
-                width: fit-content;
-                position: absolute;
-
-                top: 50%;
-                transform: translate(50%, -50%);
-            }
-
-            i:hover {
-                cursor: pointer;
-                color: @blue-6;
-            }
+            transform: translateX(1em)
         }
     }
 }

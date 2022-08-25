@@ -1,8 +1,15 @@
 <div class="content">
     <div class="content-left">
-        <h1>
-            {{consumer.name}}
-        </h1>
+        <div class="title center-parent">
+            <h1 [ngClass]="{'hidden' : isEditingTitle}"> {{consumer.name}} </h1>
+            <input [ngClass]="{'hidden' : !isEditingTitle}" nz-input nzBorderless [(ngModel)]="titleInput" />
+
+            <i *ngIf="!this.isEditingTitle" class="edit clickable vcenter" nz-icon nzType="edit" nzTheme="outline" (click)="editTitle()"></i>
+            <i *ngIf="this.isEditingTitle" class="edit clickable vcenter" nz-icon nzType="check" nzTheme="outline" (click)="saveTitle()"></i>
+
+            <i class="delete clickable vcenter" nz-icon nzType="delete" nzTheme="outline" (click)="deleteConsumer()"></i>
+        </div>
+
         <form nz-form [formGroup]="formGroup">
             <div class="form-section">
                 <div class="form-label">
@@ -39,8 +46,8 @@
                 </div>
                 <div class="form-input filter-input">
                     <input nz-input [formControlName]="i" />
-                    <div>
-                        <i nz-icon nzType="minus-circle" nzTheme="outline" (click)="deleteFilter(i)"></i>
+                    <div class="center-parent">
+                        <i class="vcenter clickable" nz-icon nzType="minus-circle" nzTheme="outline" (click)="deleteFilter(i)"></i>
                     </div>
                 </div>
             </div>

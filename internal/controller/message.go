@@ -48,11 +48,11 @@ func (c *MessageController) Produce(data interface{}) {
 }
 
 type ConsumePayload struct {
-	ConsumerName string
-	ClusterName  string
-	Topic        string
-	Partition    int
-	Offset       int
+	ConsumerId  string
+	ClusterName string
+	Topic       string
+	Partition   int
+	Offset      int
 }
 
 func (c *MessageController) Consume(data interface{}) {
@@ -76,21 +76,21 @@ func (c *MessageController) Consume(data interface{}) {
 		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
 		for msg := range results {
 			write(*c.Conn, "message.consumed", map[string]interface{}{
-				"ConsumerName": payload.ConsumerName,
-				"ClusterName":  payload.ClusterName,
-				"Topic":        payload.Topic,
-				"Partition":    payload.Partition,
-				"Message":      msg,
-				"ESO":          false,
+				"ConsumerId":  payload.ConsumerId,
+				"ClusterName": payload.ClusterName,
+				"Topic":       payload.Topic,
+				"Partition":   payload.Partition,
+				"Message":     msg,
+				"ESO":         false,
 			})
 		}
 
 		write(*c.Conn, "message.consumed", map[string]interface{}{
-			"ConsumerName": payload.ConsumerName,
-			"ClusterName":  payload.ClusterName,
-			"Topic":        payload.Topic,
-			"Partition":    payload.Partition,
-			"EOS":          true,
+			"ConsumerId":  payload.ConsumerId,
+			"ClusterName": payload.ClusterName,
+			"Topic":       payload.Topic,
+			"Partition":   payload.Partition,
+			"EOS":         true,
 		})
 
 		fmt.Printf("Closing stream on Topic: %s\b", payload.Topic)
