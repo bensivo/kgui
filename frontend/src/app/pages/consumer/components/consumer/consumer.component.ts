@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
@@ -31,17 +31,15 @@ export class ConsumerComponent {
     select(s => s.active)
   );
 
-  consumer$: Observable<Consumer> = combineLatest([
-    this.route.params,
-    this.consumerStore.store,
-  ]).pipe(
+  consumer$: Observable<Consumer> = combineLatest([this.route.params, this.consumerStore.consumers$]).pipe(
     map(([params, consumers]) => {
-      const consumer = consumers[params.id];
+      console.log(params, consumers)
+      const consumer = consumers.find(c => c.id === params.id) 
       if (!consumer) {
         this.router.navigate(['/consumers']);
       }
-      return consumer;
-    }),
+      return consumer as Consumer;
+    })
   )
 
   messages$: Observable<Message[]> = this.messagesStore.forConsumer(this.consumer$);
@@ -55,6 +53,7 @@ export class ConsumerComponent {
     map(([clusters, cluster, consumer, messages]) => {
 
       const formGroup: FormGroup = this.formBuilder.group({
+          name: new FormControl(consumer.name),
           cluster: new FormControl(cluster),
           topic: new FormControl(consumer.topic),
           partition: new FormControl(0),
@@ -67,6 +66,14 @@ export class ConsumerComponent {
           ...s,
           active: value.cluster
         }))
+
+        this.consumerStore.updateConsumer(consumer.id, {
+          id: consumer.id,
+          topic: value.topic,
+          name: value.name,
+          offset: value.offset,
+          filters: value.filters,
+        })
       })
 
       return {

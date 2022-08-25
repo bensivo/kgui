@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConsumerStore } from 'src/app/store/consumer.store';
+import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { ProducerStore } from 'src/app/store/producer.store';
 
 @Component({
@@ -17,21 +17,13 @@ export class NavComponent {
 
   isCollapsed = false;
 
-  consumers$: Observable<any[]> = this.consumerStore.store.pipe(
-    map((consumers) => {
-      console.log(consumers)
-        const values = Object.values(consumers)
-        values.sort();
-      console.log(values)
-        return values;
-    })
-  );
+  consumers$: Observable<Consumer[]> = this.consumerStore.consumers$;
 
   producers$: Observable<any[]> = this.producerStore.store.pipe(
     map((producers) => Object.values(producers))
   );
 
   addConsumer() {
-    this.consumerStore.addConsumer();
+    this.consumerStore.addConsumer({});
   }
 }

@@ -15,9 +15,7 @@ import { nanoid } from 'nanoid';
 export class AppComponent implements OnInit {
   isCollapsed = false;
 
-  consumers$: Observable<any[]> = this.consumerStore.store.pipe(
-    select((consumers) => Object.values(consumers))
-  );
+  consumers$: Observable<any[]> = this.consumerStore.consumers$;
 
   constructor(private socketService: SocketService, private clusterStore: ClusterStore, private consumerStore: ConsumerStore, private producerStore: ProducerStore) { }
 
@@ -69,7 +67,7 @@ export class AppComponent implements OnInit {
     });
 
     const messages = {
-      id: nanoid(),
+      id: 'messages-id',
       name: 'Messages',
       topic: 'messages',
       offset: 0,
@@ -80,7 +78,7 @@ export class AppComponent implements OnInit {
     };
 
     const numbers = {
-        id: nanoid(),
+        id: 'numbers-id',
         name: 'Numbers',
         topic: 'numbers',
         offset: 0,
@@ -88,10 +86,9 @@ export class AppComponent implements OnInit {
           '1',
         ],
     };
-    this.consumerStore.store.update((_s) => ({
-      [messages.id]: messages,
-      [numbers.id]: numbers,
-    }));
+
+    this.consumerStore.addConsumer(messages)
+    this.consumerStore.addConsumer(numbers)
 
     this.producerStore.store.update((_s) => ({
       Log: {
