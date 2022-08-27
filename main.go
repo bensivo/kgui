@@ -3,11 +3,16 @@ package main
 import (
 	"embed"
 	"log"
+	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"gitlab.com/bensivo/kgui/internal/controller"
+	"gitlab.com/bensivo/kgui/internal/server"
 )
 
 //go:embed frontend/dist
@@ -17,11 +22,41 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
+	appMenu := menu.NewMenu()
+	fileMenu := appMenu.AddSubmenu("File")
+	fileMenu.AddText("Open File", keys.CmdOrCtrl("o"), func(data *menu.CallbackData) {
+
+		// TODO: we could do this without a call to app.Open() if we saved the app context variable somewhere
+		payload, err := app.Open()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		conns := server.GetConnections()
+		for _, conn := range conns {
+			controller.Write(*conn, "load.requested", payload)
+		}
+
+	})
+	fileMenu.AddText("Save File", keys.CmdOrCtrl("s"), func(data *menu.CallbackData) {
+		conns := server.GetConnections()
+		payload := map[string]interface{}{}
+		for _, conn := range conns {
+			controller.Write(*conn, "save.requested", payload)
+		}
+	})
+	fileMenu.AddSeparator()
+
+	if runtime.GOOS == "darwin" {
+		appMenu.Append(menu.EditMenu()) // on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+	}
+
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "kgui",
-		Width:             720,
-		Height:            570,
+		Title: "kgui",
+		// Width:             720,
+		// Height:            570,
 		DisableResize:     false,
 		Fullscreen:        false,
 		Frameless:         false,
@@ -33,6 +68,7 @@ func main() {
 		OnStartup:         app.startup,
 		OnDomReady:        app.domReady,
 		OnShutdown:        app.shutdown,
+		Menu:              appMenu,
 		Bind: []interface{}{
 			app,
 		},

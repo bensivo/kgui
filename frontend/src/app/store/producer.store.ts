@@ -21,7 +21,11 @@ export class ProducerStore {
         name: 'producer'
     }, withProps<ProducerState>({}));
 
-    getProducer(name$: Observable<string>): Observable<Producer > {
+    get state() {
+        return this.store.getValue();
+    }
+
+    get(name$: Observable<string>): Observable<Producer > {
         return combineLatest([
             name$,
             this.store.asObservable()

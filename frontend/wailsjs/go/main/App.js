@@ -6,6 +6,14 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function Open() {
+  return window['go']['main']['App']['Open']();
+}
+
+export function Save(arg1) {
+  return window['go']['main']['App']['Save'](arg1);
+}
+
 export function ShowDialog() {
   return window['go']['main']['App']['ShowDialog']();
 }

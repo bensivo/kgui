@@ -37,7 +37,7 @@ func (c *ClusterController) listClusters() {
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	write(*c.Conn, "clusters.changed", clusters)
+	Write(*c.Conn, "clusters.changed", clusters)
 }
 
 func (c *ClusterController) addCluster(data interface{}) {
@@ -57,7 +57,7 @@ func (c *ClusterController) addCluster(data interface{}) {
 		clusters = append(clusters, value)
 	}
 
-	write(*c.Conn, "clusters.changed", clusters)
+	Write(*c.Conn, "clusters.changed", clusters)
 }
 
 type RemoveClusterPayload struct {
@@ -81,5 +81,5 @@ func (c *ClusterController) removeCluster(data interface{}) {
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	write(*c.Conn, "clusters.changed", clusters)
+	Write(*c.Conn, "clusters.changed", clusters)
 }

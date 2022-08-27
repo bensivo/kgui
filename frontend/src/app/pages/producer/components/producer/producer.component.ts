@@ -44,7 +44,7 @@ export class ProducerComponent {
 
   producerViewData$ = combineLatest([
     this.clusters$,
-    this.producerStore.getProducer(this.producerName$),
+    this.producerStore.get(this.producerName$),
     this.requests$,
   ]).pipe(
     map(([clusters, producer, requests]) => {

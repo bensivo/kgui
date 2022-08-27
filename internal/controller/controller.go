@@ -16,7 +16,7 @@ type Message struct {
 	Data  interface{}
 }
 
-func write(conn websocket.Conn, topic string, data interface{}) {
+func Write(conn websocket.Conn, topic string, data interface{}) {
 	msg := Message{
 		Topic: topic,
 		Data:  data,

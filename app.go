@@ -8,6 +8,7 @@ import (
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gitlab.com/bensivo/kgui/internal/server"
+	"gitlab.com/bensivo/kgui/internal/storage"
 )
 
 // App struct
@@ -46,6 +47,14 @@ func (b *App) shutdown(ctx context.Context) {
 // Greet returns a greeting for the given name
 func (b *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func (b *App) Save(data map[string]interface{}) {
+	storage.Save(b.ctx, data)
+}
+
+func (b *App) Open() (map[string]interface{}, error) {
+	return storage.Open(b.ctx)
 }
 
 // Shows a Dialog

@@ -11,7 +11,16 @@ import (
 	"gitlab.com/bensivo/kgui/internal/controller"
 )
 
+var connections []*websocket.Conn
+
+func GetConnections() []*websocket.Conn {
+	return connections
+}
+
 func New() *httprouter.Router {
+
+	connections = make([]*websocket.Conn, 0)
+
 	router := httprouter.New()
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -27,7 +36,9 @@ func New() *httprouter.Router {
 			log.Println(err)
 			return
 		}
+
 		log.Println("Client connected " + conn.LocalAddr().String())
+		connections = append(connections, conn)
 
 		var stateController = &controller.ClusterController{
 			Conn: conn,

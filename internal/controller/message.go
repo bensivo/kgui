@@ -41,7 +41,7 @@ func (c *MessageController) Produce(data interface{}) {
 	var cluster kafka.Cluster = state[payload.ClusterName]
 	cluster.Produce(payload.Topic, payload.Partition, payload.Message)
 
-	write(*c.Conn, "message.produced", map[string]interface{}{
+	Write(*c.Conn, "message.produced", map[string]interface{}{
 		"CorrelationId": payload.CorrelationId,
 		"Status":        "SUCCESS",
 	})
@@ -75,7 +75,7 @@ func (c *MessageController) Consume(data interface{}) {
 	go func() {
 		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
 		for msg := range results {
-			write(*c.Conn, "message.consumed", map[string]interface{}{
+			Write(*c.Conn, "message.consumed", map[string]interface{}{
 				"ConsumerId":  payload.ConsumerId,
 				"ClusterName": payload.ClusterName,
 				"Topic":       payload.Topic,
@@ -85,7 +85,7 @@ func (c *MessageController) Consume(data interface{}) {
 			})
 		}
 
-		write(*c.Conn, "message.consumed", map[string]interface{}{
+		Write(*c.Conn, "message.consumed", map[string]interface{}{
 			"ConsumerId":  payload.ConsumerId,
 			"ClusterName": payload.ClusterName,
 			"Topic":       payload.Topic,

@@ -67,7 +67,7 @@ export class ConsumerComponent {
           active: value.cluster
         }))
 
-        this.consumerStore.updateConsumer(consumer.id, {
+        this.consumerStore.update(consumer.id, {
           id: consumer.id,
           topic: value.topic,
           name: value.name,

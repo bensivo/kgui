@@ -65,6 +65,6 @@ export class ConsumerViewComponent {
   }
 
   deleteConsumer() {
-    this.consumerStore.deleteConsumer(this.consumer.id);
+    this.consumerStore.delete(this.consumer.id);
   }
 }

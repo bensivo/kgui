@@ -3,4 +3,8 @@
 
 export function Greet(arg1:string):Promise<string>;
 
+export function Open():Promise<{[key: string]: any}>;
+
+export function Save(arg1:{[key: string]: any}):void;
+
 export function ShowDialog():void;

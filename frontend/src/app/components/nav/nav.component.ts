@@ -24,6 +24,6 @@ export class NavComponent {
   );
 
   addConsumer() {
-    this.consumerStore.addConsumer({});
+    this.consumerStore.add({});
   }
 }

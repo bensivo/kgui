@@ -26,4 +26,8 @@ export class ClusterStore {
     }, withProps<ClusterState>({
         clusters: [],
     }));
+
+    get state() {
+        return this.store.getValue();
+    }
 }
