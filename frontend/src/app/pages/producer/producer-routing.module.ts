@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProducerComponent } from './components/producer/producer.component';
 
 const routes: Routes = [
-  { path: ':name', component: ProducerComponent },
+  { path: ':id', component: ProducerComponent },
 ];
 
 @NgModule({

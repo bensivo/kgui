@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster } from 'src/app/store/cluster.store';
-import { Producer } from 'src/app/store/producer.store';
+import { Producer, ProducerStore } from 'src/app/store/producer.store';
 import { Request, RequestStore } from 'src/app/store/request.store';
 import * as uuid from 'uuid';
 
@@ -14,6 +14,7 @@ import * as uuid from 'uuid';
 export class ProducerViewComponent {
   constructor(
     private socketService: SocketService,
+    private producerStore: ProducerStore,
     private requestStore: RequestStore,
   ){}
 
@@ -50,8 +51,12 @@ export class ProducerViewComponent {
     this.requestStore.add({
       correlationId,
       status: 'CREATED',
-      producerName: this.producer.name,
+      producerId: this.producer.id,
       data: data,
     });
+  }
+
+  deleteProducer() {
+    this.producerStore.store.remove(this.producer.id);
   }
 }

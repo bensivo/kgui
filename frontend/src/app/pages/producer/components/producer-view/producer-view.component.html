@@ -1,9 +1,13 @@
 <div class="content">
     <div class="content-left">
+        <div class="title center-parent">
+            <form [formGroup]="formGroup">
+                <input nz-input nzBorderless formControlName="name" />
+            </form>
 
-        <h1>
-            {{producer.name}}
-        </h1>
+            <i class="delete clickable vcenter" nz-icon nzType="delete" nzTheme="outline" (click)="deleteProducer()"></i>
+        </div>
+
         <form nz-form [formGroup]="formGroup">
             <div class="form-section">
                 <div class="form-label">
@@ -30,7 +34,7 @@
                     <label>Partition</label>
                 </div>
                 <div class="form-input">
-                    <nz-input-number formControlName="partition" [nzStep]="1"></nz-input-number>
+                    <nz-input-number formControlName="partition" [nzStep]="1" [nzMin]="0"></nz-input-number>
                 </div>
             </div>
 

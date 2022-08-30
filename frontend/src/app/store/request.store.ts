@@ -5,7 +5,7 @@ import { SocketService } from '../socket/socket.service';
 export interface Request {
     correlationId: string;
     status: string;
-    producerName: string;
+    producerId: string;
     data: any;
 }
 

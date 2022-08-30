@@ -25,7 +25,12 @@
         <ul>
             <li *ngFor="let producer of producers$ | async" nz-menu-item>
                 <span>
-                    <a routerLink="/producers/{{producer.name}}">{{producer.name}}</a>
+                    <a routerLink="/producers/{{producer.id}}">{{producer.name}}</a>
+                </span>
+            </li>
+            <li nz-menu-item (click)="addProducer()">
+                <span>
+                    Add Producer +
                 </span>
             </li>
         </ul>

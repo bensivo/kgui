@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { StorageService } from './services/storage.service';
 import { SocketService } from './socket/socket.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
-import { ConsumerStore } from './store/consumer.store';
-import { ProducerStore } from './store/producer.store';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +11,7 @@ import { ProducerStore } from './store/producer.store';
 export class AppComponent implements OnInit {
   isCollapsed = false;
 
-  consumers$: Observable<any[]> = this.consumerStore.consumers$;
-
-  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private consumerStore: ConsumerStore, private producerStore: ProducerStore, private storageService: StorageService) { }
+  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private storageService: StorageService) { }
 
   async ngOnInit() {
     await this.socketService.initialize();

@@ -1,38 +1,17 @@
 import { Injectable } from '@angular/core';
-import { createStore, withProps } from '@ngneat/elf';
-import { combineLatest, Observable } from 'rxjs';
-import { flatMap, map, mergeMap } from 'rxjs/operators';
+import { Entity, EntityStore } from './entity.store';
 
-export interface Producer {
+export interface Producer extends Entity{
     name: string;
     topic: string;
     message: string;
-}
-
-export interface ProducerState {
-    [key: string]: Producer;
+    partition: number;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class ProducerStore {
-    store = createStore({
-        name: 'producer'
-    }, withProps<ProducerState>({}));
 
-    get state() {
-        return this.store.getValue();
-    }
-
-    get(name$: Observable<string>): Observable<Producer > {
-        return combineLatest([
-            name$,
-            this.store.asObservable()
-        ]) .pipe(
-            map(([name, state]) => {
-                return state[name]
-            })
-        )
-    }
+   store = new EntityStore<Producer>('producer')
 }

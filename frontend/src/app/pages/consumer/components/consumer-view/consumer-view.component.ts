@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { SocketService } from 'src/app/socket/socket.service';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
 
@@ -65,6 +65,6 @@ export class ConsumerViewComponent {
   }
 
   deleteConsumer() {
-    this.consumerStore.delete(this.consumer.id);
+    this.consumerStore.store.remove(this.consumer.id);
   }
 }

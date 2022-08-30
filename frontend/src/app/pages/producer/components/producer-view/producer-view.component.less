@@ -6,6 +6,26 @@
 
 .content-left {
     flex: 1;
+    max-width: 500px;
+
+    div.title {
+        input {
+            width: fit-content;
+            font-size: 2em;
+            padding: 0;
+        }
+
+        i {
+            &.edit {
+                right: 5em;
+            }
+
+            &.delete {
+                right: 3em;
+            }
+        }
+    }
+
 }
 
 .content-right {

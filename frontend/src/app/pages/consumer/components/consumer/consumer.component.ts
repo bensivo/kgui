@@ -31,7 +31,7 @@ export class ConsumerComponent {
     select(s => s.active)
   );
 
-  consumer$: Observable<Consumer> = combineLatest([this.route.params, this.consumerStore.consumers$]).pipe(
+  consumer$: Observable<Consumer> = combineLatest([this.route.params, this.consumerStore.store.entities$]).pipe(
     map(([params, consumers]) => {
       console.log(params, consumers)
       const consumer = consumers.find(c => c.id === params.id) 
@@ -67,13 +67,13 @@ export class ConsumerComponent {
           active: value.cluster
         }))
 
-        this.consumerStore.update(consumer.id, {
+        this.consumerStore.store.upsert({
           id: consumer.id,
           topic: value.topic,
           name: value.name,
           offset: value.offset,
           filters: value.filters,
-        })
+        });
       })
 
       return {

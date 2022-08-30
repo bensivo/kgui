@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, of } from 'rxjs';
+import { ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
-import { MessagesStore, Message } from 'src/app/store/messages.store';
+import { Message, MessagesStore } from 'src/app/store/messages.store';
 import { ConsumerComponent } from './consumer.component';
 
 
@@ -13,46 +13,61 @@ describe('ConsumersComponent', () => {
   let fixture: ComponentFixture<ConsumerComponent>;
 
   const clusterState = {
-    clusters: []
+    clusters: [{
+      name: 'cluster-1'
+    }],
+    active: {
+      name: 'cluster-1'
+    }
   }
   const consumers = [{
-    name: 'test',
+    id: 'test-consumer-id',
+    name: 'test-consumer',
+    topic: 'test-topic',
+    offset: 0,
+    filters: [],
   }] as Consumer[];
-  const messages = [] as Message[];
   const params = {
-    name: 'test'
-  } as Consumer;
+    id: 'test-consumer-id'
+  };
+  const messages = [] as Message[];
 
   const clusterStore = {
     store: new BehaviorSubject(clusterState),
   };
 
   const consumerStore = {
-    store: new BehaviorSubject(consumers),
+    store: {
+      entities$: new BehaviorSubject(consumers),
+    }
   };
 
   const messagesStore = {
     store: new BehaviorSubject(messages),
+    forConsumer: jasmine.createSpy('forConsumer').and.returnValue(of(messages))
   }
 
   const route = {
     params: new BehaviorSubject(params),
   }
 
-
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
-      declarations: [ ConsumerComponent ],
+      declarations: [ConsumerComponent],
       providers: [
-        { provide: ClusterStore, useValue: clusterStore},
-        { provide: ConsumerStore, useValue: consumerStore},
-        { provide: MessagesStore, useValue: messagesStore},
-        { provide: ActivatedRoute, useValue: route},
+        { provide: ClusterStore, useValue: clusterStore },
+        { provide: ConsumerStore, useValue: consumerStore },
+        { provide: MessagesStore, useValue: messagesStore },
+        { provide: ActivatedRoute, useValue: route },
+        {
+          provide: Router, useValue: {
+            navigate: jasmine.createSpy('navigate'),
+          }
+        },
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ConsumerComponent);
     component = fixture.componentInstance;
@@ -70,12 +85,6 @@ describe('ConsumersComponent', () => {
       component.data$.subscribe(() => {
         done()
       });
-
-      // fixture.detectChanges();
-
-      // expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
-      //   clusters: clusterState.clusters,
-      // }))
     });
 
     it('should contain the consumer for the given route', () => {
