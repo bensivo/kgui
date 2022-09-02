@@ -12,6 +12,11 @@ import { NavModule } from './components/nav/nav.module';
 import { IconsProviderModule } from './icons-provider.module';
 import { SocketModule } from './socket/socket.module';
 
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+registerLocaleData(en);
+
 @NgModule({
   declarations: [
     AppComponent
@@ -30,6 +35,7 @@ import { SocketModule } from './socket/socket.module';
     NavModule,
   ],
   providers: [
+    { provide: NZ_I18N, useValue: en_US }
   ],
   bootstrap: [AppComponent]
 })
