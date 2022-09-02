@@ -1,23 +1,13 @@
-<nz-layout class="app-layout">
-    <nz-sider class="menu-sidebar" nzCollapsible [nzCollapsedWidth]="1" nzBreakpoint="lg" [(nzCollapsed)]="isCollapsed">
-        <div class="sidebar-logo">
-            <h1>KGui</h1>
-        </div>
+<nz-layout class="app">
+    <nz-sider class="sidebar" nzCollapsible [nzCollapsedWidth]="1" nzBreakpoint="lg" [nzCollapsed]="!(expanded$ | async)" (nzCollapsedChange)="onExpandedChange(!$event)">
         <app-nav></app-nav>
     </nz-sider>
     <nz-layout>
         <nz-header>
-            <div class="app-header">
-                <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-            <i class="trigger"
-               nz-icon
-               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-            ></i>
-        </span>
-            </div>
+            <app-header></app-header>
         </nz-header>
         <nz-content>
-            <div style="overflow: auto" class="inner-content">
+            <div class="inner-content">
                 <router-outlet></router-outlet>
             </div>
         </nz-content>

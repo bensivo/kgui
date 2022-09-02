@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { select } from '@ngneat/elf';
+import { map } from 'rxjs/operators';
 import { StorageService } from './services/storage.service';
 import { SocketService } from './socket/socket.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
+import { NavStore } from './store/nav.store';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +12,17 @@ import { ClusterState, ClusterStore } from './store/cluster.store';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-  isCollapsed = false;
 
-  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private storageService: StorageService) { }
+  constructor(private navStore: NavStore, private socketService: SocketService, private clusterStore: ClusterStore, private storageService: StorageService) { }
+
+  expanded$ = this.navStore.store.pipe(map(s => s.expanded));
+
+  onExpandedChange(expanded: boolean) {
+    this.navStore.store.update(s => ({
+      ...s,
+      expanded,
+    }));
+  }
 
   async ngOnInit() {
     await this.socketService.initialize();

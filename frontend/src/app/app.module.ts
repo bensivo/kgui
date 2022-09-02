@@ -7,6 +7,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HeaderModule } from './components/header/header.module';
 import { NavModule } from './components/nav/nav.module';
 import { IconsProviderModule } from './icons-provider.module';
 import { SocketModule } from './socket/socket.module';
@@ -23,6 +24,7 @@ import { SocketModule } from './socket/socket.module';
     BrowserAnimationsModule,
     IconsProviderModule,
     NzLayoutModule,
+    HeaderModule,
     NzMenuModule,
     SocketModule,
     NavModule,

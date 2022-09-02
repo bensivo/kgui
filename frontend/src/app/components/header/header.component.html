@@ -1,0 +1,6 @@
+<div class="app-header">
+    <span class="header-trigger" (click)="onClickToggleNav()">
+            <i class="trigger"
+               nz-icon
+               [nzType]="(expanded$ | async)? 'menu-fold' : 'menu-unfold'"
+            ></i>
