@@ -22,7 +22,7 @@ export class ProducerViewComponent {
   producer!: Producer;
 
   @Input()
-  clusters!: Cluster[];
+  cluster!: Cluster | undefined;
 
   @Input()
   formGroup!: FormGroup;
@@ -31,11 +31,15 @@ export class ProducerViewComponent {
   requests!: Request[];
 
   produce() {
+    if (!this.cluster) {
+      alert("Please select a cluster");
+      return;
+    }
     const value = this.formGroup.value;
     const correlationId = uuid.v4();
     const data = {
       CorrelationId: correlationId,
-      ClusterName: value.cluster.Name,
+      ClusterName: this.cluster.Name,
       Topic: value.topic,
       Partition: value.partition,
       Message: value.message,

@@ -19,10 +19,10 @@ export class ConsumerViewComponent {
   ) { }
 
   @Input()
-  consumer!: Consumer;
+  cluster!: Cluster | undefined;
 
   @Input()
-  clusters!: Cluster[];
+  consumer!: Consumer;
 
   @Input()
   messages!: Message[];
@@ -40,11 +40,15 @@ export class ConsumerViewComponent {
       [this.consumer.id]: [],
     }))
 
+    if (!this.cluster) {
+      alert("Please select a cluster");
+      return;
+    }
     this.socketService.send({
       Topic: 'message.consume',
       Data: {
         ConsumerId: this.consumer.id,
-        ClusterName: this.formGroup.value.cluster.Name,
+        ClusterName: this.cluster.Name,
         Topic: this.formGroup.value.topic,
         Partition: 0,
         Offset: this.formGroup.value.offset

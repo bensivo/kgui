@@ -11,17 +11,6 @@
         <form nz-form [formGroup]="formGroup">
             <div class="form-section">
                 <div class="form-label">
-                    <label>Cluster</label>
-                </div>
-                <div class="form-input">
-                    <nz-select formControlName="cluster">
-                        <nz-option *ngFor="let cluster of clusters" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
-                    </nz-select>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <div class="form-label">
                     <label>Topic</label>
                 </div>
                 <div class="form-input">

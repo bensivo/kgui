@@ -24,11 +24,7 @@ export class ProducerComponent {
     private router: Router,
   ) { }
 
-  clusters$ = this.clusterStore.store.pipe(
-    map(c => c.clusters)
-  )
-
-  activeCluster$ = this.clusterStore.store.pipe(
+  cluster$ = this.clusterStore.store.pipe(
     map(c => c.active)
   )
 
@@ -58,15 +54,13 @@ export class ProducerComponent {
   )
 
   producerViewData$ = combineLatest([
-    this.clusters$,
-    this.activeCluster$,
+    this.cluster$,
     this.producer$,
     this.requests$,
   ]).pipe(
-    map(([clusters, activeCluster,producer, requests]) => {
+    map(([cluster,producer, requests]) => {
 
       const formGroup = this.formBuilder.group({
-        cluster: new FormControl(activeCluster),
         topic: new FormControl(producer.topic),
         name: new FormControl(producer.name),
         partition: new FormControl(producer.partition),
@@ -74,11 +68,6 @@ export class ProducerComponent {
       });
 
       formGroup.valueChanges.subscribe((value: any) => {
-        this.clusterStore.store.update((s) => ({
-          ...s,
-          active: value.cluster
-        }))
-
         this.producerStore.store.upsert({
           id: producer.id,
           name: value.name,
@@ -89,7 +78,7 @@ export class ProducerComponent {
       })
 
       return {
-        clusters,
+        cluster,
         producer,
         formGroup,
         requests,
