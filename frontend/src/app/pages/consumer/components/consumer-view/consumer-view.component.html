@@ -56,8 +56,8 @@
     </div>
 
     <div class="content-right">
-        <div class="message-text" *ngFor="let message of messages">
-            <app-message [message]="message"></app-message>
+        <div class="message-text" *ngFor="let message of messages; trackBy: messageTrackBy">
+            <app-message [message]=" message "></app-message>
         </div>
     </div>
 </div>

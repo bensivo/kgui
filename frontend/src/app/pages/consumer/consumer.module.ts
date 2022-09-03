@@ -14,7 +14,6 @@ import { ConsumerViewComponent } from './components/consumer-view/consumer-view.
 import { MessageComponent } from './components/message/message.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
-
 @NgModule({
   declarations: [
     ConsumerComponent,

@@ -68,6 +68,10 @@ export class ConsumerViewComponent {
     return i
   }
 
+  messageTrackBy(i: number, msg: Message){
+    return msg.offset // TODO: test if 2 consumers end up with messages using the same offset
+  }
+
   deleteConsumer() {
     this.consumerStore.store.remove(this.consumer.id);
   }

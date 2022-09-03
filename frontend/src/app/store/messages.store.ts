@@ -1,3 +1,4 @@
+import { NumberSymbol } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
@@ -13,6 +14,9 @@ export interface KafkaMessage {
   EOS: boolean;
   Message?: {
     Value: string;
+    Offset: number;
+    Partition: number;
+    Time: string;
   }
 }
 
@@ -25,6 +29,9 @@ export enum MessageType {
 export interface Message {
   type: MessageType;
   data: string | number;
+  offset: number;
+  partition: number;
+  time: string;
 }
 
 export interface MessagesState {
@@ -55,7 +62,10 @@ export class MessagesStore {
         if (message.EOS) {
           this.pushMessage(consumerId, {
             type: MessageType.EOS,
-            data: 'End of Topic'
+            data: 'End of Topic',
+            offset: -1,
+            partition: -1,
+            time: new Date().toISOString(),
           })
           return;
         }
@@ -65,6 +75,9 @@ export class MessagesStore {
           this.pushMessage(consumerId, {
             type: MessageType.MESSAGE,
             data: value,
+            offset: message.Message.Offset,
+            partition: message.Message.Partition,
+            time: message.Message.Time,
           });
           return;
         }
