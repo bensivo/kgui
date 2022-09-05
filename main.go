@@ -29,7 +29,7 @@ func main() {
 		// TODO: we could do this without a call to app.Open() if we saved the app context variable somewhere
 		payload, err := app.Open()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 
@@ -81,6 +81,6 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }

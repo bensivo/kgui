@@ -14,25 +14,32 @@ type ConsumeArgs struct {
 	Offset    int
 }
 
-func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) {
-	defer close(res)
+func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
+	defer func() {
+		fmt.Println("Closing consumer")
+		close(res)
+	}()
 
-	conn := c.DialLeader(args.Topic, args.Partition)
+	conn, err := c.DialLeader(args.Topic, args.Partition)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
 	lastOffset, err := conn.ReadLastOffset()
 	if err != nil {
-		log.Fatal(err)
-		return
+		log.Println(err)
+		return err
 	}
 	if lastOffset == 0 {
 		fmt.Printf("No messages on partition %d\n", args.Partition)
-		return
+		return err
 	}
 
 	currentOffset, err := seekRelativeOffset(conn, int64(args.Offset))
 	if err != nil {
-		log.Fatal(err)
-		return
+		log.Println(err)
+		return err
 	}
 	fmt.Printf("Reading messages %d-%d\n", currentOffset, lastOffset)
 
@@ -48,9 +55,10 @@ func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) {
 
 		if msg.Offset == lastOffset-1 {
 			fmt.Printf("Consumed all messages on partition %d\n", args.Partition)
-			return
+			return nil
 		}
 	}
+	return nil
 }
 
 func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {

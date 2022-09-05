@@ -29,7 +29,7 @@ func (b *App) startup(ctx context.Context) {
 	router := server.New()
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 }

@@ -45,7 +45,7 @@ func (c *ClusterController) addCluster(data interface{}) {
 	var cluster kafka.Cluster
 	err := mapstructure.Decode(data, &cluster)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	log.Printf("Adding Cluster %s - %v\n", cluster.Name, cluster)
@@ -70,7 +70,7 @@ func (c *ClusterController) removeCluster(data interface{}) {
 	var payload RemoveClusterPayload
 	err := mapstructure.Decode(data, &payload)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	log.Printf("Removing Cluster %s\n", payload.Name)

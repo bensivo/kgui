@@ -35,16 +35,24 @@ func (c *MessageController) Produce(data interface{}) {
 	var payload ProducePayload
 	err := mapstructure.Decode(data, &payload)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var cluster kafka.Cluster = state[payload.ClusterName]
-	cluster.Produce(payload.Topic, payload.Partition, payload.Message)
+	err = cluster.Produce(payload.Topic, payload.Partition, payload.Message)
 
-	Write(*c.Conn, "message.produced", map[string]interface{}{
-		"CorrelationId": payload.CorrelationId,
-		"Status":        "SUCCESS",
-	})
+	if err != nil {
+		Write(*c.Conn, "message.produced", map[string]interface{}{
+			"CorrelationId": payload.CorrelationId,
+			"Status":        "ERROR",
+		})
+	} else {
+		Write(*c.Conn, "message.produced", map[string]interface{}{
+			"CorrelationId": payload.CorrelationId,
+			"Status":        "SUCCESS",
+		})
+	}
+
 }
 
 type ConsumePayload struct {
@@ -59,7 +67,7 @@ func (c *MessageController) Consume(data interface{}) {
 	var payload ConsumePayload
 	err := mapstructure.Decode(data, &payload)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var cluster kafka.Cluster = state[payload.ClusterName]
@@ -70,7 +78,12 @@ func (c *MessageController) Consume(data interface{}) {
 		Offset:    payload.Offset,
 	}
 	var results = make(chan kgo.Message)
-	go cluster.Consume(args, results)
+	go func() {
+		err = cluster.Consume(args, results)
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
 	go func() {
 		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
@@ -81,7 +94,7 @@ func (c *MessageController) Consume(data interface{}) {
 				"Topic":       payload.Topic,
 				"Partition":   payload.Partition,
 				"Message":     msg,
-				"ESO":         false,
+				"EOS":         false,
 			})
 		}
 

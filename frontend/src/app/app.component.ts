@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { select } from '@ngneat/elf';
 import { map } from 'rxjs/operators';
-import { StorageService } from './services/storage.service';
+import { StorageService } from './storage/storage.service';
 import { SocketService } from './socket/socket.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
 import { MessagesStore } from './store/messages.store';

@@ -23,7 +23,7 @@ func Write(conn websocket.Conn, topic string, data interface{}) {
 	}
 	resBytes, err := json.Marshal(msg)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	err = conn.WriteMessage(1, resBytes)

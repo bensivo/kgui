@@ -6,8 +6,6 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -28,72 +26,88 @@ type Cluster struct {
 	SSLSkipVerification  bool
 }
 
-func (c *Cluster) Dial() *kgo.Conn {
-	dialer := c.GetDialer()
+func (c *Cluster) Dial() (*kgo.Conn, error) {
+	dialer, err := c.GetDialer()
+	if err != nil {
+		return nil, err
+	}
 
 	conn, err := dialer.Dial("tcp", c.BootstrapServer)
 	if err != nil {
 		fmt.Println("Failed to dial leader", err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	return conn
+	return conn, nil
 }
 
-func (c *Cluster) DialLeader(topic string, partition int) *kgo.Conn {
-	dialer := c.GetDialer()
+func (c *Cluster) DialLeader(topic string, partition int) (*kgo.Conn, error) {
+	dialer, err := c.GetDialer()
+	if err != nil {
+		return nil, err
+	}
 
-	fmt.Printf("Dialing leader for cluster %v", c)
+	fmt.Printf("Dialing leader for cluster: %s topic: %s\n", c.Name, topic)
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	conn, err := dialer.DialLeader(ctx, "tcp", c.BootstrapServer, topic, partition)
 	if err != nil {
 		fmt.Println("Failed to dial leader", err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	return conn
+	return conn, nil
 }
 
-func (c *Cluster) GetDialer() *kgo.Dialer {
+func (c *Cluster) GetDialer() (*kgo.Dialer, error) {
+	mechanism, err := c.getSaslMechanism()
+	if err != nil {
+		return nil, err
+	}
+
+	tls, err := c.getTLSConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	dialer := &kgo.Dialer{
 		Timeout:       time.Second * 10,
 		DualStack:     true,
-		SASLMechanism: c.getSaslMechanism(),
-		TLS:           c.getTLSConfig(),
+		SASLMechanism: mechanism,
+		TLS:           tls,
 	}
-	return dialer
+	return dialer, nil
 }
 
-func (c *Cluster) getSaslMechanism() sasl.Mechanism {
+func (c *Cluster) getSaslMechanism() (sasl.Mechanism, error) {
 	if strings.ToLower(c.SaslMechanism) == "plain" {
 		return plain.Mechanism{
 			Username: c.SaslUsername,
 			Password: c.SaslPassword,
-		}
+		}, nil
 	}
 	if strings.ToLower(c.SaslMechanism) == "scram-sha-512" {
 		mechanism, err := scram.Mechanism(scram.SHA512, c.SaslUsername, c.SaslPassword)
 		if err != nil {
 			fmt.Println("Error configuring scram-sha-512 auth")
-			os.Exit(1)
+			return nil, err
 		}
-		return mechanism
+		return mechanism, nil
 	}
 	if strings.ToLower(c.SaslMechanism) == "scram-sha-256" {
 		mechanism, err := scram.Mechanism(scram.SHA256, c.SaslUsername, c.SaslPassword)
 		if err != nil {
 			fmt.Println("Error configuring scram-sha-256 auth")
-			os.Exit(1)
+			return nil, err
 		}
-		return mechanism
+		return mechanism, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (c *Cluster) getTLSConfig() *tls.Config {
+func (c *Cluster) getTLSConfig() (*tls.Config, error) {
 	if !c.SSLEnabled {
-		return nil
+		return nil, nil
 	}
 
 	var tlsConfig tls.Config = tls.Config{
@@ -103,7 +117,7 @@ func (c *Cluster) getTLSConfig() *tls.Config {
 	if c.SSLCaCertificatePath != "" {
 		caCert, err := ioutil.ReadFile("./test/clusters/ssl/ca_authority/ca-cert")
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		caCertPool := x509.NewCertPool()
@@ -115,5 +129,5 @@ func (c *Cluster) getTLSConfig() *tls.Config {
 		tlsConfig.InsecureSkipVerify = true
 	}
 
-	return &tlsConfig
+	return &tlsConfig, nil
 }

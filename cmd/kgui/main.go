@@ -13,7 +13,7 @@ func main() {
 
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 	fmt.Scanf("v")

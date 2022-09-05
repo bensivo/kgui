@@ -13,7 +13,7 @@ import (
 func Save(ctx context.Context, data map[string]interface{}) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -23,20 +23,20 @@ func Save(ctx context.Context, data map[string]interface{}) {
 		Title:            "Save",
 	})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
 	fmt.Println("Selected file: " + file)
 	bytes, err := json.Marshal(data)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
 	err = os.WriteFile(file, bytes, 0600)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 }
@@ -44,7 +44,7 @@ func Save(ctx context.Context, data map[string]interface{}) {
 func Open(ctx context.Context) (map[string]interface{}, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	file, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
@@ -53,21 +53,21 @@ func Open(ctx context.Context) (map[string]interface{}, error) {
 		Title:            "Save",
 	})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	fmt.Println(file)
 	bytes, err := os.ReadFile(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	payload := make(map[string]interface{})
 	err = json.Unmarshal(bytes, &payload)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 

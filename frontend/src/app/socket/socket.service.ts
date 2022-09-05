@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable,  } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
+
 
 export interface Message<T> {
   Topic: string;
@@ -11,6 +13,7 @@ export interface Message<T> {
   providedIn: 'root'
 })
 export class SocketService {
+  constructor(private notification: NzNotificationService){}
 
   private ws!: WebSocket;
 
@@ -26,7 +29,17 @@ export class SocketService {
 
       this.ws.addEventListener('error', (e: any) => {
         console.error('Websocket error', e);
+
         reject();
+      });
+
+      this.ws.addEventListener('close', (e: any) => {
+        console.error('Websocket error', e);
+        this.notification.create('error', 'Error', 'Websocket connection closed');
+
+        setTimeout(() => {
+          this.initialize();
+        }, 5000)
       });
 
       this.ws.addEventListener('message', (m: MessageEvent) => {

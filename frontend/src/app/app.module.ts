@@ -15,6 +15,7 @@ import { SocketModule } from './socket/socket.module';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 registerLocaleData(en);
 
 @NgModule({
@@ -31,6 +32,7 @@ registerLocaleData(en);
     NzLayoutModule,
     HeaderModule,
     NzMenuModule,
+    NzNotificationModule,
     SocketModule,
     NavModule,
   ],
