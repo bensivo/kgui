@@ -1,43 +1,43 @@
-<p align="center">
- <img src="./banner.png"/>
-</p>
+# KGui
+A desktop kafka client written using [Wails](https://wails.io).
 
-# Introduction
-A template for [Wails beta.13](https://wails.io) with Angular 12. (TypeScript + SASS + Hot Reload)
+## Installation
+Currently the only way to install kgui is to build it from source.
 
-Current Versions:
- - Angular 12.2.0
- - Wails beta.13 or newer
+This app was developed using versions:
+- golang 1.17.3
+- node.js 16.13.0
 
-# Getting Started
-## Prerequisites
- - Node 14+ with npm
- - Wails CLI beta.13 or newer | (https://wails.io/docs/gettingstarted/installation)
- - Angular CLI | Install with `npm i -g @angular/cli`
+First, install wails following the instructions [here](https://wails.io/docs/gettingstarted/installation/).
 
-## Creating the Projekt
-Create a new Application with the Wails CLI and this template:
+Then, build the application on your machine.
 ```
-wails init -n projektname -t https://github.com/TAINCER/wails-angular-template
+$ git clone https://gitlab.com/bensivo/kgui.git
+$ cd kgui
+$ wails build
 ```
 
-## Running the Application in Developer Mode
-The easiest way is to use the Wails CLI: `wails dev`
+The application will be built into the 'build' folder.
 
-This should hot refresh when making changes the Frontend and rebuild when making changes in the Go.
 
-## Building the Application for Production
-When building for Production, there are some parts to notice:
- - Angular is going to use the `frontend/src/environments/environment.prod.ts` when building the frontend.
- - You should properly change the Icons for your Application in `build/` and `build/windows` (when building for Windows)
- - The Developer Console will not work.
-
-Finally, you can build you Application with: `wails build`
-
-# Adding Angular Material
-In order to add Angular Material you can use the build in Angular CLI command:
+## Development
+### Browser
+Run an in-browser instance with 2 terminals:
 ```
-cd frontend
-ng add @angular/material
+$ cd frontend
+$ npm i
+$ npm run start
 ```
-This will prompt you what theme you want to use, etc.
+```
+$ go run cmd/kgui/main.go
+```
+
+Then navigate to your browser at http://localhost:4200
+
+
+
+### Native
+Some features, like file dialogs, are not available when developing in a browser. To develop locally using native windows, run:
+```
+wails dev
+```
