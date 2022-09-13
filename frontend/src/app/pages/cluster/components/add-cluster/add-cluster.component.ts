@@ -26,6 +26,10 @@ export class AddClusterComponent implements OnInit {
       sslEnabled: new FormControl(false),
       sslSkipVerification: new FormControl(false),
     });
+
+    this.socketService.stream('clusters.changed').subscribe(() => {
+      this.router.navigate(['/clusters']);
+    })
   }
 
   cancel() {

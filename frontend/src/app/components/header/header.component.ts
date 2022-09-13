@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { select } from '@ngneat/elf';
+import { NzTabPosition } from 'ng-zorro-antd/tabs';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
@@ -19,6 +20,10 @@ export class HeaderComponent implements OnInit{
   );
   cluster = new FormControl();
 
+  tabs: Array<{ name: string; content: string; disabled: boolean }> = [];
+  nzTabPosition: NzTabPosition = 'top';
+  selectedIndex = 5;
+
   constructor(private navStore: NavStore, private clusterStore: ClusterStore) {}
 
   ngOnInit(): void {
@@ -28,7 +33,18 @@ export class HeaderComponent implements OnInit{
         active: cluster,
       }));
     });
-    
+
+    for (let i = 0; i < 5; i++) {
+      this.tabs.push({
+        name: `Tab ${i}`,
+        disabled: false,
+        content: '',
+      });
+    }
+  }
+
+  log(args: any[]): void {
+    console.log(args);
   }
 
   onClickToggleNav() {

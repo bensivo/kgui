@@ -35,43 +35,9 @@ export class AppComponent implements OnInit {
         }))
       });
 
-    // this.storageService.load({
-    //   cluster: {
-    //     clusters: [],
-    //   },
-    //   consumer: {
-    //     ['numbers']: {
-    //       id: 'numbers',
-    //       name: 'numbers',
-    //       topic: 'numbers',
-    //       offset: 0,
-    //       filters: []
-    //     },
-    //     ['asdf']: {
-    //       id: 'asdf',
-    //       name: 'event stream',
-    //       topic: 'deming.event.stream',
-    //       offset: -1,
-    //       filters: []
-    //     }
-    //   },
-    //   producer: {},
-    // });
-
-
-
-    //  this.socketService.send({
-    //   Topic: 'clusters.add',
-    //   Data: {
-    //     BootstrapServer: "localhost:9092",
-    //     Name: "localhost",
-    //     SSLCaCertificatePath: "",
-    //     SSLEnabled: false,
-    //     SSLSkipVerification: false,
-    //     SaslMechanism: "",
-    //     SaslPassword: "",
-    //     SaslUsername: "",
-    //   },
-    // });
+      this.socketService.send({
+        Topic: 'clusters.refresh',
+        Data: {},
+      });
   }
 }
