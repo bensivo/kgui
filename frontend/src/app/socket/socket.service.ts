@@ -47,6 +47,11 @@ export class SocketService {
         this.messages.next(JSON.parse(m.data));
       });
     });
+
+    this.stream('error')
+    .subscribe((data: any) => {
+      this.notification.create('error', 'Error', data.Message)
+    })
   }
 
   public get connected(): boolean {

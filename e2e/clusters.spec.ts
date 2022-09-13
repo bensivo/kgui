@@ -38,7 +38,7 @@ describe('connect', () => {
 
     const cluster2 = {
         Name: "cluster2",
-        BootstrapServer: "localhost:9092",
+        BootstrapServer: "localhost:9093",
         SaslMechanism: "",
         SaslUsername: "",
         SaslPassword: "",
@@ -85,7 +85,7 @@ describe('connect', () => {
             },
             {
                 Topic: 'clusters.changed',
-                Data: [cluster1, cluster2]
+                Data: expect.arrayContaining([cluster1, cluster2]),
             })
     });
 

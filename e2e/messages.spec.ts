@@ -31,6 +31,20 @@ describe('send', () => {
                 SSLSkipVerification: true,
             }
         }))
+
+        ws.send(JSON.stringify({
+            Topic: 'clusters.add',
+            Data: {
+                Name: "cluster2",
+                BootstrapServer: "localhost:9093",
+                SaslMechanism: "",
+                SaslUsername: "",
+                SaslPassword: "",
+                SSLEnabled: false,
+                SSLCaCertificatePath: "",
+                SSLSkipVerification: true,
+            }
+        }))
     });
 
     afterEach(async () => {
@@ -107,21 +121,47 @@ describe('send', () => {
                     Topic: "logs",
                     Partition: 0,
                     Offset: -1,
-                    EOS: false,
                 }
 
             }, {
                 Topic: 'message.consumed',
                 Data: {
-                    ClusterName: 'cluster1',
-                    ConsumerId: 'testing',
-                    Topic: 'logs',
+                    ConsumerId: "testing",
+                    ClusterName: "cluster1",
+                    EOS: false,
                     Partition: 0,
-                    EOS: true,
+                    Topic: 'logs',
+                    Message: expect.objectContaining({
+                        Value: Buffer.from(JSON.stringify({
+                            year: 2022,
+                            month: 8,
+                            day: 8,
+                        })).toString('base64'),
+                    })
+                }
+            })
+        })
+
+        it('should send error for bad connection', async () => {
+            await reqRes(ws, {
+                Topic: 'message.consume',
+                Data: {
+                    ConsumerId: "testing",
+                    ClusterName: "cluster2",
+                    Topic: "logs",
+                    Partition: 0,
+                    Offset: -1,
+                }
+
+            }, {
+                Topic: 'error',
+                Data: {
+                    Message: expect.anything(),
                 }
             })
         })
     })
+
 });
 
 async function reqRes(ws: WebSocket, req: any, res: any) {

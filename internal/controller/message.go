@@ -46,6 +46,9 @@ func (c *MessageController) Produce(data interface{}) {
 			"CorrelationId": payload.CorrelationId,
 			"Status":        "ERROR",
 		})
+		Write(*c.Conn, "error", map[string]interface{}{
+			"Message": err.Error(),
+		})
 	} else {
 		Write(*c.Conn, "message.produced", map[string]interface{}{
 			"CorrelationId": payload.CorrelationId,
@@ -82,6 +85,10 @@ func (c *MessageController) Consume(data interface{}) {
 		err = cluster.Consume(args, results)
 		if err != nil {
 			log.Println(err)
+
+			Write(*c.Conn, "error", map[string]interface{}{
+				"Message": err.Error(),
+			})
 		}
 	}()
 
