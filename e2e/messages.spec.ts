@@ -1,5 +1,6 @@
 import waitForExpect from 'wait-for-expect';
 import WebSocket from 'ws';
+import * as uuid from 'uuid';
 
 /**
  * Preconditions for this test:
@@ -44,10 +45,11 @@ describe('send', () => {
     });
 
     it('send message', async () => {
-        for(let i=0; i<100; i++)
+        const CorrelationId = uuid.v4();
         await reqRes(ws, {
             Topic: 'message.produce',
             Data: {
+                CorrelationId,
                 ClusterName: "cluster1",
                 Topic: "logs",
                 Partition: 0,
@@ -60,32 +62,66 @@ describe('send', () => {
         }, {
             Topic: 'message.produced',
             Data: {
-                // TODO: need some kind of message identifier
-                Status: 'OK'
+                CorrelationId,
+                Status: 'SUCCESS'
             }
         })
     })
 
-    it('read messages', async () => {
-        await reqRes(ws, {
-            Topic: 'message.consume',
-            Data: {
-                ClusterName: "cluster1",
-                Topic: "messages",
-                Partition: 0,
-                Offset: -3,
-            }
+    describe('consume', () => {
+        it('can read a message', async () => {
+            await reqRes(ws, {
+                Topic: 'message.consume',
+                Data: {
+                    ConsumerId: "testing",
+                    ClusterName: "cluster1",
+                    Topic: "logs",
+                    Partition: 0,
+                    Offset: -1,
+                }
 
-        }, {
-            Topic: 'message.consumed',
-            Data: {
-                ClusterName: "cluster1",
-                Topic: "messages",
-                Partition: 0,
-                Message: "hi"
-            }
+            }, {
+                Topic: 'message.consumed',
+                Data: {
+                    ConsumerId: "testing",
+                    ClusterName: "cluster1",
+                    EOS: false,
+                    Partition: 0,
+                    Topic: 'logs',
+                    Message: expect.objectContaining({
+                        Value: Buffer.from(JSON.stringify({
+                            year: 2022,
+                            month: 8,
+                            day: 8,
+                        })).toString('base64'),
+                    })
+                }
+            });
         })
-    });
+        it('gets an EOS at the end of the topic', async () => {
+            await reqRes(ws, {
+                Topic: 'message.consume',
+                Data: {
+                    ConsumerId: "testing",
+                    ClusterName: "cluster1",
+                    Topic: "logs",
+                    Partition: 0,
+                    Offset: -1,
+                    EOS: false,
+                }
+
+            }, {
+                Topic: 'message.consumed',
+                Data: {
+                    ClusterName: 'cluster1',
+                    ConsumerId: 'testing',
+                    Topic: 'logs',
+                    Partition: 0,
+                    EOS: true,
+                }
+            })
+        })
+    })
 });
 
 async function reqRes(ws: WebSocket, req: any, res: any) {
