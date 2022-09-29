@@ -3,11 +3,7 @@
       <i class="trigger" nz-icon [nzType]="(expanded$ | async)? 'menu-fold' : 'menu-unfold'" ></i>
    </span>
 
-    <div class="tab-container">
-        <nz-tabset [nzTabPosition]="nzTabPosition" [(nzSelectedIndex)]="selectedIndex" (nzSelectChange)="log([$event])" nzType="editable-card">
-            <nz-tab *ngFor="let tab of tabs" nzClosable [nzTitle]="tab.name" (nzSelect)="log(['select', tab])"></nz-tab>
-        </nz-tabset>
-    </div>
+    <app-tabs></app-tabs>
     <div class="header-right">
         <div class="cluster-label">
             <label>Cluster:</label>

@@ -1,0 +1,5 @@
+<div class="tab-container">
+    <nz-tabset [nzTabPosition]="nzTabPosition" [nzSelectedIndex]="selectedIndex" nzType="editable-card" (nzAdd)="addTab()" (nzClose)="removeTab($event)">
+        <nz-tab *ngFor="let tab of tabs" nzClosable [nzTitle]="tab.name" (nzSelect)="selectTab(tab)"></nz-tab>
+    </nz-tabset>
+</div>

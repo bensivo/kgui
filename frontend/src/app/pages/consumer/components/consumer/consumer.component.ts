@@ -1,76 +1,79 @@
-import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { select } from '@ngneat/elf';
-import { combineLatest, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { Component, Input } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { SocketService } from 'src/app/socket/socket.service';
+import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
-  selector: 'app-consumers',
+  selector: 'app-consumer-view',
   templateUrl: './consumer.component.html',
-  styleUrls: ['./consumer.component.less']
+  styleUrls: ['./consumer.component.less'],
+
 })
-export class ConsumerComponent {
+export class ConsumerViewComponent {
+
   constructor(
-    private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
-    private messagesStore: MessagesStore,
-    private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
-    private router: Router,
+    private socketService: SocketService,
+    private messagesStore: MessagesStore
   ) { }
 
-  cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
-    select(s => s.active)
-  );
+  @Input()
+  cluster!: Cluster | undefined;
 
-  consumer$: Observable<Consumer> = combineLatest([this.route.params, this.consumerStore.store.entities$]).pipe(
-    map(([params, consumers]) => {
-      console.log(params, consumers)
-      const consumer = consumers.find(c => c.id === params.id) 
-      if (!consumer) {
-        this.router.navigate(['/consumers']);
+  @Input()
+  consumer!: Consumer;
+
+  @Input()
+  messages!: Message[];
+
+  @Input()
+  formGroup!: FormGroup;
+
+  get filters() {
+    return this.formGroup.get('filters') as FormArray
+  }
+
+  consume() {
+    this.messagesStore.store.update((s) => ({
+      ...s,
+      [this.consumer.id]: [],
+    }))
+
+    if (!this.cluster) {
+      alert("Please select a cluster");
+      return;
+    }
+    this.socketService.send({
+      Topic: 'message.consume',
+      Data: {
+        ConsumerId: this.consumer.id,
+        ClusterName: this.cluster.Name,
+        Topic: this.formGroup.value.topic,
+        Partition: 0,
+        Offset: this.formGroup.value.offset
       }
-      return consumer as Consumer;
-    })
-  )
+    });
+  }
 
-  messages$: Observable<Message[]> = this.messagesStore.forConsumer(this.consumer$);
+  addFilter() {
+    this.filters.push(new FormControl(''));
+  }
 
-  data$ = combineLatest([
-    this.cluster$,
-    this.consumer$,
-    this.messages$,
-  ]).pipe(
-    map(([cluster, consumer, messages]) => {
+  deleteFilter(index: number) {
+    this.filters.removeAt(index)
+  }
 
-      const formGroup: FormGroup = this.formBuilder.group({
-          name: new FormControl(consumer.name),
-          topic: new FormControl(consumer.topic),
-          partition: new FormControl(0),
-          offset: new FormControl(consumer.offset),
-          filters: new FormArray(consumer.filters.map(filter => new FormControl(filter)))
-      })
-      
-      formGroup.valueChanges.subscribe((value) => {
-        this.consumerStore.store.upsert({
-          id: consumer.id,
-          topic: value.topic,
-          name: value.name,
-          offset: value.offset,
-          filters: value.filters,
-        });
-      })
+  filterTrackBy(i: number){
+    return i
+  }
 
-      return {
-        cluster,
-        consumer,
-        formGroup,
-        messages,
-      }
-    })
-  )
+  messageTrackBy(i: number, msg: Message){
+    return msg.offset // TODO: test if 2 consumers end up with messages using the same offset
+  }
+
+  deleteConsumer() {
+    this.consumerStore.store.remove(this.consumer.id);
+  }
 }

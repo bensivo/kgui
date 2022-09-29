@@ -43,9 +43,6 @@ export class HeaderComponent implements OnInit{
     }
   }
 
-  log(args: any[]): void {
-    console.log(args);
-  }
 
   onClickToggleNav() {
     this.navStore.store.update(s => ({

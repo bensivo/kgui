@@ -1,27 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './header.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { ReactiveFormsModule } from '@angular/forms';
-import { TabsModule } from '../tabs/tabs.module';
-
-
+import { TabsComponent } from './tabs.component';
+import { TabsContainer } from './tabs.container';
 
 @NgModule({
   declarations: [
-    HeaderComponent
+    TabsContainer,
+    TabsComponent,
   ],
   imports: [
     CommonModule,
     NzIconModule,
     NzSelectModule,
-    ReactiveFormsModule,
-    TabsModule,
+    NzTabsModule,
   ],
   exports: [
-    HeaderComponent,
+    TabsContainer
   ],
 })
-export class HeaderModule { }
+export class TabsModule { }

@@ -1,5 +1,63 @@
-<div class="content" *ngIf="data$ | async as data">
+<div class="content">
+    <div class="content-left">
+        <div class="title center-parent">
+            <form [formGroup]="formGroup">
+                <input nz-input nzBorderless formControlName="name" />
+            </form>
 
-    <app-consumer-view [cluster]="data.cluster" [consumer]="data.consumer" [messages]="data.messages" [formGroup]="data.formGroup"></app-consumer-view>
+            <i class="delete clickable vcenter" nz-icon nzType="delete" nzTheme="outline" (click)="deleteConsumer()"></i>
+        </div>
 
+        <form nz-form [formGroup]="formGroup">
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Topic</label>
+                </div>
+                <div class="form-input">
+                    <input nz-input placeholder="Topic" formControlName="topic" />
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Offset</label>
+                </div>
+                <div class="form-input">
+                    <nz-input-number formControlName="offset" [nzStep]="1"></nz-input-number>
+                </div>
+            </div>
+
+            <div formArrayName="filters" class="form-section" *ngFor="let filter of filters.controls; let i = index; trackBy: filterTrackBy">
+                <div class="form-label">
+                    <label *ngIf="i===0">Filters</label>
+                </div>
+                <div class="form-input filter-input">
+                    <input nz-input [formControlName]="i" />
+                    <div class="center-parent">
+                        <i class="vcenter clickable" nz-icon nzType="minus-circle" nzTheme="outline" (click)="deleteFilter(i)"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-label"> </div>
+                <div class="form-input">
+                    <button nz-button nzType="primary" (click)="addFilter()">Add Filter</button>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-label"> </div>
+                <div class="form-input">
+                    <button nz-button nzType="primary" (click)="consume()">Consume</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="content-right">
+        <div class="message-text" *ngFor="let message of messages; trackBy: messageTrackBy">
+            <app-message [message]=" message "></app-message>
+        </div>
+    </div>
 </div>
