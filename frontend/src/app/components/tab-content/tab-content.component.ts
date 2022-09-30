@@ -7,10 +7,6 @@ import { Tab } from 'src/app/store/tab.store';
   styleUrls: ['./tab-content.component.less']
 })
 export class TabContentComponent{
-
-
   @Input()
   tab!: Tab;
-
-  
 }

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
@@ -16,7 +17,8 @@ export class ConsumerViewComponent {
   constructor(
     private consumerStore: ConsumerStore,
     private socketService: SocketService,
-    private messagesStore: MessagesStore
+    private messagesStore: MessagesStore,
+    private notification: NzNotificationService,
   ) { }
 
   @Input()
@@ -42,7 +44,7 @@ export class ConsumerViewComponent {
     }))
 
     if (!this.cluster) {
-      alert("Please select a cluster");
+      this.notification.create('error', 'Error', 'Please select a cluster')
       return;
     }
     this.socketService.send({
