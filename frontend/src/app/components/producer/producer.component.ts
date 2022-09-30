@@ -8,8 +8,8 @@ import * as uuid from 'uuid';
 
 @Component({
   selector: 'app-producer-view',
-  templateUrl: './producer-view.component.html',
-  styleUrls: ['./producer-view.component.less']
+  templateUrl: './producer.component.html',
+  styleUrls: ['./producer.component.less']
 })
 export class ProducerViewComponent {
   constructor(

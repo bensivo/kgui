@@ -9,10 +9,8 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
-import { ConsumersRoutingModule } from '../consumer/consumer-routing.module';
-import { ProducerViewComponent } from './components/producer-view/producer-view.component';
-import { ProducerContainer } from './components/producer-view/producer.container';
-import { ProducersRoutingModule } from './producer-routing.module';
+import { ProducerViewComponent } from './producer.component';
+import { ProducerContainer } from './producer.container';
 
 
 
@@ -22,11 +20,9 @@ import { ProducersRoutingModule } from './producer-routing.module';
     ProducerViewComponent,
   ],
   imports: [
-    ProducersRoutingModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    ConsumersRoutingModule,
     NzSelectModule,
     NzTreeViewModule,
     NzIconModule,

@@ -35,9 +35,47 @@ export class AppComponent implements OnInit {
         }))
       });
 
-      this.socketService.send({
-        Topic: 'clusters.refresh',
-        Data: {},
-      });
+    this.socketService.send({
+      Topic: 'clusters.refresh',
+      Data: {},
+    });
+
+    this.storageService.load({
+      cluster: {
+        clusters: [],
+      },
+      consumer: [
+        {
+          id: 'numbers',
+          name: 'numbers',
+          topic: 'numbers',
+          offset: 0,
+          filters: []
+        }
+      ],
+      producer: [
+        {
+          id: 'numbers',
+          name: 'numbers',
+          topic: 'numbers',
+          partition: 0,
+          message: new Date().toISOString(),
+        }
+      ]
+    });
+
+     this.socketService.send({
+      Topic: 'clusters.add',
+      Data: {
+        BootstrapServer: "localhost:9092",
+        Name: "localhost",
+        SSLCaCertificatePath: "",
+        SSLEnabled: false,
+        SSLSkipVerification: false,
+        SaslMechanism: "",
+        SaslPassword: "",
+        SaslUsername: "",
+      },
+    });
   }
 }

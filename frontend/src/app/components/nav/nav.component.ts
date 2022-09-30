@@ -23,6 +23,7 @@ export class NavComponent {
   producers$: Observable<Producer[]> = this.producerStore.store.entities$
 
   onSelectConsumer(consumer: Consumer) {
+    console.log(consumer)
     const existing = this.tabStore.store.entities.find(t => 
       t.targetType === 'consumer' && t.targetId === consumer.id
     )
