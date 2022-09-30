@@ -40,42 +40,44 @@ export class AppComponent implements OnInit {
       Data: {},
     });
 
-    this.storageService.load({
-      cluster: {
-        clusters: [],
-      },
-      consumer: [
-        {
-          id: 'numbers',
-          name: 'numbers',
-          topic: 'numbers',
-          offset: 0,
-          filters: []
-        }
-      ],
-      producer: [
-        {
-          id: 'numbers',
-          name: 'numbers',
-          topic: 'numbers',
-          partition: 0,
-          message: new Date().toISOString(),
-        }
-      ]
-    });
+    //  SEEDS for local testing
 
-     this.socketService.send({
-      Topic: 'clusters.add',
-      Data: {
-        BootstrapServer: "localhost:9092",
-        Name: "localhost",
-        SSLCaCertificatePath: "",
-        SSLEnabled: false,
-        SSLSkipVerification: false,
-        SaslMechanism: "",
-        SaslPassword: "",
-        SaslUsername: "",
-      },
-    });
+    // this.storageService.load({
+    //   cluster: {
+    //     clusters: [],
+    //   },
+    //   consumer: [
+    //     {
+    //       id: 'numbers',
+    //       name: 'numbers',
+    //       topic: 'numbers',
+    //       offset: 0,
+    //       filters: []
+    //     }
+    //   ],
+    //   producer: [
+    //     {
+    //       id: 'numbers',
+    //       name: 'numbers',
+    //       topic: 'numbers',
+    //       partition: 0,
+    //       message: new Date().toISOString(),
+    //     }
+    //   ]
+    // });
+
+    //  this.socketService.send({
+    //   Topic: 'clusters.add',
+    //   Data: {
+    //     BootstrapServer: "localhost:9092kasdjflkasdfaksdfjalksdfalsdhfkashdfkashdfkasdhfkajdsh",
+    //     Name: "localhost",
+    //     SSLCaCertificatePath: "",
+    //     SSLEnabled: false,
+    //     SSLSkipVerification: false,
+    //     SaslMechanism: "",
+    //     SaslPassword: "",
+    //     SaslUsername: "",
+    //   },
+    // });
   }
 }
