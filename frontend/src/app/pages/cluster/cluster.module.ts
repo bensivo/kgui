@@ -12,11 +12,13 @@ import { AddClusterComponent } from './components/add-cluster/add-cluster.compon
 import { ClusterComponent } from './components/cluster/cluster.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { AddClusterContainer } from './components/add-cluster/add-cluster.container';
 
 @NgModule({
   declarations: [
     ClusterComponent,
     AddClusterComponent,
+    AddClusterContainer
   ],
   imports: [
     ClusterRoutingModule,

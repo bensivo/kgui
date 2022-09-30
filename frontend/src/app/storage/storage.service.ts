@@ -31,8 +31,6 @@ export class StorageService {
         this.socketService.stream<PersistedState>('load.requested').subscribe((data) => {
             this.load(data);
         });
-
-
     }
 
     save() {

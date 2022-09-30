@@ -34,6 +34,10 @@ export class ClusterComponent implements OnInit {
     this.router.navigate(['/clusters/add']);
   }
 
+  editCluster(cluster: any) {
+    this.router.navigate([`/clusters/add/${cluster.Name}`]);
+  }
+
   deleteCluster(cluster: any) {
     this.socketService.send({
       Topic: 'clusters.remove',
