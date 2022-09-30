@@ -1,17 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { nanoid } from 'nanoid';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { NzTabPosition } from 'ng-zorro-antd/tabs';
-import { Tab, TabStore } from 'src/app/store/tab.store';
+import { TabStore } from 'src/app/store/tab.store';
+import { TabData } from './tabs.container';
 
 
 @Component({
   selector: 'app-tabs-component',
   templateUrl: './tabs.component.html',
-  styleUrls: ['./tabs.component.less']
+  styleUrls: ['./tabs.component.less'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TabsComponent{
   @Input()
-  tabs!: Tab[];
+  tabs!: TabData[];
 
   @Input()
   selectedIndex!: number;
@@ -33,7 +34,7 @@ export class TabsComponent{
     this.tabStore.store.remove(tab.id);
   }
 
-  selectTab(tab: Tab) {
+  selectTab(tab: TabData) {
     const id = tab.id;
     this.tabStore.selectTab(id);
   }

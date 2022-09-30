@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProducerComponent } from './components/producer/producer.component';
+import { ProducerContainer } from './components/producer-view/producer.container';
 
 const routes: Routes = [
-  { path: ':id', component: ProducerComponent },
+  { path: ':id', component: ProducerContainer },
 ];
 
 @NgModule({

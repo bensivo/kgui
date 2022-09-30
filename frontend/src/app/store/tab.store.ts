@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Entity, EntityStore } from './entity.store';
 
 export interface Tab extends Entity {
     active: boolean;
-    name: string;
     targetType: 'consumer' | 'producer';
     targetId:  string;
 }
@@ -19,5 +19,9 @@ export class TabStore {
         ...t,
         active: t.id === id
     }));
+   }
+
+   get tabs$(): Observable<Tab[]> {
+    return this.store.entities$
    }
 }

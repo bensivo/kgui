@@ -13,12 +13,7 @@ import { TabStore } from "src/app/store/tab.store";
     constructor(private tabStore: TabStore) { }
 
     tab$ = this.tabStore.store.entities$.pipe(
-      map((tabs) => {
-
-        const t = tabs.find((t) => t.active)
-        console.log(t);
-        return t;
-      })
+      map((tabs) => tabs.find((t) => t.active))
     );
 
     // TODO: Create an observable that gets consumer or producer information based on information in the tab

@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProducersRoutingModule } from './producer-routing.module';
-import { ProducerComponent } from './components/producer/producer.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
@@ -12,13 +11,14 @@ import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { ConsumersRoutingModule } from '../consumer/consumer-routing.module';
 import { ProducerViewComponent } from './components/producer-view/producer-view.component';
-import { NzButtonModule } from 'ng-zorro-antd/button';
+import { ProducerContainer } from './components/producer-view/producer.container';
+import { ProducersRoutingModule } from './producer-routing.module';
 
 
 
 @NgModule({
   declarations: [
-    ProducerComponent,
+    ProducerContainer,
     ProducerViewComponent,
   ],
   imports: [
@@ -35,6 +35,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzInputNumberModule,
     NzMenuModule,
     NzButtonModule,
+  ],
+  exports: [
+    ProducerContainer,
   ]
 })
 export class ProducerModule { }

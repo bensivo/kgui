@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { nanoid } from 'nanoid';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Producer, ProducerStore } from 'src/app/store/producer.store';
 import { Tab, TabStore } from 'src/app/store/tab.store';
@@ -35,7 +34,6 @@ export class NavComponent {
     const tab: Tab = {
       id: nanoid(),
       active: true,
-      name: consumer.name,
       targetType: 'consumer',
       targetId: consumer.id
     };
@@ -54,7 +52,6 @@ export class NavComponent {
     const tab: Tab = {
       id: nanoid(),
       active: true,
-      name: producer.name,
       targetType: 'producer',
       targetId: producer.id
     };

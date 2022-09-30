@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ClusterStore } from 'src/app/store/cluster.store';
 import { ProducerStore } from 'src/app/store/producer.store';
@@ -10,27 +9,31 @@ import { RequestStore } from 'src/app/store/request.store';
 
 @Component({
   selector: 'app-producer',
-  templateUrl: './producer.component.html',
-  styleUrls: ['./producer.component.less']
+  template: `
+    <app-producer-view *ngIf="producerViewData$ | async as data" [producer]="data.producer" [cluster]="data.cluster" [formGroup]="data.formGroup" [requests]="data.requests"></app-producer-view>
+  `,
 })
-export class ProducerComponent {
+export class ProducerContainer {
+
+  @Input()
+  producerId!: string;
+  producerId$ = new BehaviorSubject(this.producerId);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.producerId)  {
+      this.producerId$.next(changes.producerId.currentValue);
+    }
+  }
 
   constructor(
     private clusterStore: ClusterStore,
     private producerStore: ProducerStore,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private requestStore: RequestStore,
-    private router: Router,
   ) { }
 
   cluster$ = this.clusterStore.store.pipe(
     map(c => c.active)
   )
-
-  producerId$: Observable<string> = this.route.params.pipe(
-    map(params => params['id'])
-  );
 
   producer$ = this.producerId$
     .pipe(
@@ -39,7 +42,7 @@ export class ProducerComponent {
       }),
       map((producer) => {
         if (!producer) {
-          this.router.navigate(['/producers']);
+          console.error('could not get producer with id')
         }
         return producer;
       })

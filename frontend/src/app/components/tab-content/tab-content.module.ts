@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TabContentComponent } from './tab-content.component';
 import { TabContentContainer } from './tabs.container';
 import { ConsumerModule } from 'src/app/pages/consumer/consumer.module';
+import { ProducerModule } from 'src/app/pages/producer/producer.module';
 
 
 
@@ -14,6 +15,7 @@ import { ConsumerModule } from 'src/app/pages/consumer/consumer.module';
   imports: [
     CommonModule,
     ConsumerModule,
+    ProducerModule,
   ],
   exports: [
     TabContentComponent,

@@ -25,6 +25,11 @@ export class ConsumerContainer implements OnChanges{
   consumerId!: string;
 
   consumerId$ = new BehaviorSubject(this.consumerId);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.consumerId)  {
+      this.consumerId$.next(changes.consumerId.currentValue);
+    }
+  }
 
   constructor(
     private clusterStore: ClusterStore,
@@ -34,11 +39,7 @@ export class ConsumerContainer implements OnChanges{
     // private router: Router,
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.consumerId)  {
-      this.consumerId$.next(changes.consumerId.currentValue);
-    }
-  }
+
 
   cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
     select(s => s.active)

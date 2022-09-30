@@ -1,2 +1,2 @@
 <app-consumer *ngIf="tab.targetType==='consumer'" [consumerId]="tab.targetId"></app-consumer>
-<h1 *ngIf="tab.targetType==='producer'">producer</h1>
+<app-producer *ngIf="tab.targetType==='producer'" [producerId]="tab.targetId"></app-producer>
