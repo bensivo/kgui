@@ -22,7 +22,7 @@ export class TabsComponent{
   addTab() {
     this.tabStore.store.upsert({
       id: nanoid(),
-      name: 'Untitled',
+      name: 'Untitled' + this.tabs.length,
       sequence: 1,
       active: false,
     });
