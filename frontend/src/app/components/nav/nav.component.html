@@ -13,7 +13,7 @@
         <ul>
             <li *ngFor="let consumer of consumers$ | async" nz-menu-item>
                 <span>
-                    <a routerLink="/consumers/{{consumer.id}}">{{consumer.name}}</a>
+                    <a (click)="onSelectConsumer(consumer)">{{consumer.name}}</a>
                 </span>
             </li>
             <li nz-menu-item (click)="addConsumer()">
@@ -28,7 +28,7 @@
         <ul>
             <li *ngFor="let producer of producers$ | async" nz-menu-item>
                 <span>
-                    <a routerLink="/producers/{{producer.id}}">{{producer.name}}</a>
+                    <a (click)="onSelectProducer(producer)">{{producer.name}}</a>
                 </span>
             </li>
             <li nz-menu-item (click)="addProducer()">

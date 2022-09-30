@@ -1,1 +1,2 @@
-<p>{{tab.name}}</p>
+<app-consumer *ngIf="tab.targetType==='consumer'" [consumerId]="tab.targetId"></app-consumer>
+<h1 *ngIf="tab.targetType==='producer'">producer</h1>

@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
 
 @Component({
-  selector: 'app-consumers',
+  selector: 'app-consumer',
   template: `
     <app-consumer-view *ngIf="data$ | async as data" [cluster]="data.cluster" [consumer]="data.consumer" [messages]="data.messages" [formGroup]="data.formGroup"></app-consumer-view>
   `,
@@ -19,26 +19,37 @@ import { Message, MessagesStore } from 'src/app/store/messages.store';
     }
   `]
 })
-export class ConsumerContainer {
+export class ConsumerContainer implements OnChanges{
+
+  @Input()
+  consumerId!: string;
+
+  consumerId$ = new BehaviorSubject(this.consumerId);
+
   constructor(
     private clusterStore: ClusterStore,
     private consumerStore: ConsumerStore,
     private messagesStore: MessagesStore,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private router: Router,
+    // private router: Router,
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.consumerId)  {
+      this.consumerId$.next(changes.consumerId.currentValue);
+    }
+  }
 
   cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
     select(s => s.active)
   );
 
-  consumer$: Observable<Consumer> = combineLatest([this.route.params, this.consumerStore.store.entities$]).pipe(
-    map(([params, consumers]) => {
-      console.log(params, consumers)
-      const consumer = consumers.find(c => c.id === params.id)
+  consumer$: Observable<Consumer> = combineLatest([this.consumerId$, this.consumerStore.store.entities$]).pipe(
+    map(([consumerId, consumers]) => {
+      const consumer = consumers.find(c => c.id === consumerId)
       if (!consumer) {
-        this.router.navigate(['/consumers']);
+        console.error('Cannot find consumer with id', consumerId)
+        // this.router.navigate(['/consumers']);
       }
       return consumer as Consumer;
     })

@@ -33,6 +33,9 @@ import { ConsumerViewComponent } from './components/consumer/consumer.component'
     NzInputNumberModule,
     NzButtonModule,
     NzMenuModule,
-  ]
+  ],
+  exports: [
+    ConsumerContainer,
+  ],
 })
 export class ConsumerModule { }

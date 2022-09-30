@@ -3,8 +3,9 @@ import { Entity, EntityStore } from './entity.store';
 
 export interface Tab extends Entity {
     active: boolean;
-    sequence: number;
     name: string;
+    targetType: 'consumer' | 'producer';
+    targetId:  string;
 }
 
 @Injectable({
@@ -12,4 +13,11 @@ export interface Tab extends Entity {
 })
 export class TabStore {
    store = new EntityStore<Tab>('tab', [ ]);
+
+   selectTab(id: string) {
+    this.store.entities = this.store.entities.map((t) => ({
+        ...t,
+        active: t.id === id
+    }));
+   }
 }

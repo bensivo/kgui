@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { nanoid } from 'nanoid';
 import { NzTabPosition } from 'ng-zorro-antd/tabs';
 import { Tab, TabStore } from 'src/app/store/tab.store';
-import * as uuid from 'uuid';
 
 
 @Component({
@@ -14,18 +13,19 @@ export class TabsComponent{
   @Input()
   tabs!: Tab[];
 
+  @Input()
+  selectedIndex!: number;
+
   constructor(private tabStore: TabStore) { }
 
   nzTabPosition: NzTabPosition = 'top';
-  selectedIndex = 0;
 
   addTab() {
-    this.tabStore.store.upsert({
-      id: nanoid(),
-      name: 'Untitled' + this.tabs.length,
-      sequence: 1,
-      active: false,
-    });
+    // this.tabStore.store.upsert({
+    //   id: nanoid(),
+    //   name: 'Untitled' + this.tabs.length,
+    //   active: false,
+    // });
   }
 
   removeTab(event: { index: number }) {
@@ -35,10 +35,7 @@ export class TabsComponent{
 
   selectTab(tab: Tab) {
     const id = tab.id;
-    this.tabStore.store.entities = this.tabStore.store.entities.map(tab => ({
-      ...tab,
-      active: tab.id === id
-    }));
+    this.tabStore.selectTab(id);
   }
 
   log(args: any[]): void {
