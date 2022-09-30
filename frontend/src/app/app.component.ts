@@ -66,18 +66,18 @@ export class AppComponent implements OnInit {
     //   ]
     // });
 
-     this.socketService.send({
-      Topic: 'clusters.add',
-      Data: {
-        BootstrapServer: "localhost:9092",
-        Name: "localhost",
-        SSLCaCertificatePath: "",
-        SSLEnabled: false,
-        SSLSkipVerification: false,
-        SaslMechanism: "",
-        SaslPassword: "",
-        SaslUsername: "",
-      },
-    });
+    //  this.socketService.send({
+    //   Topic: 'clusters.add',
+    //   Data: {
+    //     BootstrapServer: "localhost:9092",
+    //     Name: "localhost",
+    //     SSLCaCertificatePath: "",
+    //     SSLEnabled: false,
+    //     SSLSkipVerification: false,
+    //     SaslMechanism: "",
+    //     SaslPassword: "",
+    //     SaslUsername: "",
+    //   },
+    // });
   }
 }
