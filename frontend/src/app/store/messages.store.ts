@@ -62,7 +62,7 @@ export class MessagesStore {
         if (message.EOS) {
           this.pushMessage(consumerId, {
             type: MessageType.EOS,
-            data: 'End of Topic',
+            data: 'End of Stream',
             offset: -1,
             partition: -1,
             time: new Date().toISOString(),

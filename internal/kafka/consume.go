@@ -3,6 +3,7 @@ package kafka
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 	kgo "github.com/segmentio/kafka-go"
@@ -14,6 +15,59 @@ type ConsumeArgs struct {
 	Offset    int
 }
 
+// Consume messages from a single topic-partition pair, until a signal is received on the end channel.
+//
+// The res channel is not closed until the end signal is received.
+func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int) error {
+	defer func() {
+		fmt.Println("Closing consumer")
+		close(res)
+	}()
+
+	conn, err := c.DialLeader(args.Topic, args.Partition)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	_, err = seekRelativeOffset(conn, int64(args.Offset))
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	for {
+		select {
+		case <-end:
+			fmt.Printf("Received end signal. Closing consumer for topic %s\n", args.Topic)
+			return nil
+
+		default:
+			conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+			fmt.Printf("Reading Batch\n")
+			batch := conn.ReadBatch(1e3, 1e6)
+
+			fmt.Println("Got batch", batch.Offset())
+
+			for {
+				msg, err := batch.ReadMessage()
+				if err != nil {
+					fmt.Println("Failed to read message", err)
+					break
+				}
+				res <- msg
+			}
+
+			if err := batch.Close(); err != nil {
+				fmt.Println("Failed to close batch:", err)
+			}
+		}
+	}
+}
+
+// Consume messages from a single topic-partition pair, until the end of the partition
+//
+// Unlike ConsumeF, this function self-terminates once the end of the partition is reached
 func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
 	defer func() {
 		fmt.Println("Closing consumer")
@@ -50,7 +104,6 @@ func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
 			break
 		}
 
-		// fmt.Printf("%d - %s\n", msg.Offset, string(msg.Value))
 		res <- msg
 
 		if msg.Offset == lastOffset-1 {
@@ -69,7 +122,7 @@ func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {
 		seekPos = kafka.SeekEnd
 	}
 
-	offset, err := conn.Seek(AbsInt(offset), seekPos)
+	offset, err := conn.Seek(absInt(offset), seekPos)
 	if err != nil {
 		fmt.Println("Failed to seek offset", err)
 		return -1, err
@@ -78,7 +131,7 @@ func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {
 	return offset, nil
 }
 
-func AbsInt(n int64) int64 {
+func absInt(n int64) int64 {
 	if n < 0 {
 		return -n
 	} else {

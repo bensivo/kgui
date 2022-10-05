@@ -4,7 +4,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { SocketService } from 'src/app/socket/socket.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
-import { Message, MessagesStore } from 'src/app/store/messages.store';
+import { Message, MessagesStore, MessageType } from 'src/app/store/messages.store';
 
 @Component({
   selector: 'app-consumer-view',
@@ -12,7 +12,7 @@ import { Message, MessagesStore } from 'src/app/store/messages.store';
   styleUrls: ['./consumer.component.less'],
 
 })
-export class ConsumerViewComponent {
+export class ConsumerComponent {
 
   constructor(
     private consumerStore: ConsumerStore,
@@ -37,6 +37,10 @@ export class ConsumerViewComponent {
     return this.formGroup.get('filters') as FormArray
   }
 
+  get isConsuming(): boolean {
+    return this.messages.length > 0 && this.messages[this.messages.length-1].type !== MessageType.EOS
+  }
+
   consume() {
     this.messagesStore.store.update((s) => ({
       ...s,
@@ -55,6 +59,15 @@ export class ConsumerViewComponent {
         Topic: this.formGroup.value.topic,
         Partition: 0,
         Offset: this.formGroup.value.offset
+      }
+    });
+  }
+
+  stop() {
+    this.socketService.send({
+      Topic: 'message.stop',
+      Data: {
+        ConsumerId: this.consumer.id,
       }
     });
   }

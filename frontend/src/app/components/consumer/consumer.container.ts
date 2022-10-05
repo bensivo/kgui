@@ -36,10 +36,7 @@ export class ConsumerContainer implements OnChanges{
     private consumerStore: ConsumerStore,
     private messagesStore: MessagesStore,
     private formBuilder: FormBuilder,
-    // private router: Router,
   ) { }
-
-
 
   cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
     select(s => s.active)
@@ -50,7 +47,6 @@ export class ConsumerContainer implements OnChanges{
       const consumer = consumers.find(c => c.id === consumerId)
       if (!consumer) {
         console.error('Cannot find consumer with id', consumerId)
-        // this.router.navigate(['/consumers']);
       }
       return consumer as Consumer;
     })
