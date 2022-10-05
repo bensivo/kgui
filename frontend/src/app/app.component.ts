@@ -35,30 +35,36 @@ export class AppComponent implements OnInit {
         }))
       });
 
+    this.socketService.send({
+      Topic: 'clusters.refresh',
+      Data: {},
+    });
+
+    //  SEEDS for local testing
+
     // this.storageService.load({
     //   cluster: {
     //     clusters: [],
     //   },
-    //   consumer: {
-    //     ['numbers']: {
+    //   consumer: [
+    //     {
     //       id: 'numbers',
     //       name: 'numbers',
     //       topic: 'numbers',
     //       offset: 0,
     //       filters: []
-    //     },
-    //     ['asdf']: {
-    //       id: 'asdf',
-    //       name: 'event stream',
-    //       topic: 'deming.event.stream',
-    //       offset: -1,
-    //       filters: []
     //     }
-    //   },
-    //   producer: {},
+    //   ],
+    //   producer: [
+    //     {
+    //       id: 'numbers',
+    //       name: 'numbers',
+    //       topic: 'numbers',
+    //       partition: 0,
+    //       message: new Date().toISOString(),
+    //     }
+    //   ]
     // });
-
-
 
     //  this.socketService.send({
     //   Topic: 'clusters.add',

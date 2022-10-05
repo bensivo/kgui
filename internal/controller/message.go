@@ -20,6 +20,8 @@ func (c *MessageController) Handle(msg Message) {
 		c.Produce(msg.Data)
 	case "message.consume":
 		c.Consume(msg.Data)
+	case "message.stop":
+		c.Stop(msg.Data)
 	}
 }
 
@@ -58,6 +60,8 @@ func (c *MessageController) Produce(data interface{}) {
 
 }
 
+var consumers map[string]chan int = make(map[string]chan int)
+
 type ConsumePayload struct {
 	ConsumerId  string
 	ClusterName string
@@ -73,16 +77,25 @@ func (c *MessageController) Consume(data interface{}) {
 		log.Println(err)
 	}
 
-	var cluster kafka.Cluster = state[payload.ClusterName]
+	if consumers[payload.ConsumerId] != nil {
+		fmt.Printf("Consumer %s already active. Sending end signal.\n", payload.ConsumerId)
+		consumers[payload.ConsumerId] <- 1
+	}
 
+	var cluster kafka.Cluster = state[payload.ClusterName]
 	var args = kafka.ConsumeArgs{
 		Topic:     payload.Topic,
 		Partition: payload.Partition,
 		Offset:    payload.Offset,
 	}
+
 	var results = make(chan kgo.Message)
+	var end = make(chan int)
+	consumers[payload.ConsumerId] = end
+
 	go func() {
-		err = cluster.Consume(args, results)
+		// err = cluster.Consume(args, results)
+		err = cluster.ConsumeF(args, results, end)
 		if err != nil {
 			log.Println(err)
 
@@ -115,4 +128,22 @@ func (c *MessageController) Consume(data interface{}) {
 
 		fmt.Printf("Closing stream on Topic: %s\b", payload.Topic)
 	}()
+}
+
+type ConsumeStopPayload struct {
+	ConsumerId string
+}
+
+func (c *MessageController) Stop(data interface{}) {
+	var payload ConsumePayload
+	err := mapstructure.Decode(data, &payload)
+	if err != nil {
+		log.Println(err)
+	}
+
+	if consumers[payload.ConsumerId] != nil {
+		fmt.Printf("Sending end signal to consumer %s.\n", payload.ConsumerId)
+		consumers[payload.ConsumerId] <- 1
+		consumers[payload.ConsumerId] = nil
+	}
 }

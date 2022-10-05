@@ -1,31 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SocketService } from 'src/app/socket/socket.service';
+import { ClusterStore } from 'src/app/store/cluster.store';
 import { Cluster } from '../cluster/cluster.component';
 
 @Component({
-  selector: 'app-add-cluster',
+  selector: 'app-add-cluster-component',
   templateUrl: './add-cluster.component.html',
   styleUrls: ['./add-cluster.component.less']
 })
 export class AddClusterComponent implements OnInit {
 
+  @Input()
   formGroup!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private socketService: SocketService, private router: Router ) { }
+  constructor(private socketService: SocketService, private router: Router,) { }
 
-  ngOnInit(): void {
-    this.formGroup = this.formBuilder.group({
-      name: new FormControl(''),
-      bootstrapServer: new FormControl(''),
-      saslEnabled: new FormControl(false),
-      saslMechanism: new FormControl(''),
-      saslUsername: new FormControl(''),
-      saslPassword: new FormControl(''),
-      sslEnabled: new FormControl(false),
-      sslSkipVerification: new FormControl(false),
-    });
+
+  async ngOnInit(): Promise<void> {
+    console.log(this.formGroup.value)
+    this.socketService.stream('clusters.changed').subscribe(() => {
+      this.router.navigate(['/clusters']);
+    })
   }
 
   cancel() {
@@ -40,7 +39,7 @@ export class AddClusterComponent implements OnInit {
         BootstrapServer: this.formGroup.value.bootstrapServer,
         SaslMechanism: this.formGroup.value.saslEnabled ? this.formGroup.value.saslMechanism : '',
         SaslUsername: this.formGroup.value.saslEnabled ? this.formGroup.value.saslUsername : '',
-        SaslPassword:this.formGroup.value.saslEnabled ?  this.formGroup.value.saslPassword : '',
+        SaslPassword: this.formGroup.value.saslEnabled ? this.formGroup.value.saslPassword : '',
         SSLEnabled: this.formGroup.value.sslEnabled,
         SSLCaCertificatePath: '', // TODO: implement
         SSLSkipVerification: this.formGroup.value.sslEnabled && this.formGroup.value.sslSkipVerification,

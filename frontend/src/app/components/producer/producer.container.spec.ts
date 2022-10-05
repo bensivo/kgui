@@ -4,14 +4,14 @@ import { ProducerStore } from 'src/app/store/producer.store';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClusterStore } from 'src/app/store/cluster.store';
 
-import { ProducerComponent } from './producer.component';
+import { ProducerContainer } from './producer.container';
 import { BehaviorSubject, of } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RequestStore } from 'src/app/store/request.store';
 
-describe('ProducerComponent', () => {
-  let component: ProducerComponent;
-  let fixture: ComponentFixture<ProducerComponent>;
+describe('ProducerContainer', () => {
+  let component: ProducerContainer;
+  let fixture: ComponentFixture<ProducerContainer>;
 
   const clusterStore = {
     store: of({})
@@ -34,7 +34,7 @@ describe('ProducerComponent', () => {
       imports: [
         ReactiveFormsModule,
       ],
-      declarations: [ ProducerComponent ],
+      declarations: [ ProducerContainer ],
       providers: [
         { provide: ClusterStore, useValue: clusterStore},
         { provide: ProducerStore, useValue: producerStore},
@@ -50,7 +50,7 @@ describe('ProducerComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProducerComponent);
+    fixture = TestBed.createComponent(ProducerContainer);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

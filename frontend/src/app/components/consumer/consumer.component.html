@@ -45,10 +45,16 @@
                     <button nz-button nzType="primary" (click)="addFilter()">Add Filter</button>
                 </div>
             </div>
-            <div class="form-section">
+            <div class="form-section" *ngIf="!isConsuming">
                 <div class="form-label"> </div>
                 <div class="form-input">
                     <button nz-button nzType="primary" (click)="consume()">Consume</button>
+                </div>
+            </div>
+            <div class="form-section" *ngIf="isConsuming">
+                <div class="form-label"> </div>
+                <div class="form-input">
+                    <button nz-button nzType="primary" (click)="stop()">Stop</button>
                 </div>
             </div>
         </form>

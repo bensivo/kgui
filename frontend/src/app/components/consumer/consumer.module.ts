@@ -3,28 +3,26 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
-import { ConsumerComponent } from './components/consumer/consumer.component';
-import { ConsumersRoutingModule } from './consumer-routing.module';
+import { ConsumerContainer } from './consumer.container';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { ConsumerViewComponent } from './components/consumer-view/consumer-view.component';
-import { MessageComponent } from './components/message/message.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { ConsumerComponent } from './consumer.component';
+import { MessageModule } from '../message/message.module';
 
 @NgModule({
   declarations: [
+    ConsumerContainer,
     ConsumerComponent,
-    ConsumerViewComponent,
-    MessageComponent,
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MessageModule,
     FormsModule,
-    ConsumersRoutingModule,
     NzSelectModule,
     NzTreeViewModule,
     NzIconModule,
@@ -33,6 +31,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzInputNumberModule,
     NzButtonModule,
     NzMenuModule,
-  ]
+  ],
+  exports: [
+    ConsumerContainer,
+  ],
 })
 export class ConsumerModule { }

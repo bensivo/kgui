@@ -14,13 +14,17 @@ export class EntityStore<T extends Entity> {
 
     protected store: Store<any, EntityState<T>>;
 
-    constructor(name: string) {
+    constructor(name: string, initial: T[] = []) {
         this.store = createStore(
             {
                 name,
             },
             withProps<EntityState<T>>({})
         )
+
+        for(const i of initial) {
+            this.upsert(i)
+        }
     }
 
     get state() {
@@ -28,6 +32,18 @@ export class EntityStore<T extends Entity> {
     }
 
     set state(state: EntityState<T>) {
+        this.store.update(_ => state);
+    }
+
+    get entities() {
+        return Object.values(this.state);
+    }
+
+    set entities(entities: T[]) {
+        const state: Record<string, T> = {};
+        for(let i=0; i<entities.length; i++) {
+            state[entities[i].id] = entities[i]
+        }
         this.store.update(_ => state);
     }
 

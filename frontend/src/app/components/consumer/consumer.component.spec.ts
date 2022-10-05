@@ -4,15 +4,15 @@ import { SocketService } from 'src/app/socket/socket.service';
 import { ConsumerStore } from 'src/app/store/consumer.store';
 import { MessagesStore } from 'src/app/store/messages.store';
 
-import { ConsumerViewComponent } from './consumer-view.component';
+import { ConsumerComponent } from './consumer.component';
 
 describe('ConsumerViewComponent', () => {
-  let component: ConsumerViewComponent;
-  let fixture: ComponentFixture<ConsumerViewComponent>;
+  let component: ConsumerComponent;
+  let fixture: ComponentFixture<ConsumerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConsumerViewComponent ],
+      declarations: [ ConsumerComponent ],
       providers: [
         {provide: ConsumerStore, useValue: {}},
         {provide: SocketService, useValue: {}},
@@ -23,7 +23,7 @@ describe('ConsumerViewComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConsumerViewComponent);
+    fixture = TestBed.createComponent(ConsumerComponent);
     component = fixture.componentInstance;
     component.formGroup = new FormGroup({
       filters: new FormArray([]),

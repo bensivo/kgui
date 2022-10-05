@@ -3,13 +3,12 @@ import * as wails from '../../../wailsjs/go/main/App';
 import { SocketService } from "../socket/socket.service";
 import { ClusterState, ClusterStore } from "../store/cluster.store";
 import { Consumer, ConsumerStore } from "../store/consumer.store";
-import { EntityState } from "../store/entity.store";
 import { Producer, ProducerStore } from "../store/producer.store";
 
 export interface PersistedState {
     cluster: ClusterState,
-    consumer: EntityState<Consumer>,
-    producer: EntityState<Producer>,
+    consumer: Consumer[],
+    producer: Producer[],
 }
 
 @Injectable({
@@ -17,7 +16,7 @@ export interface PersistedState {
 })
 export class StorageService {
 
-    constructor (
+    constructor(
         private clusterStore: ClusterStore,
         private consumerStore: ConsumerStore,
         private producerStore: ProducerStore,
@@ -37,8 +36,8 @@ export class StorageService {
     save() {
         const state = {
             cluster: this.clusterStore.state,
-            consumer: this.consumerStore.store.state,
-            producer: this.producerStore.store.state,
+            consumer: this.consumerStore.store.entities,
+            producer: this.producerStore.store.entities,
         }
 
         console.log('Persisting state', state);
@@ -47,8 +46,16 @@ export class StorageService {
 
     load(state: PersistedState) {
         console.log('Loading state', state);
-        this.clusterStore.store.update((s) => state.cluster );
-        this.consumerStore.store.state = state.consumer;
-        this.producerStore.store.state =  state.producer;
+        this.consumerStore.store.entities = state.consumer;
+        this.producerStore.store.entities = state.producer;
+
+        for (const cluster of state.cluster.clusters) {
+            this.socketService.send({
+                Topic: 'clusters.add',
+                Data: {
+                    ...cluster
+                },
+            });
+        }
     }
 }

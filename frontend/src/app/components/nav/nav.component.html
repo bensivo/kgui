@@ -11,12 +11,12 @@
 
     <li nz-submenu nzIcon="api" nzTitle="Consumers">
         <ul>
-            <li *ngFor="let consumer of consumers$ | async" nz-menu-item>
+            <li *ngFor="let consumer of consumers$ | async" class="menu-item" (click)="onSelectConsumer(consumer)">
                 <span>
-                    <a routerLink="/consumers/{{consumer.id}}">{{consumer.name}}</a>
+                    <a routerLink="/workspace">{{consumer.name}}</a>
                 </span>
             </li>
-            <li nz-menu-item (click)="addConsumer()">
+            <li class="menu-item" (click)="addConsumer()">
                 <span>
                     Add Consumer +
                 </span>
@@ -26,12 +26,12 @@
 
     <li nz-submenu nzIcon="send" nzTitle="Producers">
         <ul>
-            <li *ngFor="let producer of producers$ | async" nz-menu-item>
+            <li *ngFor="let producer of producers$ | async" class="menu-item" (click)="onSelectProducer(producer)">
                 <span>
-                    <a routerLink="/producers/{{producer.id}}">{{producer.name}}</a>
+                    <a routerLink="/workspace">{{producer.name}}</a>
                 </span>
             </li>
-            <li nz-menu-item (click)="addProducer()">
+            <li class="menu-item" (click)="addProducer()">
                 <span>
                     Add Producer +
                 </span>

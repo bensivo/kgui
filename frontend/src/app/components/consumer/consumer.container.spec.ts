@@ -5,12 +5,12 @@ import { BehaviorSubject, of } from 'rxjs';
 import { ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
-import { ConsumerComponent } from './consumer.component';
+import { ConsumerContainer } from './consumer.container';
 
 
 describe('ConsumersComponent', () => {
-  let component: ConsumerComponent;
-  let fixture: ComponentFixture<ConsumerComponent>;
+  let component: ConsumerContainer;
+  let fixture: ComponentFixture<ConsumerContainer>;
 
   const clusterState = {
     clusters: [{
@@ -54,7 +54,7 @@ describe('ConsumersComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
-      declarations: [ConsumerComponent],
+      declarations: [ConsumerContainer],
       providers: [
         { provide: ClusterStore, useValue: clusterStore },
         { provide: ConsumerStore, useValue: consumerStore },
@@ -69,7 +69,7 @@ describe('ConsumersComponent', () => {
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(ConsumerComponent);
+    fixture = TestBed.createComponent(ConsumerContainer);
     component = fixture.componentInstance;
     fixture.detectChanges();
 

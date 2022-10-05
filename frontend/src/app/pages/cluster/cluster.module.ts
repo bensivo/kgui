@@ -10,13 +10,15 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { ClusterRoutingModule } from './cluster-routing.module';
 import { AddClusterComponent } from './components/add-cluster/add-cluster.component';
 import { ClusterComponent } from './components/cluster/cluster.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { AddClusterContainer } from './components/add-cluster/add-cluster.container';
 
 @NgModule({
   declarations: [
     ClusterComponent,
     AddClusterComponent,
+    AddClusterContainer
   ],
   imports: [
     ClusterRoutingModule,
