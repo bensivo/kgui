@@ -65,6 +65,7 @@ export class NavComponent {
       id: nanoid(),
       name: 'Untitled',
       topic: '',
+      follow: false,
       offset: 0,
       filters: [],
     });

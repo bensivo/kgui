@@ -9,6 +9,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ConsumerComponent } from './consumer.component';
 import { MessageModule } from '../message/message.module';
@@ -30,6 +31,7 @@ import { MessageModule } from '../message/message.module';
     NzInputModule,
     NzInputNumberModule,
     NzButtonModule,
+    NzSwitchModule,
     NzMenuModule,
   ],
   exports: [

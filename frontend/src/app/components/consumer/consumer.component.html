@@ -26,7 +26,14 @@
                     <nz-input-number formControlName="offset" [nzStep]="1"></nz-input-number>
                 </div>
             </div>
-
+            <div class="form-section">
+                <div class="form-label">
+                    <label>Follow</label>
+                </div>
+                <div class="form-input">
+                    <nz-switch formControlName="follow"></nz-switch>
+                </div>
+            </div>
             <div formArrayName="filters" class="form-section" *ngFor="let filter of filters.controls; let i = index; trackBy: filterTrackBy">
                 <div class="form-label">
                     <label *ngIf="i===0">Filters</label>
@@ -38,7 +45,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="form-section">
                 <div class="form-label"> </div>
                 <div class="form-input">

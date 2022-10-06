@@ -66,6 +66,7 @@ export class ConsumerContainer implements OnChanges{
         topic: new FormControl(consumer.topic),
         partition: new FormControl(0),
         offset: new FormControl(consumer.offset),
+        follow: new FormControl(consumer.follow),
         filters: new FormArray(consumer.filters.map(filter => new FormControl(filter)))
       })
 
@@ -75,9 +76,10 @@ export class ConsumerContainer implements OnChanges{
           topic: value.topic,
           name: value.name,
           offset: value.offset,
+          follow: value.follow,
           filters: value.filters,
         });
-      })
+      });
 
       return {
         cluster,

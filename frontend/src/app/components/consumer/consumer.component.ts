@@ -58,7 +58,8 @@ export class ConsumerComponent {
         ClusterName: this.cluster.Name,
         Topic: this.formGroup.value.topic,
         Partition: 0,
-        Offset: this.formGroup.value.offset
+        Offset: this.formGroup.value.offset,
+        Follow: this.formGroup.value.follow
       }
     });
   }

@@ -67,6 +67,7 @@ type ConsumePayload struct {
 	ClusterName string
 	Topic       string
 	Partition   int
+	Follow      bool
 	Offset      int
 }
 
@@ -90,12 +91,15 @@ func (c *MessageController) Consume(data interface{}) {
 	}
 
 	var results = make(chan kgo.Message)
-	var end = make(chan int)
-	consumers[payload.ConsumerId] = end
 
 	go func() {
-		// err = cluster.Consume(args, results)
-		err = cluster.ConsumeF(args, results, end)
+		if payload.Follow {
+			end := make(chan int)
+			consumers[payload.ConsumerId] = end
+			err = cluster.ConsumeF(args, results, end)
+		} else {
+			err = cluster.Consume(args, results)
+		}
 		if err != nil {
 			log.Println(err)
 

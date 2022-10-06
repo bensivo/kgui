@@ -5,6 +5,7 @@ export interface Consumer extends Entity{
     name: string;
     topic: string;
     offset: number;
+    follow: boolean;
     filters: string[];
 }
 
