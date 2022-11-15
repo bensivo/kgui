@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { SocketService } from 'src/app/socket/socket.service';
@@ -12,7 +12,7 @@ import { Message, MessagesStore, MessageType } from 'src/app/store/messages.stor
   styleUrls: ['./consumer.component.less'],
 
 })
-export class ConsumerComponent {
+export class ConsumerComponent{
 
   constructor(
     private consumerStore: ConsumerStore,

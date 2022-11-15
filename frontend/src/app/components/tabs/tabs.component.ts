@@ -21,17 +21,9 @@ export class TabsComponent{
 
   nzTabPosition: NzTabPosition = 'top';
 
-  addTab() {
-    // this.tabStore.store.upsert({
-    //   id: nanoid(),
-    //   name: 'Untitled' + this.tabs.length,
-    //   active: false,
-    // });
-  }
-
   removeTab(event: { index: number }) {
     const tab = this.tabs[event.index];
-    this.tabStore.store.remove(tab.id);
+    this.tabStore.removeTab(tab.id);
   }
 
   selectTab(tab: TabData) {

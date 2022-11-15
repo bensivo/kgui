@@ -73,5 +73,4 @@ export class EntityStore<T extends Entity> {
             ...state
         }));
     }
-
 }

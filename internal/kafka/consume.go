@@ -1,8 +1,10 @@
 package kafka
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -24,45 +26,70 @@ func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int)
 		close(res)
 	}()
 
-	conn, err := c.DialLeader(args.Topic, args.Partition)
+	offset, err := c.GetRelativeOffset(args.Topic, args.Partition, int64(args.Offset))
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Could not get offset")
+		return err
+	}
+	fmt.Printf("Relative offset: %d - Absolute offset: %d\n", args.Offset, offset)
+
+	dialer, err := c.GetDialer()
+	if err != nil {
+		log.Fatal("Failed to get dialer", err)
 		return err
 	}
 
-	_, err = seekRelativeOffset(conn, int64(args.Offset))
+	r := kgo.NewReader(kafka.ReaderConfig{
+		Brokers:   []string{c.BootstrapServer},
+		Topic:     args.Topic,
+		Partition: args.Partition,
+		MinBytes:  0,
+		MaxBytes:  1e6,
+		Dialer:    dialer,
+	})
+
+	err = r.SetOffset(offset)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("Could not set offset")
 		return err
 	}
 
-	for {
-		select {
-		case <-end:
-			fmt.Printf("Received end signal. Closing consumer for topic %s\n", args.Topic)
-			return nil
-
-		default:
-			conn.SetReadDeadline(time.Now().Add(1 * time.Second))
-			fmt.Printf("Reading Batch\n")
-			batch := conn.ReadBatch(1e3, 1e6)
-
-			fmt.Println("Got batch", batch.Offset())
-
-			for {
-				msg, err := batch.ReadMessage()
-				if err != nil {
-					fmt.Println("Failed to read message", err)
-					break
-				}
-				res <- msg
+	var wg sync.WaitGroup
+	wg.Add(1)
+	cancelable, cancel := context.WithCancel(context.Background())
+	go func() {
+		for {
+			m, err := r.ReadMessage(cancelable)
+			if err != nil {
+				fmt.Println(err)
+				break
 			}
+			res <- m
+		}
 
-			if err := batch.Close(); err != nil {
-				fmt.Println("Failed to close batch:", err)
+		fmt.Println("Finished reading message")
+		if err := r.Close(); err != nil {
+			log.Fatal("failed to close reader:", err)
+		}
+
+		wg.Done()
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-end:
+				fmt.Printf("Received end signal. Closing consumer for topic %s\n", args.Topic)
+				cancel()
+				return
+			default:
+				time.Sleep(1 * time.Second)
 			}
 		}
-	}
+	}()
+
+	wg.Wait()
+	return nil
 }
 
 // Consume messages from a single topic-partition pair, until the end of the partition
@@ -112,6 +139,31 @@ func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
 		}
 	}
 	return nil
+}
+
+func (c *Cluster) GetRelativeOffset(topic string, partition int, relativeOffset int64) (int64, error) {
+	conn, err := c.DialLeader(topic, partition)
+	defer func() {
+		err = conn.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	var seekPos int
+	if relativeOffset >= 0 {
+		seekPos = kafka.SeekStart
+	} else {
+		seekPos = kafka.SeekEnd
+	}
+
+	offset, err := conn.Seek(absInt(relativeOffset), seekPos)
+	if err != nil {
+		fmt.Println("Failed to seek offset", err)
+		return -1, err
+	}
+
+	return offset, nil
 }
 
 func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {
