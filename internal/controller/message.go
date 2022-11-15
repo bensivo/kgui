@@ -80,7 +80,7 @@ func (c *MessageController) Consume(data interface{}) {
 
 	if consumers[payload.ConsumerId] != nil {
 		fmt.Printf("Consumer %s already active. Sending end signal.\n", payload.ConsumerId)
-		consumers[payload.ConsumerId] <- 1
+		// consumers[payload.ConsumerId] <- 1
 	}
 
 	var cluster kafka.Cluster = state[payload.ClusterName]

@@ -59,7 +59,7 @@ export class SocketService {
   }
 
   public send<T>(msg: Message<T>) {
-    console.log('Send', msg);
+    // console.log('Send', msg);
     if (!this.connected) {
       throw new Error('Cannot send message. Websocket closed');
     }

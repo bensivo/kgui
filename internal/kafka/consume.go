@@ -35,10 +35,9 @@ func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int)
 
 	dialer, err := c.GetDialer()
 	if err != nil {
-		log.Fatal("Failed to get dialer", err)
+		fmt.Println("Failed to get dialer", err)
 		return err
 	}
-
 	r := kgo.NewReader(kafka.ReaderConfig{
 		Brokers:   []string{c.BootstrapServer},
 		Topic:     args.Topic,
@@ -69,7 +68,7 @@ func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int)
 
 		fmt.Println("Finished reading message")
 		if err := r.Close(); err != nil {
-			log.Fatal("failed to close reader:", err)
+			fmt.Println("Failed to close reader", err)
 		}
 
 		wg.Done()
@@ -143,12 +142,10 @@ func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
 
 func (c *Cluster) GetRelativeOffset(topic string, partition int, relativeOffset int64) (int64, error) {
 	conn, err := c.DialLeader(topic, partition)
-	defer func() {
-		err = conn.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}()
+	if err != nil {
+		fmt.Println(err)
+		return -1, err
+	}
 
 	var seekPos int
 	if relativeOffset >= 0 {
@@ -160,6 +157,12 @@ func (c *Cluster) GetRelativeOffset(topic string, partition int, relativeOffset 
 	offset, err := conn.Seek(absInt(relativeOffset), seekPos)
 	if err != nil {
 		fmt.Println("Failed to seek offset", err)
+		return -1, err
+	}
+
+	err = conn.Close()
+	if err != nil {
+		fmt.Println(err)
 		return -1, err
 	}
 

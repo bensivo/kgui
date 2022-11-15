@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { SocketService } from 'src/app/socket/socket.service';
@@ -12,16 +12,8 @@ import { Message, MessagesStore, MessageType } from 'src/app/store/messages.stor
   styleUrls: ['./consumer.component.less'],
 
 })
-export class ConsumerComponent{
-
-  constructor(
-    private consumerStore: ConsumerStore,
-    private socketService: SocketService,
-    private messagesStore: MessagesStore,
-    private notification: NzNotificationService,
-  ) { }
-
-  @Input()
+export class ConsumerComponent implements AfterViewChecked {
+ @Input()
   cluster!: Cluster | undefined;
 
   @Input()
@@ -33,12 +25,33 @@ export class ConsumerComponent{
   @Input()
   formGroup!: FormGroup;
 
+  @ViewChild('messageScrollView') private messageScrollView!: ElementRef;
+
+  constructor(
+    private consumerStore: ConsumerStore,
+    private socketService: SocketService,
+    private messagesStore: MessagesStore,
+    private notification: NzNotificationService,
+  ) { }
+
+
+  ngAfterViewChecked() {
+    // Useful hook for after the messages have been loaded into the consumer
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.messageScrollView.nativeElement.scrollTop = this.messageScrollView.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+
   get filters() {
     return this.formGroup.get('filters') as FormArray
   }
 
   get isConsuming(): boolean {
-    return this.messages.length > 0 && this.messages[this.messages.length-1].type !== MessageType.EOS
+    return this.messages.length > 0 && this.messages[this.messages.length - 1].type !== MessageType.EOS
   }
 
   consume() {
@@ -81,11 +94,11 @@ export class ConsumerComponent{
     this.filters.removeAt(index)
   }
 
-  filterTrackBy(i: number){
+  filterTrackBy(i: number) {
     return i
   }
 
-  messageTrackBy(i: number, msg: Message){
+  messageTrackBy(i: number, msg: Message) {
     return msg.offset // TODO: test if 2 consumers end up with messages using the same offset
   }
 
