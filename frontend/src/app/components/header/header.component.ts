@@ -18,6 +18,9 @@ export class HeaderComponent implements OnInit{
   clusters$: Observable<Cluster[]> = this.clusterStore.store.pipe(
     select(s => s.clusters)
   );
+  activeCluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
+    select(s => s.active)
+  );
   cluster = new FormControl();
 
   tabs: Array<{ name: string; content: string; disabled: boolean }> = [];
@@ -33,6 +36,12 @@ export class HeaderComponent implements OnInit{
         active: cluster,
       }));
     });
+
+    this.activeCluster$.subscribe((active) => {
+      if (active !== this.cluster.value) {
+        this.cluster.setValue(active);
+      }
+    })
 
     for (let i = 0; i < 5; i++) {
       this.tabs.push({

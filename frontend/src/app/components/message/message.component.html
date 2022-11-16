@@ -1,17 +1,11 @@
 <div *ngIf="message.type === MessageType.MESSAGE">
-    <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource">
-        <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
-            <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
-            {{ node.name }}
-        </nz-tree-node>
+    <!-- Tree format -->
+    <app-message-tree *ngIf="messageFormat === 'TREE'" [message]="message"></app-message-tree>
 
-        <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
-            <nz-tree-node-toggle>
-                <span nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></span>
-            </nz-tree-node-toggle>
-            {{ node.name }}
-        </nz-tree-node>
-    </nz-tree-view>
+    <app-message-json *ngIf="messageFormat === 'JSON'" [message]="message"></app-message-json>
+
+    <app-message-raw *ngIf="messageFormat === 'RAW'" [message]="message"></app-message-raw>
+
 </div>
 <span *ngIf="message.type === MessageType.EOS">{{message.data}}</span>
 <span *ngIf="message.type === MessageType.SKIP">...Skipped {{message.data}}</span>

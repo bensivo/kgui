@@ -6,6 +6,7 @@ import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { ConsumerContainer } from './consumer.container';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -33,6 +34,7 @@ import { MessageModule } from '../message/message.module';
     NzButtonModule,
     NzSwitchModule,
     NzMenuModule,
+    NzRadioModule,
   ],
   exports: [
     ConsumerContainer,

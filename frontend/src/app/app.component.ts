@@ -30,9 +30,14 @@ export class AppComponent implements OnInit {
 
     this.socketService.stream<any[]>('clusters.changed')
       .subscribe((clusters: any[]) => {
+        let active = this.clusterStore.state.active;
+        if (!active && clusters.length > 0) {
+          active = clusters[0];
+        }
         this.clusterStore.store.update((_state: ClusterState) => ({
           clusters,
-        }))
+          active,
+        }));
       });
 
     this.socketService.send({
@@ -51,7 +56,7 @@ export class AppComponent implements OnInit {
           id: 'numbers',
           name: 'numbers',
           topic: 'numbers',
-          offset: 0,
+          offset: -10,
           follow: false,
           filters: []
         }
@@ -72,6 +77,20 @@ export class AppComponent implements OnInit {
       Data: {
         BootstrapServer: "localhost:9092",
         Name: "localhost",
+        SSLCaCertificatePath: "",
+        SSLEnabled: false,
+        SSLSkipVerification: false,
+        SaslMechanism: "",
+        SaslPassword: "",
+        SaslUsername: "",
+      },
+    });
+
+    this.socketService.send({
+      Topic: 'clusters.add',
+      Data: {
+        BootstrapServer: "bad:9092",
+        Name: "bad",
         SSLCaCertificatePath: "",
         SSLEnabled: false,
         SSLSkipVerification: false,

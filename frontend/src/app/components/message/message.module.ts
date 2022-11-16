@@ -9,11 +9,14 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
+import { MessageJsonComponent } from './message-json/message-json.component';
+import { MessageRawComponent } from './message-raw/message-raw.component';
+import { MessageTreeComponent } from './message-tree/message-tree.component';
 import { MessageComponent } from './message.component';
 
 @NgModule({
   declarations: [
-    MessageComponent,
+    MessageComponent, MessageJsonComponent, MessageTreeComponent, MessageRawComponent
   ],
   imports: [
     CommonModule,

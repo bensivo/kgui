@@ -27,6 +27,8 @@ export class ConsumerComponent implements AfterViewChecked {
 
   @ViewChild('messageScrollView') private messageScrollView!: ElementRef;
 
+  messageFormat: string = 'TREE';
+
   constructor(
     private consumerStore: ConsumerStore,
     private socketService: SocketService,
@@ -37,6 +39,7 @@ export class ConsumerComponent implements AfterViewChecked {
 
   ngAfterViewChecked() {
     // Useful hook for after the messages have been loaded into the consumer
+    // NOTE: This is currently causing a bug, user can't click in the scroll-area to go to a specific section.
     this.scrollToBottom();
   }
 

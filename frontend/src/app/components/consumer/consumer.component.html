@@ -67,9 +67,18 @@
 
     </div>
 
-    <div #messageScrollView class="content-right">
-        <div class="message-text" *ngFor="let message of messages; trackBy: messageTrackBy">
-            <app-message [message]=" message "></app-message>
+    <div class="content-right">
+        <div class="radio-container">
+            <nz-radio-group [(ngModel)]="messageFormat">
+                <label nz-radio-button nzValue="TREE">Tree</label>
+                <label nz-radio-button nzValue="JSON">JSON</label>
+                <label nz-radio-button nzValue="RAW">Raw</label>
+            </nz-radio-group>
+        </div>
+        <div #messageScrollView class="message-container">
+            <div class="message-text" *ngFor="let message of messages; trackBy: messageTrackBy">
+                <app-message [message]="message" [messageFormat]="messageFormat"></app-message>
+            </div>
         </div>
     </div>
 </div>
