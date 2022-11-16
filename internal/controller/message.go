@@ -6,8 +6,9 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
-	kgo "github.com/segmentio/kafka-go"
 	"gitlab.com/bensivo/kgui/internal/kafka"
+
+	kgo "github.com/segmentio/kafka-go"
 )
 
 type MessageController struct {
@@ -66,7 +67,6 @@ type ConsumePayload struct {
 	ConsumerId  string
 	ClusterName string
 	Topic       string
-	Partition   int
 	Follow      bool
 	Offset      int
 }
@@ -80,43 +80,39 @@ func (c *MessageController) Consume(data interface{}) {
 
 	if consumers[payload.ConsumerId] != nil {
 		fmt.Printf("Consumer %s already active. Sending end signal.\n", payload.ConsumerId)
-		// consumers[payload.ConsumerId] <- 1
+		consumers[payload.ConsumerId] <- 1
 	}
 
 	var cluster kafka.Cluster = state[payload.ClusterName]
+
+	res := make(chan kgo.Message)
+
 	var args = kafka.ConsumeArgs{
-		Topic:     payload.Topic,
-		Partition: payload.Partition,
-		Offset:    payload.Offset,
+		Topic:  payload.Topic,
+		Offset: payload.Offset,
 	}
+	if payload.Follow {
+		end := make(chan int)
+		consumers[payload.ConsumerId] = end
+		err = cluster.ConsumeAllF(args, res, end)
+	} else {
+		err = cluster.ConsumeAll(args, res)
+	}
+	if err != nil {
+		log.Println(err)
 
-	var results = make(chan kgo.Message)
-
-	go func() {
-		if payload.Follow {
-			end := make(chan int)
-			consumers[payload.ConsumerId] = end
-			err = cluster.ConsumeF(args, results, end)
-		} else {
-			err = cluster.Consume(args, results)
-		}
-		if err != nil {
-			log.Println(err)
-
-			Write(*c.Conn, "error", map[string]interface{}{
-				"Message": err.Error(),
-			})
-		}
-	}()
+		Write(*c.Conn, "error", map[string]interface{}{
+			"Message": err.Error(),
+		})
+	}
 
 	go func() {
 		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
-		for msg := range results {
+		for msg := range res {
 			Write(*c.Conn, "message.consumed", map[string]interface{}{
 				"ConsumerId":  payload.ConsumerId,
 				"ClusterName": payload.ClusterName,
 				"Topic":       payload.Topic,
-				"Partition":   payload.Partition,
 				"Message":     msg,
 				"EOS":         false,
 			})
@@ -126,7 +122,6 @@ func (c *MessageController) Consume(data interface{}) {
 			"ConsumerId":  payload.ConsumerId,
 			"ClusterName": payload.ClusterName,
 			"Topic":       payload.Topic,
-			"Partition":   payload.Partition,
 			"EOS":         true,
 		})
 

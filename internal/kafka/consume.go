@@ -12,6 +12,92 @@ import (
 )
 
 type ConsumeArgs struct {
+	Topic  string
+	Offset int
+}
+
+func (c *Cluster) ConsumeAll(args ConsumeArgs, res chan kgo.Message) error {
+	topics, err := c.GetTopics()
+	if err != nil {
+		return err
+	}
+
+	// Create a message channel for each partition, and merge them all into 1 output channel
+	numPartitions := topics[args.Topic].NumPartitions
+	partitionMessages := make([]chan kgo.Message, 3)
+	for i := 0; i < numPartitions; i++ {
+		partitionMessages[i] = make(chan kgo.Message)
+	}
+	go fanInMessageChannels(res, partitionMessages...)
+
+	for i := 0; i < numPartitions; i++ {
+		go c.Consume(ConsumePartitionArgs{
+			Topic:     args.Topic,
+			Offset:    args.Offset,
+			Partition: i,
+		}, partitionMessages[i])
+	}
+
+	return nil
+}
+
+func (c *Cluster) ConsumeAllF(args ConsumeArgs, messages chan kgo.Message, end chan int) error {
+	topics, err := c.GetTopics()
+	if err != nil {
+		return err
+	}
+
+	// Create a message channel for each partition, and merge them all into 1 output channel
+	numPartitions := topics[args.Topic].NumPartitions
+	partitionMessages := make([]chan kgo.Message, 3)
+	for i := 0; i < numPartitions; i++ {
+		partitionMessages[i] = make(chan kgo.Message)
+	}
+	go fanInMessageChannels(messages, partitionMessages...)
+
+	// Create a signal channel or each partition, and setup fanout
+	partitionEnd := make([]chan int, 3)
+	for i := 0; i < numPartitions; i++ {
+		partitionEnd[i] = make(chan int)
+	}
+	go fanOutSignalChannel(end, partitionEnd...)
+
+	for i := 0; i < numPartitions; i++ {
+		go c.ConsumeF(ConsumePartitionArgs{
+			Topic:     args.Topic,
+			Offset:    args.Offset,
+			Partition: i,
+		}, partitionMessages[i], partitionEnd[i])
+	}
+
+	return nil
+}
+
+func fanInMessageChannels(output chan kgo.Message, inputs ...chan kgo.Message) {
+	var wg sync.WaitGroup
+	wg.Add(len(inputs))
+	for _, c := range inputs {
+		go func(c chan kgo.Message) {
+			for v := range c {
+				output <- v
+			}
+			wg.Done()
+		}(c)
+	}
+
+	wg.Wait()
+	close(output)
+}
+
+func fanOutSignalChannel(input chan int, outputs ...chan int) {
+	for v := range input {
+		for _, output := range outputs {
+			output <- v
+		}
+	}
+}
+
+type ConsumePartitionArgs struct {
 	Topic     string
 	Partition int
 	Offset    int
@@ -20,9 +106,9 @@ type ConsumeArgs struct {
 // Consume messages from a single topic-partition pair, until a signal is received on the end channel.
 //
 // The res channel is not closed until the end signal is received.
-func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int) error {
+func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, end chan int) error {
 	defer func() {
-		fmt.Println("Closing consumer")
+		fmt.Printf("Closing consumer %d\n", args.Partition)
 		close(res)
 	}()
 
@@ -94,9 +180,9 @@ func (c *Cluster) ConsumeF(args ConsumeArgs, res chan kgo.Message, end chan int)
 // Consume messages from a single topic-partition pair, until the end of the partition
 //
 // Unlike ConsumeF, this function self-terminates once the end of the partition is reached
-func (c *Cluster) Consume(args ConsumeArgs, res chan kgo.Message) error {
+func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) error {
 	defer func() {
-		fmt.Println("Closing consumer")
+		fmt.Printf("Closing consumer %d", args.Partition)
 		close(res)
 	}()
 

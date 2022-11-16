@@ -73,7 +73,6 @@ export class ConsumerComponent implements AfterViewChecked {
         ConsumerId: this.consumer.id,
         ClusterName: this.cluster.Name,
         Topic: this.formGroup.value.topic,
-        Partition: 0,
         Offset: this.formGroup.value.offset,
         Follow: this.formGroup.value.follow
       }

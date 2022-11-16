@@ -53,9 +53,9 @@ export class AppComponent implements OnInit {
       },
       consumer: [
         {
-          id: 'numbers',
-          name: 'numbers',
-          topic: 'numbers',
+          id: 'asdf',
+          name: 'asdf',
+          topic: 'asdf',
           offset: -10,
           follow: false,
           filters: []
