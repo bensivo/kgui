@@ -14,6 +14,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ConsumerComponent } from './consumer.component';
 import { MessageModule } from '../message/message.module';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MessageModule } from '../message/message.module';
   ],
   imports: [
     CommonModule,
+    ScrollingModule,
     ReactiveFormsModule,
     MessageModule,
     FormsModule,

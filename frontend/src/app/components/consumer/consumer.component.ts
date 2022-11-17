@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { SocketService } from 'src/app/socket/socket.service';
@@ -12,7 +12,7 @@ import { Message, MessagesStore, MessageType } from 'src/app/store/messages.stor
   styleUrls: ['./consumer.component.less'],
 
 })
-export class ConsumerComponent implements AfterViewChecked {
+export class ConsumerComponent{
  @Input()
   cluster!: Cluster | undefined;
 
@@ -25,7 +25,7 @@ export class ConsumerComponent implements AfterViewChecked {
   @Input()
   formGroup!: FormGroup;
 
-  @ViewChild('messageScrollView') private messageScrollView!: ElementRef;
+  @ViewChild('virtualScroll') private virtualScroll!: ElementRef;
 
   messageFormat: string = 'TREE';
 
@@ -36,18 +36,17 @@ export class ConsumerComponent implements AfterViewChecked {
     private notification: NzNotificationService,
   ) { }
 
+  // ngOnChanges() {
+  //   this.scrollToBottom();
+  // }
 
-  ngAfterViewChecked() {
-    // Useful hook for after the messages have been loaded into the consumer
-    // NOTE: This is currently causing a bug, user can't click in the scroll-area to go to a specific section.
-    this.scrollToBottom();
-  }
-
-  scrollToBottom(): void {
-    try {
-      this.messageScrollView.nativeElement.scrollTop = this.messageScrollView.nativeElement.scrollHeight;
-    } catch (err) { }
-  }
+  // scrollToBottom(): void {
+  //   try {
+  //     (this.virtualScroll as any).scrollToIndex(this.messages.length);
+  //   } catch (err) { 
+  //     console.error(err)
+  //   }
+  // }
 
   get filters() {
     return this.formGroup.get('filters') as FormArray
@@ -101,7 +100,7 @@ export class ConsumerComponent implements AfterViewChecked {
   }
 
   messageTrackBy(i: number, msg: Message) {
-    return msg.offset // TODO: test if 2 consumers end up with messages using the same offset
+    return `${msg.partition}-${msg.offset}`; // TODO: test if 2 consumers end up with messages using the same offset
   }
 
   deleteConsumer() {

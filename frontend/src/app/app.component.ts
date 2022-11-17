@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
           id: 'asdf',
           name: 'asdf',
           topic: 'asdf',
-          offset: -10,
+          offset: -500,
           follow: false,
           filters: []
         }
