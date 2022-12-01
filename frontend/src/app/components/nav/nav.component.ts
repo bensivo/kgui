@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { nanoid } from 'nanoid';
 import { Observable } from 'rxjs';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
@@ -15,6 +16,7 @@ export class NavComponent {
     private consumerStore: ConsumerStore,
     private producerStore: ProducerStore,
     private tabStore: TabStore,
+    private router: Router,
   ) { }
 
   isCollapsed = false;
@@ -23,7 +25,7 @@ export class NavComponent {
   producers$: Observable<Producer[]> = this.producerStore.store.entities$
 
   onSelectConsumer(consumer: Consumer) {
-    console.log(consumer)
+    // See if this consumer is already in a tab
     const existing = this.tabStore.store.entities.find(t => 
       t.targetType === 'consumer' && t.targetId === consumer.id
     )
@@ -38,8 +40,10 @@ export class NavComponent {
       targetType: 'consumer',
       targetId: consumer.id
     };
+
     this.tabStore.store.upsert(tab);
     this.tabStore.selectTab(tab.id);
+
   }
 
   onSelectProducer(producer: Producer) {
