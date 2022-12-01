@@ -15,7 +15,9 @@ export class TabContentContainer {
   tab$ = this.tabStore.store.entities$.pipe(
     map((tabs) => {
       const active = tabs.find((t) => t.active)
-      console.log('Active', active);
+      if (!active) {
+        return tabs[0]
+      }
       return active
     })
   );

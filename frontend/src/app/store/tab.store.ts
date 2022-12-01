@@ -25,18 +25,33 @@ export class TabStore {
     }
 
     removeTab(id: string) {
-        this.store.get(id)
-            .subscribe((tab) => {
-                if (tab.targetType === 'consumer') {
-                    this.socketService.send({
-                        Topic: 'message.stop',
-                        Data: {
-                            ConsumerId: tab.targetId,
-                        }
-                    });
+        // Determine if this is the active tab. If so, set the next active tab.
+        const tabs = this.store.entities;
+        const index = tabs.findIndex(t => t.id === id);
+        if (index < 0) {
+            console.error(`Cannot remove tab ${id}, not found.`);
+            return;
+        }
+
+        const tab = tabs[index];
+        if (tab.targetType === 'consumer') {
+            this.socketService.send({
+                Topic: 'message.stop',
+                Data: {
+                    ConsumerId: tab.targetId,
                 }
-                this.store.remove(id);
-            })
+            });
+        }
+
+        tabs.splice(index, 1);
+
+        // Select either the next tab, or the last tab in the list
+        if (tab.active && tabs.length > 0) {
+            const nextActiveIndex = Math.min(index, tabs.length - 1);
+            tabs[nextActiveIndex].active = true;
+        }
+
+        this.store.entities = tabs;
     }
 
     get tabs$(): Observable<Tab[]> {

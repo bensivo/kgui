@@ -55,24 +55,7 @@ export class ConsumerContainer implements OnChanges {
   startTime?: number;
 
   messages$: Observable<Message[]> = this.messagesStore.forConsumer(this.consumer$)
-  .pipe(
-    // throttleTime(200),
-    sampleTime(100),
-    // map((messages) => {
-    //   return messages.slice(-100);
-    // }),
-    // tap((m) => {
-    //   if (m.length === 0) {
-    //     return;
-    //   }
-    //   if (!this.startTime) {
-    //     this.startTime = Date.now()
-    //   }
-
-    //   console.log('Time', (Date.now() - (this.startTime ?? Date.now())) / 1000, m[m.length-1].offset)
-    // })
-    // map(messages => messages.slice(-500))
-    )
+    .pipe(sampleTime(100)); // Messages only update every 100ms, to reduce the number of re-renders when messages are flowing in very fast.
 
   data$ = combineLatest([
     this.cluster$,
