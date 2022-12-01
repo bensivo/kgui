@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MessageRawComponent } from './message-raw.component';
 
-describe('MessageRawComponent', () => {
+xdescribe('MessageRawComponent', () => {
   let component: MessageRawComponent;
   let fixture: ComponentFixture<MessageRawComponent>;
 

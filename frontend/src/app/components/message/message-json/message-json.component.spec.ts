@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MessageJsonComponent } from './message-json.component';
 
-describe('MessageJsonComponent', () => {
+xdescribe('MessageJsonComponent', () => {
   let component: MessageJsonComponent;
   let fixture: ComponentFixture<MessageJsonComponent>;
 

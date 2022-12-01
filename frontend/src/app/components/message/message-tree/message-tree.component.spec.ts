@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MessageTreeComponent } from './message-tree.component';
 
-describe('MessageTreeComponent', () => {
+xdescribe('MessageTreeComponent', () => {
   let component: MessageTreeComponent;
   let fixture: ComponentFixture<MessageTreeComponent>;
 

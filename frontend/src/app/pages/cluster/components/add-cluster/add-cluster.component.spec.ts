@@ -10,7 +10,7 @@ import { SocketService } from 'src/app/socket/socket.service';
 
 import { AddClusterComponent } from './add-cluster.component';
 
-describe('AddClusterComponent', () => {
+xdescribe('AddClusterComponent', () => {
   let component: AddClusterComponent;
   let fixture: ComponentFixture<AddClusterComponent>;
 

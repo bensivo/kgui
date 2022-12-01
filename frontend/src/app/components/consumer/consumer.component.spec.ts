@@ -6,7 +6,7 @@ import { MessagesStore } from 'src/app/store/messages.store';
 
 import { ConsumerComponent } from './consumer.component';
 
-describe('ConsumerViewComponent', () => {
+xdescribe('ConsumerComponent', () => {
   let component: ConsumerComponent;
   let fixture: ComponentFixture<ConsumerComponent>;
 
