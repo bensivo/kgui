@@ -4,26 +4,29 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
+	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/kafka"
 
 	kgo "github.com/segmentio/kafka-go"
 )
 
 type MessageController struct {
-	Conn *websocket.Conn
+	Emitter emitter.Emitter
 }
 
-func (c *MessageController) Handle(msg Message) {
-	switch msg.Topic {
-	case "message.produce":
-		c.Produce(msg.Data)
-	case "message.consume":
-		c.Consume(msg.Data)
-	case "message.stop":
-		c.Stop(msg.Data)
+func NewMessageController(e emitter.Emitter) *MessageController {
+	c := &MessageController{
+		Emitter: e,
 	}
+
+	return c
+}
+
+func (c *MessageController) RegisterHandlers() {
+	c.Emitter.On("message.produce", c.Produce)
+	c.Emitter.On("message.consume", c.Consume)
+	c.Emitter.On("message.stop", c.Stop)
 }
 
 type ProducePayload struct {
@@ -45,15 +48,15 @@ func (c *MessageController) Produce(data interface{}) {
 	err = cluster.Produce(payload.Topic, payload.Partition, payload.Message)
 
 	if err != nil {
-		Write(*c.Conn, "message.produced", map[string]interface{}{
+		c.Emitter.Emit("message.produced", map[string]interface{}{
 			"CorrelationId": payload.CorrelationId,
 			"Status":        "ERROR",
 		})
-		Write(*c.Conn, "error", map[string]interface{}{
+		c.Emitter.Emit("error", map[string]interface{}{
 			"Message": err.Error(),
 		})
 	} else {
-		Write(*c.Conn, "message.produced", map[string]interface{}{
+		c.Emitter.Emit("message.produced", map[string]interface{}{
 			"CorrelationId": payload.CorrelationId,
 			"Status":        "SUCCESS",
 		})
@@ -78,6 +81,8 @@ func (c *MessageController) Consume(data interface{}) {
 		log.Println(err)
 	}
 
+	fmt.Printf("Starting consumer %s from topic %s\n", payload.ConsumerId, payload.Topic)
+
 	if consumers[payload.ConsumerId] != nil {
 		fmt.Printf("Consumer %s already active. Sending end signal.\n", payload.ConsumerId)
 		consumers[payload.ConsumerId] <- 1
@@ -101,7 +106,7 @@ func (c *MessageController) Consume(data interface{}) {
 	if err != nil {
 		log.Println(err)
 
-		Write(*c.Conn, "error", map[string]interface{}{
+		c.Emitter.Emit("error", map[string]interface{}{
 			"Message": err.Error(),
 		})
 	}
@@ -109,7 +114,8 @@ func (c *MessageController) Consume(data interface{}) {
 	go func() {
 		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
 		for msg := range res {
-			Write(*c.Conn, "message.consumed", map[string]interface{}{
+			fmt.Printf("Consumed %s:%d:%d\n", payload.Topic, msg.Partition, msg.Offset)
+			c.Emitter.Emit("message.consumed", map[string]interface{}{
 				"ConsumerId":  payload.ConsumerId,
 				"ClusterName": payload.ClusterName,
 				"Topic":       payload.Topic,
@@ -118,7 +124,7 @@ func (c *MessageController) Consume(data interface{}) {
 			})
 		}
 
-		Write(*c.Conn, "message.consumed", map[string]interface{}{
+		c.Emitter.Emit("message.consumed", map[string]interface{}{
 			"ConsumerId":  payload.ConsumerId,
 			"ClusterName": payload.ClusterName,
 			"Topic":       payload.Topic,

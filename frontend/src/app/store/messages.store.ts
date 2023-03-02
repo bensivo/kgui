@@ -88,8 +88,7 @@ export class MessagesStore {
 
   pushMessage(consumerId: string, message: Message) {
     const state = this.store.getValue()
-    const messages = state[consumerId] ?? [];
-    messages.push(message);
+    const messages = [message, ...(state[consumerId] ?? [])];
     this.store.update(() => ({
       ...state,
       [consumerId]: messages

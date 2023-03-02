@@ -75,13 +75,15 @@
                 <label nz-radio-button nzValue="RAW">Raw</label>
             </nz-radio-group>
         </div>
+
         <!-- <div class="message-container"> -->
         <!-- <div class="message-text" *ngFor="let message of messages; trackBy: messageTrackBy"> -->
+        <!-- </div> -->
+
         <cdk-virtual-scroll-viewport #virtualScroll class="message-container" [itemSize]="10" minBufferPx="1800" maxBufferPx="1800">
             <div class="message-text" *cdkVirtualFor="let message of messages; trackBy: messageTrackBy">
                 <app-message [message]="message" [messageFormat]="messageFormat"></app-message>
             </div>
         </cdk-virtual-scroll-viewport>
-        <!-- </div> -->
     </div>
 </div>

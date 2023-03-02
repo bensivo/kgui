@@ -3,13 +3,13 @@ package controller
 import (
 	"log"
 
-	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
+	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/kafka"
 )
 
 type ClusterController struct {
-	Conn *websocket.Conn
+	Emitter emitter.Emitter
 }
 
 var state map[string]kafka.Cluster = make(map[string]kafka.Cluster)
@@ -19,25 +19,28 @@ type ListClustersResponse struct {
 	Data  []kafka.Cluster
 }
 
-func (c *ClusterController) Handle(msg Message) {
-	switch msg.Topic {
-	case "clusters.refresh":
-		c.listClusters()
-	case "clusters.add":
-		c.addCluster(msg.Data)
-	case "clusters.remove":
-		c.removeCluster(msg.Data)
+func NewClusterController(e emitter.Emitter) *ClusterController {
+	c := &ClusterController{
+		Emitter: e,
 	}
+
+	return c
 }
 
-func (c *ClusterController) listClusters() {
+func (c *ClusterController) RegisterHandlers() {
+	c.Emitter.On("clusters.refresh", c.listClusters)
+	c.Emitter.On("clusters.add", c.addCluster)
+	c.Emitter.On("clusters.remove", c.removeCluster)
+}
+
+func (c *ClusterController) listClusters(_msg interface{}) {
 	log.Println("Listing clusters")
 
 	clusters := make([]kafka.Cluster, 0, len(state))
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	Write(*c.Conn, "clusters.changed", clusters)
+	c.Emitter.Emit("clusters.changed", clusters)
 }
 
 func (c *ClusterController) addCluster(data interface{}) {
@@ -57,7 +60,7 @@ func (c *ClusterController) addCluster(data interface{}) {
 		clusters = append(clusters, value)
 	}
 
-	Write(*c.Conn, "clusters.changed", clusters)
+	c.Emitter.Emit("clusters.changed", clusters)
 }
 
 type RemoveClusterPayload struct {
@@ -81,5 +84,5 @@ func (c *ClusterController) removeCluster(data interface{}) {
 	for _, value := range state {
 		clusters = append(clusters, value)
 	}
-	Write(*c.Conn, "clusters.changed", clusters)
+	c.Emitter.Emit("clusters.changed", clusters)
 }

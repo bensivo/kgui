@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-	"gitlab.com/bensivo/kgui/internal/server"
+	"gitlab.com/bensivo/kgui/internal/controller"
+	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/storage"
 )
 
@@ -26,12 +25,14 @@ func (b *App) startup(ctx context.Context) {
 	// Perform your setup here
 	b.ctx = ctx
 
-	router := server.New()
-	err := http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	emitter := emitter.NewWebsocketEmitter()
+	clusterController := controller.NewClusterController(emitter)
+	messageController := controller.NewMessageController(emitter)
+
+	clusterController.RegisterHandlers()
+	messageController.RegisterHandlers()
+
+	emitter.Start()
 }
 
 // domReady is called after the front-end dom has been loaded

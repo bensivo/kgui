@@ -2,19 +2,19 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
 
-	"gitlab.com/bensivo/kgui/internal/server"
+	"gitlab.com/bensivo/kgui/internal/controller"
+	"gitlab.com/bensivo/kgui/internal/emitter"
 )
 
 func main() {
-	router := server.New()
+	emitter := emitter.NewWebsocketEmitter()
+	clusterController := controller.NewClusterController(emitter)
+	messageController := controller.NewMessageController(emitter)
 
-	err := http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	clusterController.RegisterHandlers()
+	messageController.RegisterHandlers()
+
+	emitter.Start()
 	fmt.Scanf("v")
 }

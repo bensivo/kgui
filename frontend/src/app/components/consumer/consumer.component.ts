@@ -53,7 +53,7 @@ export class ConsumerComponent{
   }
 
   get isConsuming(): boolean {
-    return this.messages.length > 0 && this.messages[this.messages.length - 1].type !== MessageType.EOS
+    return this.messages.length > 0 && this.messages[0].type !== MessageType.EOS
   }
 
   consume() {
