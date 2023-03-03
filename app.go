@@ -7,6 +7,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gitlab.com/bensivo/kgui/internal/controller"
 	"gitlab.com/bensivo/kgui/internal/emitter"
+	"gitlab.com/bensivo/kgui/internal/logger"
 	"gitlab.com/bensivo/kgui/internal/storage"
 )
 
@@ -24,6 +25,8 @@ func NewApp() *App {
 func (b *App) startup(ctx context.Context) {
 	// Perform your setup here
 	b.ctx = ctx
+
+	logger.Init()
 
 	emitter := emitter.NewWebsocketEmitter()
 	clusterController := controller.NewClusterController(emitter)

@@ -9,6 +9,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+
+	log "gitlab.com/bensivo/kgui/internal/logger"
 )
 
 //go:embed frontend/dist
@@ -79,6 +81,7 @@ func main() {
 	})
 
 	if err != nil {
-		logger.Error(err)
+		// panic(err)
+		log.Error(err)
 	}
 }
