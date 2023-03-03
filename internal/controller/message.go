@@ -114,7 +114,6 @@ func (c *MessageController) Consume(data interface{}) {
 	go func() {
 		logger.Infof("Starting stream on Topic: %s", payload.Topic)
 		for msg := range res {
-			logger.Debugf("Consumed %s:%d:%d", payload.Topic, msg.Partition, msg.Offset)
 			c.Emitter.Emit("message.consumed", map[string]interface{}{
 				"ConsumerId":  payload.ConsumerId,
 				"ClusterName": payload.ClusterName,
@@ -131,7 +130,8 @@ func (c *MessageController) Consume(data interface{}) {
 			"EOS":         true,
 		})
 
-		logger.Infof("Closing stream on Topic: %s\b", payload.Topic)
+		logger.Infof("Stream on Topic: %s closed", payload.Topic)
+		consumers[payload.ConsumerId] = nil
 	}()
 }
 
@@ -149,6 +149,14 @@ func (c *MessageController) Stop(data interface{}) {
 	if consumers[payload.ConsumerId] != nil {
 		logger.Infof("Sending end signal to consumer %s.", payload.ConsumerId)
 		consumers[payload.ConsumerId] <- 1
-		consumers[payload.ConsumerId] = nil
+		// consumers[payload.ConsumerId] = nil
+	} else {
+		logger.Infof("Consumer %s is not active. Sending EOS.", payload.ConsumerId)
+		c.Emitter.Emit("message.consumed", map[string]interface{}{
+			"ConsumerId":  payload.ConsumerId,
+			"ClusterName": payload.ClusterName,
+			"Topic":       payload.Topic,
+			"EOS":         true,
+		})
 	}
 }

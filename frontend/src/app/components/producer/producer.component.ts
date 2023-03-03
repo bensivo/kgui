@@ -65,4 +65,16 @@ export class ProducerViewComponent {
   deleteProducer() {
     this.producerStore.store.remove(this.producer.id);
   }
+
+  onClickJSONFormat() {
+    try {
+      const parsed = JSON.parse(this.producer.message);
+      this.producerStore.store.upsert({
+        ...this.producer,
+        message: JSON.stringify(parsed, null, 4),
+      });
+    } catch(e) {
+      this.notification.create('error', 'Error', 'Message is not valid JSON');
+    }
+  }
 }

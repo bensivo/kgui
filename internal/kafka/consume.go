@@ -24,12 +24,13 @@ func (c *Cluster) ConsumeAll(args ConsumeArgs, res chan kgo.Message) error {
 
 	// Create a message channel for each partition, and merge them all into 1 output channel
 	numPartitions := topics[args.Topic].NumPartitions
-	partitionMessages := make([]chan kgo.Message, 3)
+	partitionMessages := make([]chan kgo.Message, numPartitions)
 	for i := 0; i < numPartitions; i++ {
 		partitionMessages[i] = make(chan kgo.Message)
 	}
 	go fanInMessageChannels(res, partitionMessages...)
 
+	logger.Infof("Topic %s has %d partitions. Starting consumers", args.Topic, numPartitions)
 	for i := 0; i < numPartitions; i++ {
 		go c.Consume(ConsumePartitionArgs{
 			Topic:     args.Topic,
@@ -49,19 +50,20 @@ func (c *Cluster) ConsumeAllF(args ConsumeArgs, messages chan kgo.Message, end c
 
 	// Create a message channel for each partition, and merge them all into 1 output channel
 	numPartitions := topics[args.Topic].NumPartitions
-	partitionMessages := make([]chan kgo.Message, 3)
+	partitionMessages := make([]chan kgo.Message, numPartitions)
 	for i := 0; i < numPartitions; i++ {
 		partitionMessages[i] = make(chan kgo.Message)
 	}
 	go fanInMessageChannels(messages, partitionMessages...)
 
 	// Create a signal channel or each partition, and setup fanout
-	partitionEnd := make([]chan int, 3)
+	partitionEnd := make([]chan int, numPartitions)
 	for i := 0; i < numPartitions; i++ {
 		partitionEnd[i] = make(chan int)
 	}
 	go fanOutSignalChannel(end, partitionEnd...)
 
+	logger.Infof("Topic %s has %d partitions. Starting follow consumers", args.Topic, numPartitions)
 	for i := 0; i < numPartitions; i++ {
 		go c.ConsumeF(ConsumePartitionArgs{
 			Topic:     args.Topic,
@@ -90,11 +92,19 @@ func fanInMessageChannels(output chan kgo.Message, inputs ...chan kgo.Message) {
 }
 
 func fanOutSignalChannel(input chan int, outputs ...chan int) {
+	var wg sync.WaitGroup
+
 	for v := range input {
+		wg.Add(len(outputs))
 		for _, output := range outputs {
-			output <- v
+			go func(o chan int, v int) {
+				o <- v
+				wg.Done()
+			}(output, v)
 		}
+		wg.Wait()
 	}
+	logger.Info("fanout done")
 }
 
 type ConsumePartitionArgs struct {
@@ -108,7 +118,6 @@ type ConsumePartitionArgs struct {
 // The res channel is not closed until the end signal is received.
 func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, end chan int) error {
 	defer func() {
-		logger.Infof("Closing consumer %d", args.Partition)
 		close(res)
 	}()
 
@@ -117,7 +126,8 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 		logger.Infoln("Could not get offset")
 		return err
 	}
-	logger.Infof("Relative offset: %d - Absolute offset: %d", args.Offset, offset)
+
+	logger.Infof("Consuming messages %s(%d):%d-...", args.Topic, args.Partition, offset)
 
 	dialer, err := c.GetDialer()
 	if err != nil {
@@ -146,25 +156,31 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 		for {
 			m, err := r.ReadMessage(cancelable)
 			if err != nil {
-				logger.Infoln(err)
+				logger.Infof("Stopping consumer %s(%d) - %v", args.Topic, args.Partition, err)
+				// logger.Infoln(err)
 				break
 			}
+
+			logger.Debugf("Consumed %s(%d):%d", args.Topic, args.Partition, m.Offset)
 			res <- m
 		}
 
-		logger.Infoln("Finished reading message")
+		// We used to decrement the waitgroup AFTER the reader successfully closed,
+		// but closing readers can take a long time, negatively affecting the UX.
+		wg.Done()
+
 		if err := r.Close(); err != nil {
 			logger.Infoln("Failed to close reader", err)
 		}
+		logger.Infof("Closed reader %s(%d)", args.Topic, args.Partition)
 
-		wg.Done()
 	}()
 
 	go func() {
 		for {
 			select {
 			case <-end:
-				logger.Infof("Received end signal. Closing consumer for topic %s", args.Topic)
+				logger.Infof("Consumer %s(%d) received end signal", args.Topic, args.Partition)
 				cancel()
 				return
 			default:
@@ -181,8 +197,9 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 //
 // Unlike ConsumeF, this function self-terminates once the end of the partition is reached
 func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) error {
+	logger.Infof("Consuming messages from %s(%d):%d (relative)", args.Topic, args.Partition, args.Offset)
 	defer func() {
-		logger.Infof("Closing consumer %d", args.Partition)
+		logger.Infof("Closing consumer %s(%d)", args.Topic, args.Partition)
 		close(res)
 	}()
 
@@ -207,7 +224,7 @@ func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) err
 		log.Println(err)
 		return err
 	}
-	logger.Infof("Reading messages %d-%d", currentOffset, lastOffset)
+	logger.Infof("Consuming messages %s(%d):%d-%d", args.Topic, args.Partition, currentOffset, lastOffset)
 
 	for {
 		msg, err := conn.ReadMessage(10e6)
@@ -216,10 +233,11 @@ func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) err
 			break
 		}
 
+		logger.Debugf("Consumed %s(%d):%d", args.Topic, args.Partition, msg.Offset)
 		res <- msg
 
 		if msg.Offset == lastOffset-1 {
-			logger.Infof("Consumed all messages on partition %d", args.Partition)
+			logger.Infof("Consumed all messages on topic: %s, partition %d", args.Topic, args.Partition)
 			return nil
 		}
 	}
