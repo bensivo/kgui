@@ -3,11 +3,11 @@ package storage
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 func Save(ctx context.Context, data map[string]interface{}) {
@@ -27,7 +27,7 @@ func Save(ctx context.Context, data map[string]interface{}) {
 		return
 	}
 
-	fmt.Println("Selected file: " + file)
+	logger.Info("Selected file: " + file)
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		log.Println(err)
@@ -57,7 +57,7 @@ func Open(ctx context.Context) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	fmt.Println(file)
+	logger.Info(file)
 	bytes, err := os.ReadFile(file)
 	if err != nil {
 		log.Println(err)

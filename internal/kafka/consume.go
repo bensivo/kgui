@@ -2,13 +2,13 @@ package kafka
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"sync"
 	"time"
 
 	"github.com/segmentio/kafka-go"
 	kgo "github.com/segmentio/kafka-go"
+	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 type ConsumeArgs struct {
@@ -108,20 +108,20 @@ type ConsumePartitionArgs struct {
 // The res channel is not closed until the end signal is received.
 func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, end chan int) error {
 	defer func() {
-		fmt.Printf("Closing consumer %d\n", args.Partition)
+		logger.Infof("Closing consumer %d", args.Partition)
 		close(res)
 	}()
 
 	offset, err := c.GetRelativeOffset(args.Topic, args.Partition, int64(args.Offset))
 	if err != nil {
-		fmt.Println("Could not get offset")
+		logger.Infoln("Could not get offset")
 		return err
 	}
-	fmt.Printf("Relative offset: %d - Absolute offset: %d\n", args.Offset, offset)
+	logger.Infof("Relative offset: %d - Absolute offset: %d", args.Offset, offset)
 
 	dialer, err := c.GetDialer()
 	if err != nil {
-		fmt.Println("Failed to get dialer", err)
+		logger.Infoln("Failed to get dialer", err)
 		return err
 	}
 	r := kgo.NewReader(kafka.ReaderConfig{
@@ -135,7 +135,7 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 
 	err = r.SetOffset(offset)
 	if err != nil {
-		fmt.Println("Could not set offset")
+		logger.Infoln("Could not set offset")
 		return err
 	}
 
@@ -146,15 +146,15 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 		for {
 			m, err := r.ReadMessage(cancelable)
 			if err != nil {
-				fmt.Println(err)
+				logger.Infoln(err)
 				break
 			}
 			res <- m
 		}
 
-		fmt.Println("Finished reading message")
+		logger.Infoln("Finished reading message")
 		if err := r.Close(); err != nil {
-			fmt.Println("Failed to close reader", err)
+			logger.Infoln("Failed to close reader", err)
 		}
 
 		wg.Done()
@@ -164,7 +164,7 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 		for {
 			select {
 			case <-end:
-				fmt.Printf("Received end signal. Closing consumer for topic %s\n", args.Topic)
+				logger.Infof("Received end signal. Closing consumer for topic %s", args.Topic)
 				cancel()
 				return
 			default:
@@ -182,7 +182,7 @@ func (c *Cluster) ConsumeF(args ConsumePartitionArgs, res chan<- kgo.Message, en
 // Unlike ConsumeF, this function self-terminates once the end of the partition is reached
 func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) error {
 	defer func() {
-		fmt.Printf("Closing consumer %d", args.Partition)
+		logger.Infof("Closing consumer %d", args.Partition)
 		close(res)
 	}()
 
@@ -198,7 +198,7 @@ func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) err
 		return err
 	}
 	if lastOffset == 0 {
-		fmt.Printf("No messages on partition %d\n", args.Partition)
+		logger.Infof("No messages on partition %d", args.Partition)
 		return err
 	}
 
@@ -207,19 +207,19 @@ func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) err
 		log.Println(err)
 		return err
 	}
-	fmt.Printf("Reading messages %d-%d\n", currentOffset, lastOffset)
+	logger.Infof("Reading messages %d-%d", currentOffset, lastOffset)
 
 	for {
 		msg, err := conn.ReadMessage(10e6)
 		if err != nil {
-			fmt.Println("Failed to read message", err)
+			logger.Infoln("Failed to read message", err)
 			break
 		}
 
 		res <- msg
 
 		if msg.Offset == lastOffset-1 {
-			fmt.Printf("Consumed all messages on partition %d\n", args.Partition)
+			logger.Infof("Consumed all messages on partition %d", args.Partition)
 			return nil
 		}
 	}
@@ -229,7 +229,7 @@ func (c *Cluster) Consume(args ConsumePartitionArgs, res chan<- kgo.Message) err
 func (c *Cluster) GetRelativeOffset(topic string, partition int, relativeOffset int64) (int64, error) {
 	conn, err := c.DialLeader(topic, partition)
 	if err != nil {
-		fmt.Println(err)
+		logger.Infoln(err)
 		return -1, err
 	}
 
@@ -242,13 +242,13 @@ func (c *Cluster) GetRelativeOffset(topic string, partition int, relativeOffset 
 
 	offset, err := conn.Seek(absInt(relativeOffset), seekPos)
 	if err != nil {
-		fmt.Println("Failed to seek offset", err)
+		logger.Infoln("Failed to seek offset", err)
 		return -1, err
 	}
 
 	err = conn.Close()
 	if err != nil {
-		fmt.Println(err)
+		logger.Infoln(err)
 		return -1, err
 	}
 
@@ -265,7 +265,7 @@ func seekRelativeOffset(conn *kgo.Conn, offset int64) (int64, error) {
 
 	offset, err := conn.Seek(absInt(offset), seekPos)
 	if err != nil {
-		fmt.Println("Failed to seek offset", err)
+		logger.Infoln("Failed to seek offset", err)
 		return -1, err
 	}
 

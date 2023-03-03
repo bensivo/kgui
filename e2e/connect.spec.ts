@@ -9,30 +9,41 @@ import WebSocket from 'ws';
  */
 
 describe('connect', () => {
-    let ws: WebSocket;
 
-    beforeEach(async () => {
-        await new Promise<void>((resolve) => {
-            ws = new WebSocket('ws://localhost:8080/connect');
-            ws.on('open', () => {
-                resolve();
-            });
+    const connect = () => new Promise<WebSocket>((resolve) => {
+        const ws = new WebSocket('ws://localhost:8080/connect');
+        ws.on('open', () => {
+            resolve(ws);
         });
     });
 
-    afterEach(async () => {
-        await new Promise<void>((resolve) => {
-            ws.on('close', () => {
-                resolve();
-            });
-            // ws.terminate();
-            ws.close(1000); // Code for normal closure
+    const close = (ws: WebSocket) => new Promise<void>((resolve) => {
+        ws.on('close', () => {
+            resolve();
         });
 
-        jest.clearAllMocks();
+        setTimeout(() => {
+            ws.close(1000); // Code for normal closure
+        }, Math.random() * 2000)
     });
 
     it('should connect', async () => {
+        const ws = await connect();
         expect(ws.readyState).toEqual(WebSocket.OPEN);
+        await close(ws);
     });
+
+    it('can handle multiple connections at once', async () => {
+        const sockets = await Promise.all([
+            connect(),
+            connect(),
+            connect(),
+            connect(),
+            connect(),
+        ]);
+
+
+        await Promise.all(sockets.map(s => close(s)));
+        
+    })
 });

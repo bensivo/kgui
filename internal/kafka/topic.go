@@ -1,8 +1,9 @@
 package kafka
 
 import (
-	"fmt"
 	"os"
+
+	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 type TopicMetadata struct {
@@ -20,7 +21,7 @@ func (c *Cluster) GetTopics() (map[string]TopicMetadata, error) {
 
 	partitions, err := conn.ReadPartitions()
 	if err != nil {
-		fmt.Println(err)
+		logger.Error(err)
 		os.Exit(1)
 	}
 

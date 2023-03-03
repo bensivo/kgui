@@ -2,7 +2,6 @@ package emitter
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -10,34 +9,31 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/julienschmidt/httprouter"
 	"go.uber.org/zap"
+
+	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 type WebsocketEmitter struct {
 	connections []*websocket.Conn
 	handlers    map[string][]MessageHandler
 
-	logger *zap.SugaredLogger
+	log *zap.SugaredLogger
 }
 
 var _ Emitter = (*WebsocketEmitter)(nil) // Compiler check, *T implements I.
 
 func NewWebsocketEmitter() *WebsocketEmitter {
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync() // flushes buffer, if any
-	sugar := logger.Sugar()
+	w := &WebsocketEmitter{}
+	w.connections = make([]*websocket.Conn, 0)
+	w.handlers = make(map[string][]MessageHandler)
 
-	wi := &WebsocketEmitter{}
-	wi.connections = make([]*websocket.Conn, 0)
-	wi.handlers = make(map[string][]MessageHandler)
-	wi.logger = sugar
+	logger.Infof("Creating new websocket Emitter")
 
-	sugar.Info("Creating new WebsocketEmitter")
-
-	return wi
+	return w
 }
 
-func (wi *WebsocketEmitter) Start() {
-	wi.logger.Info("Starting websocket emitter")
+func (w *WebsocketEmitter) Start() {
+	logger.Info("Starting websocket emitter")
 	router := httprouter.New()
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -47,17 +43,32 @@ func (wi *WebsocketEmitter) Start() {
 		},
 	}
 
-	router.GET("/connect", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		wi.logger.Info("Client connecting")
-		conn, err := upgrader.Upgrade(w, r, nil)
+	router.GET("/connect", func(writer http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+		logger.Info("Client connecting")
+		conn, err := upgrader.Upgrade(writer, req, nil)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
+		logger.Infof("Connection established %s", conn.RemoteAddr().String())
+		w.connections = append(w.connections, conn)
+
+		conn.SetCloseHandler(func(code int, text string) error {
+			logger.Infof("Connection %s closed with code: %d", conn.RemoteAddr().String(), code)
+
+			for i := 0; i < len(w.connections); i++ {
+				if w.connections[i] == conn {
+					w.connections[i] = w.connections[len(w.connections)-1]
+					w.connections = w.connections[:len(w.connections)-1]
+					break
+				}
+			}
+
+			return nil
+		})
+
 		// TODO: Remove connection when the client disconnects
-		wi.logger.Info("Client connected " + conn.LocalAddr().String())
-		wi.connections = append(wi.connections, conn)
 
 		for {
 			_, p, err := conn.ReadMessage()
@@ -71,9 +82,9 @@ func (wi *WebsocketEmitter) Start() {
 			dec := json.NewDecoder(strings.NewReader(string(p)))
 			dec.Decode(&msg)
 
-			log.Printf("Message: %v\n", msg)
+			logger.Debugf("Message: %v", msg)
 
-			handlers := wi.handlers[msg.Topic]
+			handlers := w.handlers[msg.Topic]
 			for i := 1; i < len(handlers); i++ {
 				handlers[i](msg.Data)
 			}
@@ -87,7 +98,7 @@ func (wi *WebsocketEmitter) Start() {
 	}
 }
 
-func (wi *WebsocketEmitter) Emit(topic string, data interface{}) {
+func (w *WebsocketEmitter) Emit(topic string, data interface{}) {
 	msg := Message{
 		Topic: topic,
 		Data:  data,
@@ -95,29 +106,26 @@ func (wi *WebsocketEmitter) Emit(topic string, data interface{}) {
 
 	resBytes, err := json.Marshal(msg)
 	if err != nil {
-		wi.logger.Error(err)
+		logger.Error(err)
 	}
 
-	// TODO: Don't send anything to closed connections
-	// our previous setup created a new set of controllers for each connection - so if the connection stopped sending messages, the controller was never triggered
-	// In this new setup, there is 1 controller for N connections, and the controllers don't know which connectiosn are still active
-	for i := 0; i < len(wi.connections); i++ {
-		conn := wi.connections[i]
-		fmt.Printf("Writing to connection %s - %s\n", conn.LocalAddr().String(), resBytes)
+	for i := 0; i < len(w.connections); i++ {
+		conn := w.connections[i]
+		logger.Debugf("Writing to connection %s - %s", conn.LocalAddr().String(), resBytes)
 
 		err = conn.WriteMessage(1, resBytes)
 		if err != nil {
-			wi.logger.Error(err)
+			logger.Error(err)
 			return
 		}
 	}
 }
 
-func (wi *WebsocketEmitter) On(topic string, handler MessageHandler) {
-	wi.logger.Info("Registering client for topic ", topic)
-	if wi.handlers[topic] == nil {
-		wi.handlers[topic] = make([]MessageHandler, 1)
+func (w *WebsocketEmitter) On(topic string, handler MessageHandler) {
+	logger.Info("Registering client for topic ", topic)
+	if w.handlers[topic] == nil {
+		w.handlers[topic] = make([]MessageHandler, 1)
 	}
 
-	wi.handlers[topic] = append(wi.handlers[topic], handler)
+	w.handlers[topic] = append(w.handlers[topic], handler)
 }

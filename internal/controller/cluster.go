@@ -51,7 +51,7 @@ func (c *ClusterController) addCluster(data interface{}) {
 		log.Println(err)
 	}
 
-	log.Printf("Adding Cluster %s - %v\n", cluster.Name, cluster)
+	log.Printf("Adding Cluster %s - %v", cluster.Name, cluster)
 
 	state[cluster.Name] = cluster
 
@@ -76,7 +76,7 @@ func (c *ClusterController) removeCluster(data interface{}) {
 		log.Println(err)
 	}
 
-	log.Printf("Removing Cluster %s\n", payload.Name)
+	log.Printf("Removing Cluster %s", payload.Name)
 
 	delete(state, payload.Name)
 

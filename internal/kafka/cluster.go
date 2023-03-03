@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"time"
@@ -13,6 +12,7 @@ import (
 	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
 	"github.com/segmentio/kafka-go/sasl/scram"
+	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 type Cluster struct {
@@ -34,7 +34,7 @@ func (c *Cluster) Dial() (*kgo.Conn, error) {
 
 	conn, err := dialer.Dial("tcp", c.BootstrapServer)
 	if err != nil {
-		fmt.Println("Failed to dial leader", err)
+		logger.Infoln("Failed to dial leader", err)
 		return nil, err
 	}
 
@@ -47,11 +47,11 @@ func (c *Cluster) DialLeader(topic string, partition int) (*kgo.Conn, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Dialing leader for cluster: %s topic: %s\n", c.Name, topic)
+	logger.Infof("Dialing leader for cluster: %s topic: %s", c.Name, topic)
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	conn, err := dialer.DialLeader(ctx, "tcp", c.BootstrapServer, topic, partition)
 	if err != nil {
-		fmt.Println("Failed to dial leader", err)
+		logger.Infoln("Failed to dial leader", err)
 		return nil, err
 	}
 
@@ -88,7 +88,7 @@ func (c *Cluster) getSaslMechanism() (sasl.Mechanism, error) {
 	if strings.ToLower(c.SaslMechanism) == "scram-sha-512" {
 		mechanism, err := scram.Mechanism(scram.SHA512, c.SaslUsername, c.SaslPassword)
 		if err != nil {
-			fmt.Println("Error configuring scram-sha-512 auth")
+			logger.Infoln("Error configuring scram-sha-512 auth")
 			return nil, err
 		}
 		return mechanism, nil
@@ -96,7 +96,7 @@ func (c *Cluster) getSaslMechanism() (sasl.Mechanism, error) {
 	if strings.ToLower(c.SaslMechanism) == "scram-sha-256" {
 		mechanism, err := scram.Mechanism(scram.SHA256, c.SaslUsername, c.SaslPassword)
 		if err != nil {
-			fmt.Println("Error configuring scram-sha-256 auth")
+			logger.Infoln("Error configuring scram-sha-256 auth")
 			return nil, err
 		}
 		return mechanism, nil

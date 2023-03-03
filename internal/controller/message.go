@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/mitchellh/mapstructure"
 	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/kafka"
+	"gitlab.com/bensivo/kgui/internal/logger"
 
 	kgo "github.com/segmentio/kafka-go"
 )
@@ -41,7 +41,7 @@ func (c *MessageController) Produce(data interface{}) {
 	var payload ProducePayload
 	err := mapstructure.Decode(data, &payload)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 	}
 
 	var cluster kafka.Cluster = state[payload.ClusterName]
@@ -81,10 +81,10 @@ func (c *MessageController) Consume(data interface{}) {
 		log.Println(err)
 	}
 
-	fmt.Printf("Starting consumer %s from topic %s\n", payload.ConsumerId, payload.Topic)
+	logger.Infof("Starting consumer %s from topic %s", payload.ConsumerId, payload.Topic)
 
 	if consumers[payload.ConsumerId] != nil {
-		fmt.Printf("Consumer %s already active. Sending end signal.\n", payload.ConsumerId)
+		logger.Infof("Consumer %s already active. Sending end signal.", payload.ConsumerId)
 		consumers[payload.ConsumerId] <- 1
 	}
 
@@ -112,9 +112,9 @@ func (c *MessageController) Consume(data interface{}) {
 	}
 
 	go func() {
-		fmt.Printf("Starting stream on Topic: %s\n", payload.Topic)
+		logger.Infof("Starting stream on Topic: %s", payload.Topic)
 		for msg := range res {
-			fmt.Printf("Consumed %s:%d:%d\n", payload.Topic, msg.Partition, msg.Offset)
+			logger.Debugf("Consumed %s:%d:%d", payload.Topic, msg.Partition, msg.Offset)
 			c.Emitter.Emit("message.consumed", map[string]interface{}{
 				"ConsumerId":  payload.ConsumerId,
 				"ClusterName": payload.ClusterName,
@@ -131,7 +131,7 @@ func (c *MessageController) Consume(data interface{}) {
 			"EOS":         true,
 		})
 
-		fmt.Printf("Closing stream on Topic: %s\b", payload.Topic)
+		logger.Infof("Closing stream on Topic: %s\b", payload.Topic)
 	}()
 }
 
@@ -147,7 +147,7 @@ func (c *MessageController) Stop(data interface{}) {
 	}
 
 	if consumers[payload.ConsumerId] != nil {
-		fmt.Printf("Sending end signal to consumer %s.\n", payload.ConsumerId)
+		logger.Infof("Sending end signal to consumer %s.", payload.ConsumerId)
 		consumers[payload.ConsumerId] <- 1
 		consumers[payload.ConsumerId] = nil
 	}

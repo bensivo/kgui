@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"log"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2"
@@ -80,6 +79,6 @@ func main() {
 	})
 
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 	}
 }
