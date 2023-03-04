@@ -11,4 +11,6 @@ type Emitter interface {
 	Emit(topic string, data interface{})
 
 	On(topic string, handler MessageHandler)
+
+	Start()
 }

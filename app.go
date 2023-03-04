@@ -14,6 +14,8 @@ import (
 // App struct
 type App struct {
 	ctx context.Context
+
+	emitter emitter.Emitter
 }
 
 // NewApp creates a new App application struct
@@ -22,20 +24,20 @@ func NewApp() *App {
 }
 
 // startup is called at application startup
-func (b *App) startup(ctx context.Context) {
+func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
-	b.ctx = ctx
+	a.ctx = ctx
 
 	logger.Init()
 
-	emitter := emitter.NewWebsocketEmitter()
-	clusterController := controller.NewClusterController(emitter)
-	messageController := controller.NewMessageController(emitter)
+	a.emitter = emitter.NewWebsocketEmitter()
+	clusterController := controller.NewClusterController(a.emitter)
+	messageController := controller.NewMessageController(a.emitter)
 
 	clusterController.RegisterHandlers()
 	messageController.RegisterHandlers()
 
-	emitter.Start()
+	a.emitter.Start()
 }
 
 // domReady is called after the front-end dom has been loaded
