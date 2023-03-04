@@ -1,10 +1,9 @@
-import { NumberSymbol } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { createStore, select, withProps } from '@ngneat/elf';
+import { createStore, withProps } from '@ngneat/elf';
 import { combineLatest, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-import { SocketService } from '../socket/socket.service';
-import { Consumer, ConsumerStore } from './consumer.store';
+import { map } from 'rxjs/operators';
+import { EmitterService } from '../emitter/emitter.service';
+import { Consumer } from './consumer.store';
 
 export interface KafkaMessage {
   ConsumerId: string;
@@ -43,9 +42,8 @@ export interface MessagesState {
 })
 export class MessagesStore {
   constructor(
-    private socketService: SocketService,
+    private emitterService: EmitterService,
   ) {
-    this.init();
   }
 
   store = createStore({
@@ -54,7 +52,7 @@ export class MessagesStore {
 
   init() {
     combineLatest([
-      this.socketService.stream<KafkaMessage>('message.consumed')
+      this.emitterService.emitter.stream<KafkaMessage>('message.consumed')
     ])
       .subscribe(([message]) => {
         const consumerId = message.ConsumerId;

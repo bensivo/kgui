@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { ClusterStore } from 'src/app/store/cluster.store';
 
 import { ClusterComponent } from './cluster.component';
@@ -14,7 +14,7 @@ describe('ClusterComponent', () => {
       declarations: [ ClusterComponent ],
       providers: [
         {
-          provide: SocketService,
+          provide: EmitterService,
           useValue: {},
         },
         {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { StorageService } from './storage/storage.service';
-import { SocketService } from './socket/socket.service';
+import { EmitterService } from './emitter/emitter.service';
 import { ClusterState, ClusterStore } from './store/cluster.store';
 import { MessagesStore } from './store/messages.store';
 import { NavStore } from './store/nav.store';
@@ -13,7 +13,7 @@ import { NavStore } from './store/nav.store';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private navStore: NavStore, private socketService: SocketService, private clusterStore: ClusterStore, private storageService: StorageService, private messagesStore: MessagesStore) { }
+  constructor(private navStore: NavStore, private emitterService: EmitterService, private clusterStore: ClusterStore, private storageService: StorageService, private messagesStore: MessagesStore) { }
 
   expanded$ = this.navStore.store.pipe(map(s => s.expanded));
 
@@ -25,10 +25,12 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.socketService.initialize();
+    await this.emitterService.emitter.initialize();
+
+    await this.messagesStore.init();
     this.storageService.initialize();
 
-    this.socketService.stream<any[]>('clusters.changed')
+    this.emitterService.emitter.stream<any[]>('clusters.changed')
       .subscribe((clusters: any[]) => {
         let active = this.clusterStore.state.active;
         if (!active && clusters.length > 0) {
@@ -40,7 +42,7 @@ export class AppComponent implements OnInit {
         }));
       });
 
-    this.socketService.send({
+    this.emitterService.emitter.send({
       Topic: 'clusters.refresh',
       Data: {},
     });
@@ -72,7 +74,7 @@ export class AppComponent implements OnInit {
       ]
     });
 
-     this.socketService.send({
+     this.emitterService.emitter.send({
       Topic: 'clusters.add',
       Data: {
         BootstrapServer: "localhost:9092",
@@ -86,7 +88,7 @@ export class AppComponent implements OnInit {
       },
     });
 
-    this.socketService.send({
+    this.emitterService.emitter.send({
       Topic: 'clusters.add',
       Data: {
         BootstrapServer: "bad:9092",

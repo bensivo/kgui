@@ -6,7 +6,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 
 import { AddClusterComponent } from './add-cluster.component';
 
@@ -27,7 +27,7 @@ xdescribe('AddClusterComponent', () => {
       declarations: [AddClusterComponent],
       providers: [
         {
-          provide: SocketService,
+          provide: EmitterService,
           useValue: {},
         },
         {

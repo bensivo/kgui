@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { SocketService } from '../socket/socket.service';
+import { EmitterService } from '../emitter/emitter.service';
 
 export interface Request {
     correlationId: string;
@@ -21,13 +21,13 @@ export class RequestStore {
         name: 'request'
     }, withProps<RequestState>({ }));
 
-    constructor(private socketService: SocketService){
+    constructor(private emitterService: EmitterService){
         // TODO: should we put this in an app-wide init?
         this.init();
     }
 
     init() {
-        this.socketService.stream<any>('message.produced')
+        this.emitterService.emitter.stream<any>('message.produced')
         .subscribe((msg: {CorrelationId: string, Status: string}) => {
             this.update(msg.CorrelationId, msg.Status)
         })

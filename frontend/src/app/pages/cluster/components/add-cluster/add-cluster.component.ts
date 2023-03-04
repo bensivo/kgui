@@ -1,10 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SocketService } from 'src/app/socket/socket.service';
-import { ClusterStore } from 'src/app/store/cluster.store';
+import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { Cluster } from '../cluster/cluster.component';
 
 @Component({
@@ -17,12 +14,12 @@ export class AddClusterComponent implements OnInit {
   @Input()
   formGroup!: FormGroup;
 
-  constructor(private socketService: SocketService, private router: Router,) { }
+  constructor(private emitterService: EmitterService, private router: Router,) { }
 
 
   async ngOnInit(): Promise<void> {
     console.log(this.formGroup.value)
-    this.socketService.stream('clusters.changed').subscribe(() => {
+    this.emitterService.emitter.stream('clusters.changed').subscribe(() => {
       this.router.navigate(['/clusters']);
     })
   }
@@ -32,7 +29,7 @@ export class AddClusterComponent implements OnInit {
   }
 
   submit() {
-    this.socketService.send<Cluster>({
+    this.emitterService.emitter.send<Cluster>({
       Topic: 'clusters.add',
       Data: {
         Name: this.formGroup.value.name,

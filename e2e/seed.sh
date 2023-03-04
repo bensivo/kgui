@@ -1,11 +1,10 @@
 function produce() {
-    for i in {0..100}; do
-	echo "{\"partition\":$1, \"index\":$i}"| kcli p mmm -p $1
-    sleep 1
+    for i in {0..10}; do
+        echo "{\"partition\":$1, \"index\":$i}"| kcli p test -p $1
+        sleep .5
     done
 }
-kcli t create -p 3 asdf
 
-for partition in {0..49}; do
-	produce $partition &
+for partition in {0..2}; do
+	produce $partition
 done

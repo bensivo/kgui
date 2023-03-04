@@ -30,7 +30,8 @@ func (a *App) startup(ctx context.Context) {
 
 	logger.Init()
 
-	a.emitter = emitter.NewWebsocketEmitter()
+	a.emitter = emitter.NewEventsEmitter(a.ctx)
+
 	clusterController := controller.NewClusterController(a.emitter)
 	messageController := controller.NewMessageController(a.emitter)
 

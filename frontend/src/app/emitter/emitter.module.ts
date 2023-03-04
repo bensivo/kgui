@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { SocketService } from './socket.service';
+import { EmitterService } from './emitter.service';
 
 @NgModule({
   declarations: [],
@@ -8,7 +8,8 @@ import { SocketService } from './socket.service';
     CommonModule
   ],
   providers: [
-    SocketService,
+    EmitterService,
   ],
 })
-export class SocketModule { }
+export class EmitterModule { }
+

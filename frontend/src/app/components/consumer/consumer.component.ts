@@ -1,7 +1,7 @@
-import { AfterViewChecked, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore, MessageType } from 'src/app/store/messages.store';
@@ -31,7 +31,7 @@ export class ConsumerComponent{
 
   constructor(
     private consumerStore: ConsumerStore,
-    private socketService: SocketService,
+    private emitterService: EmitterService,
     private messagesStore: MessagesStore,
     private notification: NzNotificationService,
   ) { }
@@ -66,7 +66,7 @@ export class ConsumerComponent{
       this.notification.create('error', 'Error', 'Please select a cluster')
       return;
     }
-    this.socketService.send({
+    this.emitterService.emitter.send({
       Topic: 'message.consume',
       Data: {
         ConsumerId: this.consumer.id,
@@ -79,7 +79,7 @@ export class ConsumerComponent{
   }
 
   stop() {
-    this.socketService.send({
+    this.emitterService.emitter.send({
       Topic: 'message.stop',
       Data: {
         ConsumerId: this.consumer.id,

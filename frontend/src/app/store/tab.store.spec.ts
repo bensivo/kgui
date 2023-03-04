@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { SocketService } from '../socket/socket.service';
+import { EmitterService } from '../emitter/emitter.service';
 import { Tab, TabStore } from './tab.store';
 
 describe('TabStore', () => {
   let service: TabStore;
-  let socketService: SocketService;
+  let emitterService: EmitterService;
 
   const tabs: Tab[] = [
     {
@@ -31,13 +31,13 @@ describe('TabStore', () => {
     TestBed.configureTestingModule({
       providers: [
         {
-          provide: SocketService,
-          useValue: jasmine.createSpyObj('socketService', ['send'])
+          provide: EmitterService,
+          useValue: jasmine.createSpyObj('emitterService', ['send'])
         }
       ]
     });
     service = TestBed.inject(TabStore);
-    socketService = TestBed.inject(SocketService);
+    emitterService = TestBed.inject(EmitterService);
   });
 
   it('should be created', () => {
@@ -69,7 +69,7 @@ describe('TabStore', () => {
       service.store.entities = tabs;
 
       service.removeTab(tabs[0].id);
-      expect(socketService.send).toHaveBeenCalledWith({
+      expect(emitterService.emitter.send).toHaveBeenCalledWith({
         Topic: 'message.stop',
         Data: {
           ConsumerId: tabs[0].targetId

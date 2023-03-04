@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SocketService } from 'src/app/socket/socket.service';
 import { ClusterStore } from 'src/app/store/cluster.store';
-import { Cluster } from '../cluster/cluster.component';
 
 @Component({
   selector: 'app-add-cluster',

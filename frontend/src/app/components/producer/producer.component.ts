@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { Cluster } from 'src/app/store/cluster.store';
 import { Producer, ProducerStore } from 'src/app/store/producer.store';
 import { Request, RequestStore } from 'src/app/store/request.store';
@@ -14,7 +14,7 @@ import * as uuid from 'uuid';
 })
 export class ProducerViewComponent {
   constructor(
-    private socketService: SocketService,
+    private emitterService: EmitterService,
     private producerStore: ProducerStore,
     private requestStore: RequestStore,
     private notification: NzNotificationService,
@@ -47,7 +47,7 @@ export class ProducerViewComponent {
       Message: value.message,
     }
 
-    this.socketService.send(
+    this.emitterService.emitter.send(
       {
         Topic: 'message.produce',
         Data: data 

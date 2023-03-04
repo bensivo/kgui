@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SocketService } from '../socket/socket.service';
+import { EmitterService } from '../emitter/emitter.service';
 import { Entity, EntityStore } from './entity.store';
 
 export interface Tab extends Entity {
@@ -15,7 +15,7 @@ export interface Tab extends Entity {
 export class TabStore {
     store = new EntityStore<Tab>('tab', []);
 
-    constructor(private socketService: SocketService) { }
+    constructor(private emitterService: EmitterService) { }
 
     selectTab(id: string) {
         this.store.entities = this.store.entities.map((t) => ({
@@ -35,7 +35,7 @@ export class TabStore {
 
         const tab = tabs[index];
         if (tab.targetType === 'consumer') {
-            this.socketService.send({
+            this.emitterService.emitter.send({
                 Topic: 'message.stop',
                 Data: {
                     ConsumerId: tab.targetId,

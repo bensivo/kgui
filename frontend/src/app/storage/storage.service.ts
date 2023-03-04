@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import * as wails from '../../../wailsjs/go/main/App';
-import { SocketService } from "../socket/socket.service";
+import { EmitterService } from "../emitter/emitter.service";
 import { ClusterState, ClusterStore } from "../store/cluster.store";
 import { Consumer, ConsumerStore } from "../store/consumer.store";
 import { Producer, ProducerStore } from "../store/producer.store";
@@ -20,15 +20,15 @@ export class StorageService {
         private clusterStore: ClusterStore,
         private consumerStore: ConsumerStore,
         private producerStore: ProducerStore,
-        private socketService: SocketService
+        private emitterService: EmitterService
     ) { }
 
     initialize() {
-        this.socketService.stream('save.requested').subscribe(() => {
+        this.emitterService.emitter.stream('save.requested').subscribe(() => {
             this.save();
         });
 
-        this.socketService.stream<PersistedState>('load.requested').subscribe((data) => {
+        this.emitterService.emitter.stream<PersistedState>('load.requested').subscribe((data) => {
             this.load(data);
         });
     }
@@ -50,7 +50,7 @@ export class StorageService {
         this.producerStore.store.entities = state.producer;
 
         for (const cluster of state.cluster.clusters) {
-            this.socketService.send({
+            this.emitterService.emitter.send({
                 Topic: 'clusters.add',
                 Data: {
                     ...cluster

@@ -10,7 +10,7 @@ import { AppComponent } from './app.component';
 import { HeaderModule } from './components/header/header.module';
 import { NavModule } from './components/nav/nav.module';
 import { IconsProviderModule } from './icons-provider.module';
-import { SocketModule } from './socket/socket.module';
+import { EmitterModule } from './emitter/emitter.module';
 
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
@@ -34,7 +34,7 @@ registerLocaleData(en);
     HeaderModule,
     NzMenuModule,
     NzNotificationModule,
-    SocketModule,
+    EmitterModule,
     NavModule,
     TabContentModule,
   ],

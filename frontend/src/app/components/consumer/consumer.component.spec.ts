@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormArray, FormGroup } from '@angular/forms';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { ConsumerStore } from 'src/app/store/consumer.store';
 import { MessagesStore } from 'src/app/store/messages.store';
 
@@ -15,7 +15,7 @@ xdescribe('ConsumerComponent', () => {
       declarations: [ ConsumerComponent ],
       providers: [
         {provide: ConsumerStore, useValue: {}},
-        {provide: SocketService, useValue: {}},
+        {provide: EmitterService, useValue: {}},
         {provide: MessagesStore, useValue: {}},
       ]
     })

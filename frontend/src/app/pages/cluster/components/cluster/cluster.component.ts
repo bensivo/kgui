@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SocketService } from 'src/app/socket/socket.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
 import { ClusterState, ClusterStore } from 'src/app/store/cluster.store';
 
 export interface Cluster {
@@ -22,7 +22,7 @@ export interface Cluster {
 export class ClusterComponent implements OnInit {
   clusters: Cluster[] = [];
 
-  constructor(private socketService: SocketService, private clusterStore: ClusterStore, private router: Router) { }
+  constructor(private emitterService: EmitterService, private clusterStore: ClusterStore, private router: Router) { }
 
   async ngOnInit(): Promise<void> {
     this.clusterStore.store.subscribe((state: ClusterState) => {
@@ -39,7 +39,7 @@ export class ClusterComponent implements OnInit {
   }
 
   deleteCluster(cluster: any) {
-    this.socketService.send({
+    this.emitterService.emitter.send({
       Topic: 'clusters.remove',
       Data: cluster,
     });
