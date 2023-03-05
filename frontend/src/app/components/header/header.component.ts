@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { select } from '@ngneat/elf';
 import { NzTabPosition } from 'ng-zorro-antd/tabs';
@@ -10,7 +10,7 @@ import { NavStore } from 'src/app/store/nav.store';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.less']
+  styleUrls: ['./header.component.less'],
 })
 export class HeaderComponent implements OnInit{
 

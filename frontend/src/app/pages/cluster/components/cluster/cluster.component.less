@@ -1,44 +1,51 @@
-@import "~ng-zorro-antd/ng-zorro-antd.less";
+@import "../../../../../theme.less";
 
 #clusters {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-}
 
-nz-card {
-    min-height: 200px;
-    width: 300px;
+    nz-card {
+        min-height: 200px;
+        width: 300px;
 
-    div {
+        background-color: @background-color-light;
+
         text-overflow: ellipsis;
-        width: 100%;
         white-space: nowrap;
         text-overflow: ellipsis;
         display: block;
         overflow: hidden;
+
+        border: none;
+
     }
-}
 
-nz-card.add-cluster {
-    text-align: center;
-    transition: 0.2s;
+    div.ant-card-head-title  {
+        color: @primary-color;
+    }
 
-    &:hover {
-        color: @blue-6;
-        border: 1px solid @blue-6;
+    nz-card.add-cluster {
+        text-align: center;
         transition: 0.2s;
-    }
-}
 
-i {
-    cursor: pointer;
-    transition: 0.2s;
+        &:hover {
+            color: @primary-color;
+            border: 1px solid @primary-color;
+            transition: 0.2s;
+        }
+    }
+
+    i {
+        cursor: pointer;
+        transition: 0.2s;
         width: 1.5em;
         height: 1.5em;
 
-}
-i:hover {
-    transition: 0.2s;
-    color: @blue-6;
+    }
+
+    i:hover {
+        transition: 0.2s;
+        color: @primary-color;
+    }
 }

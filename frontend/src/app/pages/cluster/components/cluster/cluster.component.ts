@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { EmitterService } from 'src/app/emitter/emitter.service';
 import { ClusterState, ClusterStore } from 'src/app/store/cluster.store';
@@ -17,7 +17,8 @@ export interface Cluster {
 @Component({
   selector: 'app-cluster',
   templateUrl: './cluster.component.html',
-  styleUrls: ['./cluster.component.less']
+  styleUrls: ['./cluster.component.less'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClusterComponent implements OnInit {
   clusters: Cluster[] = [];

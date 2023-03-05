@@ -1,3 +1,5 @@
+@import '../../../theme.less';
+
 .content {
     display: flex;
     flex-direction: row;
@@ -15,6 +17,8 @@
             width: fit-content;
             font-size: 2em;
             padding: 0;
+
+            color: @primary-color;
         }
 
         i {
@@ -32,7 +36,7 @@
 
 .content-right {
     flex:1;
-    background-color: #f5f5f5; // grey-3 from ant design
+    background-color: @background-color-light;
 
     display:flex;
     flex-direction: column;

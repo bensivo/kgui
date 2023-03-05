@@ -1,3 +1,5 @@
+@import '../theme.less';
+
 .app{
     height: 100vh;
 }
@@ -9,11 +11,16 @@
     box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
 
+nz-layout {
+    background-color: @background-color-base;
+    background: @background-color-base;
+}
+
 .ant-layout-sider-collapsed * {
     display: none;
 }
 
-nz-header {
+#nz-header {
     padding: 0;
     width: 100%;
 }
@@ -24,6 +31,6 @@ nz-content {
 
 .inner-content {
     padding: 24px;
-    background: #fff;
+    // background: @background-color-base;
     height: 100%;
 }
