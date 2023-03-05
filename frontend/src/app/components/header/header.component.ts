@@ -11,6 +11,7 @@ import { NavStore } from 'src/app/store/nav.store';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.less'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class HeaderComponent implements OnInit{
 

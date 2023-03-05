@@ -9,7 +9,7 @@
     display: flex;
     height: 64px;
     padding: 0;
-    background: @component-background;
+    background: @body-background;
     box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
     flex-direction: row;
@@ -24,7 +24,17 @@
     }
 
     app-tabs {
-        flex-grow:1
+        flex-grow:1;
+
+        .ant-tabs-top > .ant-tabs-nav::before {
+            border: none; // Remove bottom border on entire tab section
+        }
+
+        .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab {
+            border-color: @background-color-light;
+            border-radius: 2px;
+            margin-right: .25em;
+        }
     }
 
     .header-right {
