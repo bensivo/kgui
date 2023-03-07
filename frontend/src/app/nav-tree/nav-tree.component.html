@@ -1,0 +1,34 @@
+<div id="nav-tree" *ngIf="nzTreeNodeOptions$ | async as nodes">
+    <nz-tree #nztree [nzData]="nodes" nzDraggable nzBlockNode (nzOnDrop)="nzEvent($event)" (nzClick)="onClickItem($event)" [nzTreeTemplate]="nzTreeTemplate"></nz-tree>
+</div>
+
+<ng-template #nzTreeTemplate let-node let-origin="origin">
+    <span *ngIf="!node.isLeaf" (contextmenu)="openContextMenu($event, folderMenu)"> {{ node.title }} </span>
+    <span *ngIf="node.isLeaf" (contextmenu)="openContextMenu($event, nodeMenu)"> {{ node.title }} </span>
+
+    <nz-dropdown-menu #folderMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item (click)="openRenameModal(node) ">Rename</li>
+            <li nz-menu-item (click)="addFolder(node) ">Add Folder</li>
+            <li nz-menu-item (click)="addConsumer(node) ">Add Consumer</li>
+            <li nz-menu-item (click)="addProducer(node) ">Add Producer</li>
+            <li nz-menu-item>Delete</li>
+        </ul>
+    </nz-dropdown-menu>
+
+    <nz-dropdown-menu #nodeMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item (click)="openRenameModal(node) ">Rename</li>
+            <li nz-menu-item>Delete</li>
+        </ul>
+    </nz-dropdown-menu>
+</ng-template>
+
+<nz-modal [(nzVisible)]="showRenameModal" nzTitle="Rename" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitModal()">
+    <ng-container *nzModalContent>
+        <form (submit)="onSubmitModal($event)">
+            <label>Name: </label>
+            <input nz-input [formControl]="renameModalInput" />
+        </form>
+    </ng-container>
+</nz-modal>

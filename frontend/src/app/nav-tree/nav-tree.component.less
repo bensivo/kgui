@@ -1,0 +1,18 @@
+ @import '../../theme.less';
+
+ // Styles for dragging elements around the tree. 'ng-reflect-drag-position' indicates where the element is to be placed, relative to this one
+ // i.e. -1 means "before this element", 1 means "after this element", 0 means "inside this element (folders)"
+ #nav-tree nz-tree-node-title[ng-reflect-show-indicator="true"][ng-reflect-drag-position="-1"] {
+    border-top: 1px solid @primary-color
+ }
+ #nav-tree nz-tree-node-title[ng-reflect-show-indicator="true"][ng-reflect-drag-position="1"] {
+    border-bottom: 1px solid @primary-color
+ }
+ #nav-tree nz-tree-node-title[ng-reflect-show-indicator="true"][ng-reflect-drag-position="0"] {
+    background-color: fade(@primary-color, 50%);
+ }
+
+ #nav-tree nz-tree-node-title > span{
+   display: inline-block;
+   width: 100%;
+ }

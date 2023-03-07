@@ -17,6 +17,7 @@ import en from '@angular/common/locales/en';
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { TabContentModule } from './components/tab-content/tab-content.module';
+import { NavTreeModule } from './nav-tree/nav-tree.module';
 registerLocaleData(en);
 
 @NgModule({
@@ -37,6 +38,7 @@ registerLocaleData(en);
     EmitterModule,
     NavModule,
     TabContentModule,
+    NavTreeModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

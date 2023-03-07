@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { nanoid } from 'nanoid';
 import { Observable } from 'rxjs';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
+import { NavStore } from 'src/app/store/nav.store';
 import { Producer, ProducerStore } from 'src/app/store/producer.store';
 import { Tab, TabStore } from 'src/app/store/tab.store';
 
@@ -15,6 +16,7 @@ export class NavComponent {
   constructor(
     private consumerStore: ConsumerStore,
     private producerStore: ProducerStore,
+    private navStore: NavStore,
     private tabStore: TabStore,
     private router: Router,
   ) { }
@@ -43,7 +45,6 @@ export class NavComponent {
 
     this.tabStore.store.upsert(tab);
     this.tabStore.selectTab(tab.id);
-
   }
 
   onSelectProducer(producer: Producer) {
@@ -83,5 +84,13 @@ export class NavComponent {
       partition: 0,
       message: '',
     });
+  }
+
+  addFolder() {
+    this.navStore.insertRootNode({
+      title: 'Untitled',
+      key: nanoid(),
+      isLeaf: false,
+    })
   }
 }

@@ -4,6 +4,7 @@ import { NavComponent } from './nav.component';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NavTreeModule } from 'src/app/nav-tree/nav-tree.module';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzMenuModule,
     RouterModule,
     NzIconModule,
+    NavTreeModule,
   ],
   exports: [
     NavComponent
