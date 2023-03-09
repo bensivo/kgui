@@ -1,5 +1,5 @@
 <div id="nav-tree" *ngIf="nzTreeNodeOptions$ | async as nodes">
-    <nz-tree #nztree [nzData]="nodes" nzDraggable nzBlockNode (nzOnDrop)="nzEvent($event)" (nzClick)="onClickItem($event)" [nzTreeTemplate]="nzTreeTemplate"></nz-tree>
+    <nz-tree *ngIf="nodes.length > 0" #nztree [nzData]="nodes" nzDraggable nzBlockNode (nzOnDrop)="nzEvent($event)" (nzClick)="onClickItem($event)" [nzTreeTemplate]="nzTreeTemplate"></nz-tree>
 </div>
 
 <ng-template #nzTreeTemplate let-node let-origin="origin">
@@ -9,17 +9,17 @@
     <nz-dropdown-menu #folderMenu="nzDropdownMenu">
         <ul nz-menu>
             <li nz-menu-item (click)="openRenameModal(node) ">Rename</li>
-            <li nz-menu-item (click)="addFolder(node) ">Add Folder</li>
-            <li nz-menu-item (click)="addConsumer(node) ">Add Consumer</li>
-            <li nz-menu-item (click)="addProducer(node) ">Add Producer</li>
-            <li nz-menu-item>Delete</li>
+            <li nz-menu-item (click)="addFolder(node)">Add Folder</li>
+            <li nz-menu-item (click)="addConsumer(node)">Add Consumer</li>
+            <li nz-menu-item (click)="addProducer(node)">Add Producer</li>
+            <li nz-menu-item (click)="removeNode(node)">Delete</li>
         </ul>
     </nz-dropdown-menu>
 
     <nz-dropdown-menu #nodeMenu="nzDropdownMenu">
         <ul nz-menu>
             <li nz-menu-item (click)="openRenameModal(node) ">Rename</li>
-            <li nz-menu-item>Delete</li>
+            <li nz-menu-item (click)="removeNode(node)">Delete</li>
         </ul>
     </nz-dropdown-menu>
 </ng-template>

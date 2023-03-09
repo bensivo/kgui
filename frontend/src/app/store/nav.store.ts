@@ -1,28 +1,26 @@
 import { Injectable } from "@angular/core";
-import { createStore, withProps } from "@ngneat/elf";
-import { nanoid } from "nanoid";
-import { NzTreeNode, NzTreeNodeOptions } from "ng-zorro-antd/tree";
+import { createStore, select, withProps } from "@ngneat/elf";
+import { Observable } from "rxjs";
 
-interface NavFolder {
+export interface NavFolder {
     type: 'folder';
     id: string;
     name: string;
     expanded: boolean;
-    children: NavItem[];
+    children: NavNode[];
 }
 
-interface NavNode {
-    type: 'node';
+export interface NavLeaf {
+    type: 'leaf';
     id: string;
     name: string;
 }
 
-export type NavItem = NavFolder | NavNode;
+export type NavNode = NavFolder | NavLeaf;
 
 export interface NavState {
     expanded: boolean;
-    navItems: NavItem[];
-    nzTreeNodes: NzTreeNodeOptions[];
+    nodes: NavNode[];
 }
 
 @Injectable({
@@ -31,101 +29,48 @@ export interface NavState {
 export class NavStore {
     store = createStore({ name: 'nav' }, withProps<NavState>({
         expanded: true,
-        navItems: [
-            {
-                id: nanoid(),
-                type: 'folder',
-                name: 'deming',
-                expanded: false,
-                children: [
-                    {
-                        id: nanoid(),
-                        type: 'node',
-                        name: 'Rovr',
-                    },
-                    {
-                        id: nanoid(),
-                        type: 'node',
-                        name: 'Observr',
-                    },
-                ]
-            },
-            {
-                id: nanoid(),
-                type: 'folder',
-                expanded: false,
-                name: 'Hovertouch',
-                children: [
-                    {
-                        id: nanoid(),
-                        type: 'node',
-                        name: 'Touch wall',
-                    },
-                    {
-                        id: nanoid(),
-                        type: 'node',
-                        name: 'Touch car',
-                    },
-                ]
-            },
-        ],
-        nzTreeNodes: [
-            {
-                title: 'deming',
-                key: nanoid(),
-                children: [
-                    {
-                        title: 'rovr',
-                        key: nanoid(),
-                    },
-                    {
-                        title: 'observr',
-                        key: nanoid(),
-                    }
-                ]
-            },
-            {
-                title: 'hovertouch',
-                key: nanoid(),
-                children: [
-                    {
-                        title: 'touchwall',
-                        isLeaf: true,
-                        key: nanoid(),
-                    },
-                    {
-                        title: 'touchcar',
-                        isLeaf: true,
-                        key: nanoid(),
-                    },
-                    {
-                        title: 'react table',
-                        isLeaf: true,
-                        key: nanoid(),
-                    }
-                ]
-            }
-        ]
+        nodes: [],
     }));
 
-    insertRootNode(newNode: NzTreeNodeOptions) {
-        this.setNodes([
-            ...this.store.state.nzTreeNodes,
-            newNode
-        ])
+    get navItems$(): Observable<NavNode[]> {
+        return this.store.pipe(
+            select(s => s.nodes)
+        );
     }
 
-    insertNode(newNode: NzTreeNodeOptions, parent: NzTreeNodeOptions): void {
-        const nodes = this._insertNode(newNode, parent, this.store.state.nzTreeNodes)
-        this.setNodes(nodes);
+    /**
+     * Inserts a node, at the root level if no parentId is given, or under the parent.
+     *
+     * @param node 
+     * @param parent 
+     */
+    insertNode(node: NavNode, parentId?: string) {
+        const nodes = [...this.store.state.nodes];
+        if (!parentId) {
+            this.setNodes([
+                ...nodes,
+                node,
+            ]);
+            return;
+        }
+
+        if (!this.nodeExists(parentId)) {
+            throw new Error(`Parent node ${parentId} not found`);
+        }
+
+        const newNodes = this._insertNode(node, parentId, this.store.state.nodes);
+        this.setNodes(newNodes);
     }
-    _insertNode(newNode: NzTreeNodeOptions, parent: NzTreeNodeOptions, nodes: NzTreeNodeOptions[]): NzTreeNodeOptions[] {
+
+    _insertNode(newNode: NavNode, parentId: string, nodes: NavNode[]): NavNode[] {
         return nodes.map(node => {
-            if (node.key === parent.key) {
-                console.log('Adding node to parent', node)
+            if (node.id === parentId) {
+                if (node.type !== 'folder') {
+                    throw new Error(`Cannot add child to non-folder node ${parentId}`);
+                }
+
                 return {
                     ...node,
-                    expanded: true,
                     children: [
                         ...node.children ?? [],
                         newNode,
@@ -133,71 +78,91 @@ export class NavStore {
                 }
             }
 
+            if (node.type === 'leaf') {
+                return node;
+            }
+
             return {
                 ...node,
-                children: node.children ? this._insertNode(newNode, parent, node.children) : undefined,
-            }
+                children: this._insertNode(newNode, parentId, node.children)
+            };
         })
     }
 
-    replaceNode(key: string, newNode: NzTreeNodeOptions): void {
-        console.log('Replacing node', key, 'with node', newNode);
-        const nodes = this._replaceNode(key, newNode, this.store.state.nzTreeNodes);
-        this.setNodes(nodes);
+    updateNode(id: string, data: Partial<NavNode>) {
+        if (!this.nodeExists(id)) {
+            throw new Error(`Cannot update node. Node ${id} not found`);
+        }
+
+        const newNodes = this._updateNode(id, data, this.store.state.nodes);
+        this.setNodes(newNodes);
     }
-    _replaceNode(key: string, newNode: NzTreeNodeOptions, nodes: NzTreeNodeOptions[]): NzTreeNodeOptions[] {
+    _updateNode(id: string, data: Partial<NavNode>, nodes: NavNode[]): NavNode[] {
         return nodes.map(node => {
-            if (node.key === key) {
-                return newNode;
+            if (node.id === id) {
+                return {
+                    ...node,
+                    ...data as NavNode,
+                }
+            }
+
+            if (node.type === 'leaf') {
+                return node;
             }
 
             return {
                 ...node,
-                children: node.children ? this._replaceNode(key, newNode, node.children) : undefined,
-            }
+                children: this._updateNode(id, data, (node as NavFolder).children)
+            };
         })
     }
 
-    setNodes(nodes: NzTreeNodeOptions[]) {
-        // NzTreeNode objects technically fill the NzTreeNodeOptions interface, but the tree breaks 
-        // if you call this function with actual NzTreeNode objects. To protect against this, we convert all 
-        // nodes to the correct type before setting.
-        const nzTreeNodes = nodes.map((n) => this.coerceToNodeOptions(n))
+    removeNode(id: string) {
+        const newNodes = this._removeNode(id, this.store.state.nodes);
+        this.setNodes(newNodes);
+    }
+    _removeNode(id: string, nodes: NavNode[]): NavNode[] {
+        return nodes.map(node => {
+            if (node.id === id) {
+                return undefined;
+            }
 
+            if (node.type === 'leaf') {
+                return node;
+            }
+
+            return {
+                ...node,
+                children: this._removeNode(id, (node as NavFolder).children)
+            };
+        })
+        .filter(n => !!n) as NavNode[]; // Compiler can't tell that this removes all undefined values. Thus, typecasting
+    }
+
+    private nodeExists(id: string): boolean {
+        return this._nodeExists(id, this.store.state.nodes);
+    }
+    private _nodeExists(id: string, nodes: NavNode[]) {
+        // Potential improvement - stop computing once you find the node that matches
+        const res: boolean[] = nodes.map(node => {
+            if (node.id === id) {
+                return true;
+            }
+
+            if (node.type === 'leaf') {
+                return false;
+            }
+
+            return this._nodeExists(id, node.children)
+        });
+        
+        return res.includes(true);
+    }
+
+    setNodes(nodes: NavNode[]) {
         this.store.update(s => ({
             ...s,
-            nzTreeNodes: nzTreeNodes
+            nodes: nodes,
         }))
     }
-
-   coerceToNodeOptions(n: NzTreeNode | NzTreeNodeOptions): NzTreeNodeOptions {
-        return {
-            title: n.title,
-            key: n.key,
-            expanded: n.level !== undefined ? n.isExpanded : (n as NzTreeNodeOptions).expanded,
-            isLeaf: n.isLeaf,
-            children: n.children?.map(child => this.coerceToNodeOptions(child)),
-        }
-    }
-
-
-    // findNode(key: string, items?: NzTreeNodeOptions[]): NzTreeNodeOptions | undefined {
-    //     let searchItems = items ? items : this.store.state.nzTreeNodes;
-
-    //     // DFS implementation to find a node by ID
-    //     for (const item of searchItems) {
-    //         if (item.key === key) {
-    //             return item;
-    //         }
-
-    //         if (!item.isLeaf) {
-    //             const res = this.findNode(key, item.children);
-    //             if (res) {
-    //                 return res
-    //             }
-    //         }
-    //     }
-
-    //     return undefined;
-    // }
 }

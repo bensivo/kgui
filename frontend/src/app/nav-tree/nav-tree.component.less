@@ -16,3 +16,12 @@
    display: inline-block;
    width: 100%;
  }
+
+ #nav-tree nz-tree-node-switcher {
+   // Normally, the carat icon for folders is clickable, but ng-zorro did not expose an emitter for this click event. 
+   // Because of this, our nav store has no way to know if a folder was expanded using this carat icon. 
+   //
+   // Removing pointer events makes it so all updates to the tree happen through the nav store.
+   cursor: auto;
+   pointer-events: none;
+ }

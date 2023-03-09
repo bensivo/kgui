@@ -1,12 +1,12 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { select } from '@ngneat/elf';
 import { nanoid } from 'nanoid';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
-import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode } from 'ng-zorro-antd/tree';
-import { tap } from 'rxjs/operators';
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ConsumerStore } from '../store/consumer.store';
-import { NavStore } from '../store/nav.store';
+import { NavNode, NavStore } from '../store/nav.store';
 import { ProducerStore } from '../store/producer.store';
 import { Tab, TabStore } from '../store/tab.store';
 
@@ -30,24 +30,44 @@ export class NavTreeComponent {
   @ViewChild('nztree')
   nzTree: NzTreeComponent | undefined;
 
-  nzTreeNodeOptions$ = this.navStore.store.pipe(
-    select(s => s.nzTreeNodes),
-    tap(s => console.log('Update', s))
-  )
-
   activatedNode?: NzTreeNode;
 
   showRenameModal = false;
   renameModalNode: NzTreeNode | undefined;
   renameModalInput = new FormControl('');
 
+  nzTreeNodeOptions$: Observable<NzTreeNodeOptions[]> = this.navStore.navItems$.pipe(
+    map(navItems => this.navNodesToNzNodes(navItems))
+  )
+
+  private navNodesToNzNodes(navNodes: NavNode[]): NzTreeNodeOptions[] {
+    return navNodes.map(item => ({
+      key: item.id,
+      title: item.name,
+      isLeaf: item.type === 'leaf',
+      expanded: item.type === 'folder' ? item.expanded : undefined,
+      children: item.type === 'folder' ? this.navNodesToNzNodes(item.children) : undefined,
+    }))
+  }
+
+  private nzNodesToNavNodes(nzNodes: NzTreeNodeOptions[]): NavNode[] {
+    return nzNodes.map(node => ({
+      id: node.key,
+      name: node.title,
+      type: (node.isLeaf ? 'leaf' : 'folder') as any,
+      expanded: !node.isLeaf ? node.isExpanded : undefined,
+      children: !node.isLeaf && node.children ? this.nzNodesToNavNodes(node.children) : undefined,
+    }))
+  }
 
   nzEvent(event: NzFormatEmitEvent): void {
     console.log('Nz Tree Event', event)
 
-    const nodes = this.nzTree?.getTreeNodes();
-    if (nodes) {
-      this.navStore.setNodes(nodes);
+    if (event.eventName === 'drop') {
+      const nzNodes = this.nzTree?.getTreeNodes();
+      if (nzNodes) {
+        this.navStore.setNodes(this.nzNodesToNavNodes(nzNodes));
+      }
     }
   }
 
@@ -59,7 +79,9 @@ export class NavTreeComponent {
     }
 
     if (!node.isLeaf) {
-      node.isExpanded = !node.isExpanded;
+      this.navStore.updateNode(node.key, {
+        expanded: !node.isExpanded
+      })
       return;
     }
 
@@ -76,6 +98,8 @@ export class NavTreeComponent {
 
       this.tabStore.store.upsert(tab);
       this.tabStore.selectTab(tab.id); console.log('No consumer with id', node.key);
+
+      // TODO: create a corresponding consumer in the consumer store
       return
     }
 
@@ -91,6 +115,8 @@ export class NavTreeComponent {
 
       this.tabStore.store.upsert(tab);
       this.tabStore.selectTab(tab.id); console.log('No consumer with id', node.key);
+
+      // TODO: create a corresponding producer in the producer store
       return;
     }
   }
@@ -108,34 +134,55 @@ export class NavTreeComponent {
   addFolder(parentNode: NzTreeNode) {
     this.navStore.insertNode(
       {
-        title: 'Untitled',
-        key: nanoid(),
-        isLeaf: false,
+        id: nanoid(),
+        name: 'Untitled',
+        type: 'folder',
+        children: [],
+        expanded: false,
       },
-      parentNode,
+      parentNode.key,
     )
+
+    this.navStore.updateNode(parentNode.key, {
+      expanded: true
+    }
+    );
   }
 
   addConsumer(parentNode: NzTreeNode) {
     this.navStore.insertNode(
       {
-        title: 'Untitled',
-        key: nanoid(),
-        isLeaf: true,
+        id: nanoid(),
+        name: 'Untitled',
+        type: 'leaf',
       },
-      parentNode,
+      parentNode.key,
     )
+
+    this.navStore.updateNode(parentNode.key, {
+      expanded: true
+    }
+    );
   }
 
   addProducer(parentNode: NzTreeNode) {
     this.navStore.insertNode(
       {
-        title: 'Untitled',
-        key: nanoid(),
-        isLeaf: true,
+        id: nanoid(),
+        name: 'Untitled',
+        type: 'leaf',
       },
-      parentNode,
+      parentNode.key,
     )
+
+    this.navStore.updateNode(parentNode.key, {
+      expanded: true
+    }
+    );
+  }
+
+  removeNode(node: NzTreeNode) {
+    this.navStore.removeNode(node.key);
   }
 
   onCancelModal() {
@@ -154,9 +201,8 @@ export class NavTreeComponent {
       return;
     }
 
-    this.navStore.replaceNode(node.key, {
-      ...this.navStore.coerceToNodeOptions(node),
-      title: this.renameModalInput.value.trim(),
-    });
+    this.navStore.updateNode(node.key, {
+      name: this.renameModalInput.value.trim(),
+    })
   }
 }

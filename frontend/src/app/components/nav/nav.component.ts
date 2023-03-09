@@ -87,10 +87,12 @@ export class NavComponent {
   }
 
   addFolder() {
-    this.navStore.insertRootNode({
-      title: 'Untitled',
-      key: nanoid(),
-      isLeaf: false,
+    this.navStore.insertNode({
+      id: nanoid(),
+      name: 'Untitled',
+      type: 'folder',
+      children: [],
+      expanded: false,
     })
   }
 }
