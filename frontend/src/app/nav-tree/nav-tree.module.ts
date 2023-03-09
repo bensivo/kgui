@@ -8,6 +8,7 @@ import { NzContextMenuServiceModule, NzDropDownModule } from 'ng-zorro-antd/drop
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     NzContextMenuServiceModule,
     NzModalModule,
     NzInputModule,
+    NzIconModule,
     ReactiveFormsModule,
   ],
   exports: [

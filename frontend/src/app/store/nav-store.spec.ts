@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { NavFolder, NavNode, NavLeaf, NavStore } from "./nav.store";
+import { NavFolder, NavLeaf, NavStore } from "./nav.store";
 
 describe('nav-store', () => {
     let service: NavStore;
@@ -12,7 +12,7 @@ describe('nav-store', () => {
         children: []
     };
     const navNode: NavLeaf = {
-        type: 'leaf',
+        type: 'consumer',
         id: 'navNode',
         name: 'node-1',
     };

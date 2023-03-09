@@ -1,10 +1,10 @@
 <div id="nav-tree" *ngIf="nzTreeNodeOptions$ | async as nodes">
-    <nz-tree *ngIf="nodes.length > 0" #nztree [nzData]="nodes" nzDraggable nzBlockNode (nzOnDrop)="nzEvent($event)" (nzClick)="onClickItem($event)" [nzTreeTemplate]="nzTreeTemplate"></nz-tree>
+    <nz-tree *ngIf="nodes.length > 0" #nztree [nzData]="nodes" nzDraggable nzBlockNode nzShowIcon (nzOnDrop)="nzEvent($event)" (nzClick)="onClickItem($event)" [nzTreeTemplate]="nzTreeTemplate"></nz-tree>
 </div>
 
 <ng-template #nzTreeTemplate let-node let-origin="origin">
     <span *ngIf="!node.isLeaf" (contextmenu)="openContextMenu($event, folderMenu)"> {{ node.title }} </span>
-    <span *ngIf="node.isLeaf" (contextmenu)="openContextMenu($event, nodeMenu)"> {{ node.title }} </span>
+    <span *ngIf="node.isLeaf" nz-icon [nzType]="origin.icon" (contextmenu)="openContextMenu($event, nodeMenu)"> {{ node.title }} </span>
 
     <nz-dropdown-menu #folderMenu="nzDropdownMenu">
         <ul nz-menu>

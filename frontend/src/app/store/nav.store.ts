@@ -11,7 +11,7 @@ export interface NavFolder {
 }
 
 export interface NavLeaf {
-    type: 'leaf';
+    type: 'consumer' | 'producer';
     id: string;
     name: string;
 }
@@ -78,14 +78,18 @@ export class NavStore {
                 }
             }
 
-            if (node.type === 'leaf') {
-                return node;
+            switch (node.type) {
+                case 'folder':
+                    return {
+                        ...node,
+                        children: this._insertNode(newNode, parentId, node.children)
+                    };
+                case 'consumer':
+                case 'producer':
+                    return node;
             }
 
-            return {
-                ...node,
-                children: this._insertNode(newNode, parentId, node.children)
-            };
+
         })
     }
 
@@ -106,14 +110,16 @@ export class NavStore {
                 }
             }
 
-            if (node.type === 'leaf') {
-                return node;
+            switch (node.type) {
+                case 'folder':
+                    return {
+                        ...node,
+                        children: this._updateNode(id, data, (node as NavFolder).children)
+                    };
+                case 'consumer':
+                case 'producer':
+                    return node;
             }
-
-            return {
-                ...node,
-                children: this._updateNode(id, data, (node as NavFolder).children)
-            };
         })
     }
 
@@ -127,16 +133,18 @@ export class NavStore {
                 return undefined;
             }
 
-            if (node.type === 'leaf') {
-                return node;
+            switch (node.type) {
+                case 'folder':
+                    return {
+                        ...node,
+                        children: this._removeNode(id, (node as NavFolder).children)
+                    };
+                case 'consumer':
+                case 'producer':
+                    return node;
             }
-
-            return {
-                ...node,
-                children: this._removeNode(id, (node as NavFolder).children)
-            };
         })
-        .filter(n => !!n) as NavNode[]; // Compiler can't tell that this removes all undefined values. Thus, typecasting
+            .filter(n => !!n) as NavNode[]; // Compiler can't tell that this removes all undefined values. Thus, typecasting
     }
 
     private nodeExists(id: string): boolean {
@@ -149,13 +157,15 @@ export class NavStore {
                 return true;
             }
 
-            if (node.type === 'leaf') {
-                return false;
+            switch (node.type) {
+                case 'folder':
+                    return this._nodeExists(id, node.children);
+                case 'consumer':
+                case 'producer':
+                    return false;
             }
-
-            return this._nodeExists(id, node.children)
         });
-        
+
         return res.includes(true);
     }
 

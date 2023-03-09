@@ -44,9 +44,14 @@ export class NavTreeComponent {
     return navNodes.map(item => ({
       key: item.id,
       title: item.name,
-      isLeaf: item.type === 'leaf',
+      isLeaf: item.type !== 'folder',
       expanded: item.type === 'folder' ? item.expanded : undefined,
       children: item.type === 'folder' ? this.navNodesToNzNodes(item.children) : undefined,
+      icon: {
+        'folder': undefined,
+        'consumer': 'api',
+        'producer': 'send',
+      }[item.type]
     }))
   }
 
@@ -54,7 +59,7 @@ export class NavTreeComponent {
     return nzNodes.map(node => ({
       id: node.key,
       name: node.title,
-      type: (node.isLeaf ? 'leaf' : 'folder') as any,
+      type: (node.isLeaf ? 'consumer' : 'folder') as any,
       expanded: !node.isLeaf ? node.isExpanded : undefined,
       children: !node.isLeaf && node.children ? this.nzNodesToNavNodes(node.children) : undefined,
     }))
@@ -85,10 +90,18 @@ export class NavTreeComponent {
       return;
     }
 
-    const consumer = this.consumerStore.store.entities.find(c => c.name === node.title);
+    const consumer = this.consumerStore.store.entities.find(c => c.id === node.key);
 
     if (consumer) {
-      // TODO: don't create tab if already open
+      // See if this consumer is already in a tab
+      const existing = this.tabStore.store.entities.find(t =>
+        t.targetType === 'consumer' && t.targetId === consumer.id
+      )
+      if (existing) {
+        this.tabStore.selectTab(existing.id)
+        return;
+      }
+
       const tab: Tab = {
         id: nanoid(),
         active: true,
@@ -97,15 +110,21 @@ export class NavTreeComponent {
       };
 
       this.tabStore.store.upsert(tab);
-      this.tabStore.selectTab(tab.id); console.log('No consumer with id', node.key);
-
-      // TODO: create a corresponding consumer in the consumer store
+      this.tabStore.selectTab(tab.id);
       return
     }
 
-    const producer = this.producerStore.store.entities.find(c => c.name === node.title);
+    const producer = this.producerStore.store.entities.find(p => p.id === node.key);
     if (producer) {
-      // TODO: don't create tab if already open
+      // See if this producer is already in a tab
+      const existing = this.tabStore.store.entities.find(t =>
+        t.targetType === 'producer' && t.targetId === producer.id
+      )
+      if (existing) {
+        this.tabStore.selectTab(existing.id)
+        return;
+      }
+
       const tab: Tab = {
         id: nanoid(),
         active: true,
@@ -114,10 +133,8 @@ export class NavTreeComponent {
       };
 
       this.tabStore.store.upsert(tab);
-      this.tabStore.selectTab(tab.id); console.log('No consumer with id', node.key);
-
-      // TODO: create a corresponding producer in the producer store
-      return;
+      this.tabStore.selectTab(tab.id);
+      return
     }
   }
 
@@ -150,35 +167,51 @@ export class NavTreeComponent {
   }
 
   addConsumer(parentNode: NzTreeNode) {
+    const id = nanoid();
     this.navStore.insertNode(
       {
-        id: nanoid(),
+        id,
         name: 'Untitled',
-        type: 'leaf',
+        type: 'consumer',
       },
       parentNode.key,
     )
 
     this.navStore.updateNode(parentNode.key, {
       expanded: true
-    }
-    );
+    });
+
+    this.consumerStore.store.upsert({
+      id,
+      name: 'Untitled',
+      topic: '',
+      follow: false,
+      offset: 0,
+      filters: [],
+    })
   }
 
   addProducer(parentNode: NzTreeNode) {
+    const id = nanoid();
     this.navStore.insertNode(
       {
-        id: nanoid(),
+        id,
         name: 'Untitled',
-        type: 'leaf',
+        type: 'producer',
       },
       parentNode.key,
     )
-
     this.navStore.updateNode(parentNode.key, {
       expanded: true
-    }
-    );
+    });
+
+    this.producerStore.store.upsert({
+      id,
+      name: 'Untitled',
+      topic: '',
+      partition: 0,
+      message: '',
+    });
   }
 
   removeNode(node: NzTreeNode) {

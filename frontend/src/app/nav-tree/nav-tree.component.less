@@ -15,7 +15,16 @@
  #nav-tree nz-tree-node-title > span{
    display: inline-block;
    width: 100%;
+   text-align: left;
+
+   svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-120%, 50%);
+   }
  }
+
 
  #nav-tree nz-tree-node-switcher {
    // Normally, the carat icon for folders is clickable, but ng-zorro did not expose an emitter for this click event. 
