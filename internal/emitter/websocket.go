@@ -16,14 +16,17 @@ import (
 type WebsocketEmitter struct {
 	connections []*websocket.Conn
 	handlers    map[string][]MessageHandler
+	router      *httprouter.Router
 
 	log *zap.SugaredLogger
 }
 
 var _ Emitter = (*WebsocketEmitter)(nil) // Compiler check, *T implements I.
 
-func NewWebsocketEmitter() *WebsocketEmitter {
-	w := &WebsocketEmitter{}
+func NewWebsocketEmitter(router *httprouter.Router) *WebsocketEmitter {
+	w := &WebsocketEmitter{
+		router: router,
+	}
 	w.connections = make([]*websocket.Conn, 0)
 	w.handlers = make(map[string][]MessageHandler)
 
@@ -34,7 +37,7 @@ func NewWebsocketEmitter() *WebsocketEmitter {
 
 func (w *WebsocketEmitter) Start() {
 	logger.Info("Starting websocket emitter")
-	router := httprouter.New()
+
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -43,7 +46,7 @@ func (w *WebsocketEmitter) Start() {
 		},
 	}
 
-	router.GET("/connect", func(writer http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+	w.router.GET("/connect", func(writer http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 		logger.Info("Client connecting")
 		conn, err := upgrader.Upgrade(writer, req, nil)
 		if err != nil {
@@ -68,8 +71,6 @@ func (w *WebsocketEmitter) Start() {
 			return nil
 		})
 
-		// TODO: Remove connection when the client disconnects
-
 		for {
 			_, p, err := conn.ReadMessage()
 			if err != nil {
@@ -90,12 +91,6 @@ func (w *WebsocketEmitter) Start() {
 			}
 		}
 	})
-
-	err := http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 }
 
 func (w *WebsocketEmitter) Emit(topic string, data interface{}) {

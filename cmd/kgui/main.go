@@ -2,15 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 
+	"github.com/julienschmidt/httprouter"
 	"gitlab.com/bensivo/kgui/internal/controller"
 	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
 func main() {
+	router := httprouter.New()
+	router.GET("/app/*path", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		http.StripPrefix("/app", http.FileServer(http.Dir("frontend/dist/app"))).ServeHTTP(w, r)
+	})
+
 	logger.Init()
-	emitter := emitter.NewWebsocketEmitter()
+	emitter := emitter.NewWebsocketEmitter(router)
 	clusterController := controller.NewClusterController(emitter)
 	messageController := controller.NewMessageController(emitter)
 
@@ -18,5 +26,12 @@ func main() {
 	messageController.RegisterHandlers()
 
 	emitter.Start()
+
+	err := http.ListenAndServe(":8080", router)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	fmt.Scanf("v")
 }

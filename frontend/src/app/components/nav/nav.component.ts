@@ -18,7 +18,6 @@ export class NavComponent {
     private producerStore: ProducerStore,
     private navStore: NavStore,
     private tabStore: TabStore,
-    private router: Router,
   ) { }
 
   isCollapsed = false;

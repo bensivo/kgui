@@ -5,9 +5,13 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "ng build --configuration production --output-hashing none",
-        "build:dev": "ng build --configuration development --delete-output-path false --output-hashing none",
-        "build:watch": "ng build --watch --configuration development --delete-output-path false --output-hashing none",
+        "build": "ng build --configuration production --output-hashing none --base-href=/app/",
+        "build:dev": "ng build --configuration development --delete-output-path false --output-hashing none --base-href=/app/",
+        "__wails_comment": "Wails expected the app to be available at the root path, so we don't compile with base-href",
+        "build:watch": "ng build --watch --configuration development --delete-output-path false --output-hashing none --base-href=/app/",
+        "build:wails": "ng build --configuration production --output-hashing none",
+        "build:wails:dev": "ng build --configuration development --delete-output-path false --output-hashing none",
+        "build:wails:watch": "ng build --watch --configuration development --delete-output-path false --output-hashing none",
         "test": "ng test"
     },
     "private": true,

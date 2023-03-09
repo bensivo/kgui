@@ -14,7 +14,7 @@ import (
 	log "gitlab.com/bensivo/kgui/internal/logger"
 )
 
-//go:embed frontend/dist
+//go:embed frontend/dist/app
 var assets embed.FS
 
 func main() {

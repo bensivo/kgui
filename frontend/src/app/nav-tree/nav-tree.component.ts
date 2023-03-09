@@ -1,5 +1,6 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { nanoid } from 'nanoid';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
@@ -24,7 +25,8 @@ export class NavTreeComponent {
     private tabStore: TabStore,
     private consumerStore: ConsumerStore,
     private producerStore: ProducerStore,
-    private navStore: NavStore
+    private navStore: NavStore,
+    private router: Router,
   ) { }
 
   @ViewChild('nztree')
@@ -77,6 +79,7 @@ export class NavTreeComponent {
   }
 
   onClickItem(data: any): void {
+
     let node: NzTreeNode = (data instanceof NzTreeNode) ? data : data.node;
 
     if (!node) {
@@ -89,6 +92,8 @@ export class NavTreeComponent {
       })
       return;
     }
+
+    this.router.navigate(['/workspace']);
 
     const consumer = this.consumerStore.store.entities.find(c => c.id === node.key);
 

@@ -5,6 +5,8 @@ function produce() {
     done
 }
 
-for partition in {0..2}; do
+kcli t create test -p 3
+
+for partition in {0..1}; do
 	produce $partition
 done

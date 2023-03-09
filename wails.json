@@ -1,10 +1,10 @@
 {
     "name": "kgui",
-    "assetdir": "frontend/dist",
-    "frontend:build": "npm run build",
+    "assetdir": "frontend/dist/app",
     "frontend:install": "npm install",
-    "frontend:dev": "npm run build:dev",
-    "frontend:dev:watcher": "npm run build:watch",
+    "frontend:build": "npm run build:wails",
+    "frontend:dev": "npm run build:wails:dev",
+    "frontend:dev:watcher": "npm run build:wails:watch",
     "wailsjsdir": "./frontend",
     "outputfilename": "kgui",
     "Author": {
