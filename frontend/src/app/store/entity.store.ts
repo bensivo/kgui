@@ -66,6 +66,21 @@ export class EntityStore<T extends Entity> {
         }));
     }
 
+    update(id: string, dto: Omit<Partial<T>, 'id'>) {
+        const entity = this.store.state[id];
+        if (!entity) {
+            throw new Error(`Entity ${id} not found`);
+        }
+
+        this.store.update((s) => ({
+            ...s,
+            [entity.id]: {
+                ...entity,
+                ...dto
+            },
+        }));
+    }
+
     remove(id: string) {
         const state = this.store.getValue();
         delete state[id];

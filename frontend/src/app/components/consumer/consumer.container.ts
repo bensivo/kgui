@@ -1,9 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { select } from '@ngneat/elf';
-import { BehaviorSubject, combineLatest, interval, Observable, Subject, zip } from 'rxjs';
-import { auditTime, defaultIfEmpty, last, map, observeOn, sampleTime, takeLast, tap, throttleTime } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, sampleTime } from 'rxjs/operators';
 import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
@@ -46,7 +45,7 @@ export class ConsumerContainer implements OnChanges {
     map(([consumerId, consumers]) => {
       const consumer = consumers.find(c => c.id === consumerId)
       if (!consumer) {
-        console.error('Cannot find consumer with id', consumerId)
+        console.error('Cannot find consumer with id', consumerId);
       }
       return consumer as Consumer;
     })
@@ -64,7 +63,6 @@ export class ConsumerContainer implements OnChanges {
   ]).pipe(
     map(([cluster, consumer, messages]) => {
       const formGroup: FormGroup = this.formBuilder.group({
-        name: new FormControl(consumer.name),
         topic: new FormControl(consumer.topic),
         partition: new FormControl(0),
         offset: new FormControl(consumer.offset),
@@ -73,10 +71,8 @@ export class ConsumerContainer implements OnChanges {
       })
 
       formGroup.valueChanges.subscribe((value) => {
-        this.consumerStore.store.upsert({
-          id: consumer.id,
+        this.consumerStore.store.update(consumer.id, {
           topic: value.topic,
-          name: value.name,
           offset: value.offset,
           follow: value.follow,
           filters: value.filters,

@@ -71,9 +71,7 @@ export class ProducerContainer {
       });
 
       formGroup.valueChanges.subscribe((value: any) => {
-        this.producerStore.store.upsert({
-          id: producer.id,
-          name: value.name,
+        this.producerStore.store.update(producer.id, {
           topic: value.topic,
           partition: value.partition,
           message: value.message,

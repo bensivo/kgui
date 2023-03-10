@@ -62,10 +62,6 @@ export class ProducerViewComponent {
     });
   }
 
-  deleteProducer() {
-    this.producerStore.store.remove(this.producer.id);
-  }
-
   onClickJSONFormat() {
     try {
       const parsed = JSON.parse(this.producer.message);

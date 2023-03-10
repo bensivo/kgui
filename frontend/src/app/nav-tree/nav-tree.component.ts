@@ -53,7 +53,10 @@ export class NavTreeComponent {
         'folder': undefined,
         'consumer': 'api',
         'producer': 'send',
-      }[item.type]
+      }[item.type],
+
+      // custom field
+      itemType: item.type,
     }))
   }
 
@@ -79,7 +82,6 @@ export class NavTreeComponent {
   }
 
   onClickItem(data: any): void {
-
     let node: NzTreeNode = (data instanceof NzTreeNode) ? data : data.node;
 
     if (!node) {
@@ -92,54 +94,57 @@ export class NavTreeComponent {
       })
       return;
     }
-
     this.router.navigate(['/workspace']);
 
-    const consumer = this.consumerStore.store.entities.find(c => c.id === node.key);
+    switch (node.origin.itemType) {
+      case 'consumer':
+        const consumer = this.consumerStore.store.entities.find(c => c.id === node.key);
+        if (consumer) {
+          // See if this consumer is already in a tab
+          const existing = this.tabStore.store.entities.find(t =>
+            t.targetType === 'consumer' && t.targetId === consumer.id
+          )
+          if (existing) {
+            this.tabStore.selectTab(existing.id)
+            return;
+          }
 
-    if (consumer) {
-      // See if this consumer is already in a tab
-      const existing = this.tabStore.store.entities.find(t =>
-        t.targetType === 'consumer' && t.targetId === consumer.id
-      )
-      if (existing) {
-        this.tabStore.selectTab(existing.id)
-        return;
-      }
+          const tab: Tab = {
+            id: consumer.id,
+            active: true,
+            targetType: 'consumer',
+            targetId: consumer.id
+          };
 
-      const tab: Tab = {
-        id: nanoid(),
-        active: true,
-        targetType: 'consumer',
-        targetId: consumer.id
-      };
+          this.tabStore.store.upsert(tab);
+          this.tabStore.selectTab(tab.id);
+          return
+        }
+        break;
+      case 'producer':
+        const producer = this.producerStore.store.entities.find(p => p.id === node.key);
+        if (producer) {
+          // See if this producer is already in a tab
+          const existing = this.tabStore.store.entities.find(t =>
+            t.targetType === 'producer' && t.targetId === producer.id
+          )
+          if (existing) {
+            this.tabStore.selectTab(existing.id)
+            return;
+          }
 
-      this.tabStore.store.upsert(tab);
-      this.tabStore.selectTab(tab.id);
-      return
-    }
+          const tab: Tab = {
+            id: producer.id,
+            active: true,
+            targetType: 'producer',
+            targetId: producer.id
+          };
 
-    const producer = this.producerStore.store.entities.find(p => p.id === node.key);
-    if (producer) {
-      // See if this producer is already in a tab
-      const existing = this.tabStore.store.entities.find(t =>
-        t.targetType === 'producer' && t.targetId === producer.id
-      )
-      if (existing) {
-        this.tabStore.selectTab(existing.id)
-        return;
-      }
-
-      const tab: Tab = {
-        id: nanoid(),
-        active: true,
-        targetType: 'producer',
-        targetId: producer.id
-      };
-
-      this.tabStore.store.upsert(tab);
-      this.tabStore.selectTab(tab.id);
-      return
+          this.tabStore.store.upsert(tab);
+          this.tabStore.selectTab(tab.id);
+          return
+        }
+        break;
     }
   }
 
@@ -220,14 +225,27 @@ export class NavTreeComponent {
   }
 
   removeNode(node: NzTreeNode) {
+
+    switch (node.origin.itemType) {
+      case 'consumer':
+        this.tabStore.removeTab(node.key)
+        this.consumerStore.store.remove(node.key);
+        break;
+      case 'producer':
+        this.tabStore.removeTab(node.key)
+        this.producerStore.store.remove(node.key);
+        break;
+    }
+
     this.navStore.removeNode(node.key);
+    // TODO: if this node had children, we should probably remove all those children from their stores too
   }
 
   onCancelModal() {
     this.showRenameModal = false;
   }
 
-  onSubmitModal(e?: any) {
+  onSubmitRenameModal(e?: any) {
     if (e) {
       e.preventDefault();
     }
@@ -239,8 +257,22 @@ export class NavTreeComponent {
       return;
     }
 
+    const name = this.renameModalInput.value.trim();
     this.navStore.updateNode(node.key, {
-      name: this.renameModalInput.value.trim(),
-    })
+      name,
+    });
+
+    switch (node.origin.itemType) {
+      case 'consumer':
+        this.consumerStore.store.update(node.key, {
+          name,
+        });
+        break;
+      case 'producer':
+        this.producerStore.store.update(node.key, {
+          name,
+        });
+        break;
+    }
   }
 }

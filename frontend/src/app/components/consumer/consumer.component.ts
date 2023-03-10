@@ -25,28 +25,13 @@ export class ConsumerComponent{
   @Input()
   formGroup!: FormGroup;
 
-  @ViewChild('virtualScroll') private virtualScroll!: ElementRef;
-
   messageFormat: string = 'TREE';
 
   constructor(
-    private consumerStore: ConsumerStore,
     private emitterService: EmitterService,
     private messagesStore: MessagesStore,
     private notification: NzNotificationService,
   ) { }
-
-  // ngOnChanges() {
-  //   this.scrollToBottom();
-  // }
-
-  // scrollToBottom(): void {
-  //   try {
-  //     (this.virtualScroll as any).scrollToIndex(this.messages.length);
-  //   } catch (err) { 
-  //     console.error(err)
-  //   }
-  // }
 
   get filters() {
     return this.formGroup.get('filters') as FormArray
@@ -101,9 +86,5 @@ export class ConsumerComponent{
 
   messageTrackBy(i: number, msg: Message) {
     return `${msg.partition}-${msg.offset}`; // TODO: test if 2 consumers end up with messages using the same offset
-  }
-
-  deleteConsumer() {
-    this.consumerStore.store.remove(this.consumer.id);
   }
 }

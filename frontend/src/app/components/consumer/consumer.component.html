@@ -2,10 +2,8 @@
     <div class="content-left">
         <div class="title center-parent">
             <form [formGroup]="formGroup">
-                <input nz-input nzBorderless formControlName="name" />
+                <h1>{{consumer.name}}</h1>
             </form>
-
-            <i class="delete clickable vcenter" nz-icon nzType="delete" nzTheme="outline" (click)="deleteConsumer()"></i>
         </div>
 
         <form nz-form [formGroup]="formGroup">
