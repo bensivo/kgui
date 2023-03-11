@@ -18,9 +18,7 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	app := NewApp()
-
 	appMenu := menu.NewMenu()
 	fileMenu := appMenu.AddSubmenu("File")
 	fileMenu.AddText("Open File", keys.CmdOrCtrl("o"), func(data *menu.CallbackData) {

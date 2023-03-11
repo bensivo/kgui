@@ -26,7 +26,6 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     await this.emitterService.emitter.initialize();
-
     await this.messagesStore.init();
     this.storageService.initialize();
 
@@ -45,61 +44,6 @@ export class AppComponent implements OnInit {
     this.emitterService.emitter.send({
       Topic: 'clusters.refresh',
       Data: {},
-    });
-
-    //  SEEDS for local testing
-
-    this.storageService.load({
-      cluster: {
-        clusters: [],
-      },
-      consumer: [
-        {
-          id: 'asdf',
-          name: 'asdf',
-          topic: 'asdf',
-          offset: 0,
-          follow: false,
-          filters: []
-        }
-      ],
-      producer: [
-        {
-          id: 'numbers',
-          name: 'numbers',
-          topic: 'numbers',
-          partition: 0,
-          message: new Date().toISOString(),
-        }
-      ]
-    });
-
-     this.emitterService.emitter.send({
-      Topic: 'clusters.add',
-      Data: {
-        BootstrapServer: "localhost:9092",
-        Name: "localhost",
-        SSLCaCertificatePath: "",
-        SSLEnabled: false,
-        SSLSkipVerification: false,
-        SaslMechanism: "",
-        SaslPassword: "",
-        SaslUsername: "",
-      },
-    });
-
-    this.emitterService.emitter.send({
-      Topic: 'clusters.add',
-      Data: {
-        BootstrapServer: "bad:9092",
-        Name: "bad",
-        SSLCaCertificatePath: "",
-        SSLEnabled: false,
-        SSLSkipVerification: false,
-        SaslMechanism: "",
-        SaslPassword: "",
-        SaslUsername: "",
-      },
     });
   }
 }
