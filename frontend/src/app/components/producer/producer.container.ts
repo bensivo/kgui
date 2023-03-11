@@ -51,6 +51,8 @@ export class ProducerContainer {
   requests$ = this.producerId$.pipe(
     mergeMap((producerId) => this.requestStore.store.pipe(
       select((s) => {
+        // NOTE: somehow JS always returns these in the order they were added to the store.
+        // Not sure why that happens, honestly. But we probably need to explicitly sort by request time
         return Object.values(s).filter(r => r.producerId === producerId)
       })
     ))

@@ -53,7 +53,7 @@
     </div>
 
     <div class="content-right">
-        <div *ngFor="let request of requests">
+        <div *ngFor="let request of requests.reverse()">
             <code>{{request.data.Message }} - {{request.status}}</code>
         </div>
     </div>
