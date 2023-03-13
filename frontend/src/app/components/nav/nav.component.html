@@ -23,16 +23,16 @@
         </li>
 
 
-        <!-- <li nz-submenu nzIcon="file" nzTitle="Save / Load">
+        <li nz-submenu nzIcon="file" nzTitle="Save / Load" *ngIf="isBrowserRuntime()">
             <ul>
-                <li class="menu-item clickable">
+                <li class="menu-item clickable" (click)="saveToFile()">
                     Save to File
                 </li>
                 <li class="menu-item clickable" (click)="openLoadDialog()">
                     Load from File
                 </li>
             </ul>
-        </li> -->
+        </li>
     </ul>
 
     <nz-modal [(nzVisible)]="showRenameModal" nzTitle="Load from file" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitModal()">

@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { nanoid } from 'nanoid';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { StorageService } from 'src/app/storage/storage.service';
@@ -29,6 +28,14 @@ export class NavComponent {
       children: [],
       expanded: false,
     })
+  }
+
+  isBrowserRuntime() {
+    return !(window as any).runtime;
+  }
+
+  saveToFile() {
+    this.storageService.save();
   }
 
   openLoadDialog() {
