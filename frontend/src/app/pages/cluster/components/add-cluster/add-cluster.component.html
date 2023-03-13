@@ -1,5 +1,5 @@
 <div id="add-cluster-container">
-    <form nz-form [formGroup]="formGroup">
+    <form nz-form [formGroup]="formGroup" (keydown.enter)="$event.preventDefault()">
         <nz-form-item>
             <nz-form-label [nzSpan]="6" nzFor="name">
                 Name

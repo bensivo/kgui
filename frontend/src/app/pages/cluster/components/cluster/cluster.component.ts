@@ -1,18 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { EmitterService } from 'src/app/emitter/emitter.service';
-import { ClusterState, ClusterStore } from 'src/app/store/cluster.store';
-
-export interface Cluster {
-  Name: string;
-  BootstrapServer: string;
-  SaslMechanism: string;
-  SaslUsername: string;
-  SaslPassword: string;
-  SSLEnabled: boolean;
-  SSLCaCertificatePath: string;
-  SSLSkipVerification: boolean;
-}
+import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
 
 @Component({
   selector: 'app-cluster',
@@ -20,29 +9,21 @@ export interface Cluster {
   styleUrls: ['./cluster.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ClusterComponent implements OnInit {
-  clusters: Cluster[] = [];
+export class ClusterComponent{
 
   constructor(private emitterService: EmitterService, private clusterStore: ClusterStore, private router: Router) { }
 
-  async ngOnInit(): Promise<void> {
-    this.clusterStore.store.subscribe((state: ClusterState) => {
-      this.clusters = state.clusters
-    });
-  }
+  clusters$ = this.clusterStore.store.entities$;
   
   addCluster() {
     this.router.navigate(['/clusters/add']);
   }
 
   editCluster(cluster: any) {
-    this.router.navigate([`/clusters/add/${cluster.Name}`]);
+    this.router.navigate([`/clusters/edit/${cluster.id}`]);
   }
 
-  deleteCluster(cluster: any) {
-    this.emitterService.emitter.send({
-      Topic: 'clusters.remove',
-      Data: cluster,
-    });
+  deleteCluster(cluster: Cluster) {
+    this.clusterStore.store.remove(cluster.id);
   }
 }

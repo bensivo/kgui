@@ -16,12 +16,30 @@
                     <app-nav-tree></app-nav-tree>
                 </li>
 
-                <li class="menu-item" (click)="addFolder()">
-                    <span>
+                <li class="menu-item clickable" (click)="addFolder()">
                     Add Folder
-                </span>
                 </li>
             </ul>
         </li>
+
+
+        <!-- <li nz-submenu nzIcon="file" nzTitle="Save / Load">
+            <ul>
+                <li class="menu-item clickable">
+                    Save to File
+                </li>
+                <li class="menu-item clickable" (click)="openLoadDialog()">
+                    Load from File
+                </li>
+            </ul>
+        </li> -->
     </ul>
+
+    <nz-modal [(nzVisible)]="showRenameModal" nzTitle="Load from file" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitModal()">
+        <ng-container *nzModalContent>
+            <form (submit)="onSubmitModal($event)">
+                <input nz-input type="file" (change)="onFileUpload($event)" />
+            </form>
+        </ng-container>
+    </nz-modal>
 </div>

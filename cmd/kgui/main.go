@@ -19,10 +19,8 @@ func main() {
 
 	logger.Init()
 	emitter := emitter.NewWebsocketEmitter(router)
-	clusterController := controller.NewClusterController(emitter)
 	messageController := controller.NewMessageController(emitter)
 
-	clusterController.RegisterHandlers()
 	messageController.RegisterHandlers()
 
 	emitter.Start()

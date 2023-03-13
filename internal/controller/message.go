@@ -31,10 +31,10 @@ func (c *MessageController) RegisterHandlers() {
 
 type ProducePayload struct {
 	CorrelationId string
-	ClusterName   string
 	Topic         string
 	Partition     int
 	Message       string
+	Cluster       kafka.Cluster
 }
 
 func (c *MessageController) Produce(data interface{}) {
@@ -44,7 +44,7 @@ func (c *MessageController) Produce(data interface{}) {
 		logger.Error(err)
 	}
 
-	var cluster kafka.Cluster = state[payload.ClusterName]
+	var cluster kafka.Cluster = payload.Cluster
 	err = cluster.Produce(payload.Topic, payload.Partition, payload.Message)
 
 	if err != nil {
@@ -67,11 +67,11 @@ func (c *MessageController) Produce(data interface{}) {
 var consumers map[string]chan int = make(map[string]chan int)
 
 type ConsumePayload struct {
-	ConsumerId  string
-	ClusterName string
-	Topic       string
-	Follow      bool
-	Offset      int
+	ConsumerId string
+	Topic      string
+	Follow     bool
+	Offset     int
+	Cluster    kafka.Cluster
 }
 
 func (c *MessageController) Consume(data interface{}) {
@@ -88,7 +88,7 @@ func (c *MessageController) Consume(data interface{}) {
 		consumers[payload.ConsumerId] <- 1
 	}
 
-	var cluster kafka.Cluster = state[payload.ClusterName]
+	var cluster kafka.Cluster = payload.Cluster
 
 	res := make(chan kgo.Message)
 
@@ -115,19 +115,17 @@ func (c *MessageController) Consume(data interface{}) {
 		logger.Infof("Starting stream on Topic: %s", payload.Topic)
 		for msg := range res {
 			c.Emitter.Emit("message.consumed", map[string]interface{}{
-				"ConsumerId":  payload.ConsumerId,
-				"ClusterName": payload.ClusterName,
-				"Topic":       payload.Topic,
-				"Message":     msg,
-				"EOS":         false,
+				"ConsumerId": payload.ConsumerId,
+				"Topic":      payload.Topic,
+				"Message":    msg,
+				"EOS":        false,
 			})
 		}
 
 		c.Emitter.Emit("message.consumed", map[string]interface{}{
-			"ConsumerId":  payload.ConsumerId,
-			"ClusterName": payload.ClusterName,
-			"Topic":       payload.Topic,
-			"EOS":         true,
+			"ConsumerId": payload.ConsumerId,
+			"Topic":      payload.Topic,
+			"EOS":        true,
 		})
 
 		logger.Infof("Stream on Topic: %s closed", payload.Topic)
@@ -149,14 +147,12 @@ func (c *MessageController) Stop(data interface{}) {
 	if consumers[payload.ConsumerId] != nil {
 		logger.Infof("Sending end signal to consumer %s.", payload.ConsumerId)
 		consumers[payload.ConsumerId] <- 1
-		// consumers[payload.ConsumerId] = nil
 	} else {
 		logger.Infof("Consumer %s is not active. Sending EOS.", payload.ConsumerId)
 		c.Emitter.Emit("message.consumed", map[string]interface{}{
-			"ConsumerId":  payload.ConsumerId,
-			"ClusterName": payload.ClusterName,
-			"Topic":       payload.Topic,
-			"EOS":         true,
+			"ConsumerId": payload.ConsumerId,
+			"Topic":      payload.Topic,
+			"EOS":        true,
 		})
 	}
 }

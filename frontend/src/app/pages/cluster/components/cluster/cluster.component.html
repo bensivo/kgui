@@ -1,4 +1,4 @@
-<div id="clusters">
+<div id="clusters" *ngIf="clusters$ | async as clusters">
     <nz-card *ngFor="let cluster of clusters" [nzTitle]="cluster.Name" [nzExtra]="extraTemplate">
         <ng-template #extraTemplate>
             <i nz-icon nzType="edit" nzTheme="outline" (click)="editCluster(cluster)"></i>

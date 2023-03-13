@@ -32,10 +32,7 @@ func (a *App) startup(ctx context.Context) {
 
 	a.emitter = emitter.NewEventsEmitter(a.ctx)
 
-	clusterController := controller.NewClusterController(a.emitter)
 	messageController := controller.NewMessageController(a.emitter)
-
-	clusterController.RegisterHandlers()
 	messageController.RegisterHandlers()
 
 	a.emitter.Start()

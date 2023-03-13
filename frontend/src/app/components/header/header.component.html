@@ -9,7 +9,7 @@
             <label>Cluster:</label>
         </div>
         <div class="cluster-select">
-            <nz-select [formControl]="cluster">
+            <nz-select [formControl]="activeClusterFormControl">
                 <nz-option *ngFor="let cluster of (clusters$ | async)" [nzValue]="cluster" [nzLabel]="cluster.Name"></nz-option>
             </nz-select>
         </div>

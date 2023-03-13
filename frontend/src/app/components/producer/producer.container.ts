@@ -31,9 +31,7 @@ export class ProducerContainer {
     private requestStore: RequestStore,
   ) { }
 
-  cluster$ = this.clusterStore.store.pipe(
-    map(c => c.active)
-  )
+  cluster$ = this.clusterStore.active$;
 
   producer$ = this.producerId$
     .pipe(

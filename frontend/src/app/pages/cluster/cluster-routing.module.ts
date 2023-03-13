@@ -6,7 +6,7 @@ import { ClusterComponent } from './components/cluster/cluster.component';
 const routes: Routes = [
   { path: '', component: ClusterComponent },
   { path: 'add', component: AddClusterContainer },
-  { path: 'add/:name', component: AddClusterContainer },
+  { path: 'edit/:id', component: AddClusterContainer },
 ];
 
 @NgModule({

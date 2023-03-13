@@ -14,7 +14,7 @@ import { Message, MessagesStore, MessageType } from 'src/app/store/messages.stor
 })
 export class ConsumerComponent{
  @Input()
-  cluster!: Cluster | undefined;
+  cluster!: Cluster | null;
 
   @Input()
   consumer!: Consumer;
@@ -55,10 +55,12 @@ export class ConsumerComponent{
       Topic: 'message.consume',
       Data: {
         ConsumerId: this.consumer.id,
-        ClusterName: this.cluster.Name,
         Topic: this.formGroup.value.topic,
         Offset: this.formGroup.value.offset,
-        Follow: this.formGroup.value.follow
+        Follow: this.formGroup.value.follow,
+        Cluster: {
+          ...this.cluster,
+        },
       }
     });
   }

@@ -24,7 +24,7 @@ export class ProducerViewComponent {
   producer!: Producer;
 
   @Input()
-  cluster!: Cluster | undefined;
+  cluster!: Cluster | null;
 
   @Input()
   formGroup!: FormGroup;
@@ -41,10 +41,12 @@ export class ProducerViewComponent {
     const correlationId = uuid.v4();
     const data = {
       CorrelationId: correlationId,
-      ClusterName: this.cluster.Name,
       Topic: value.topic,
       Partition: value.partition,
       Message: value.message,
+      Cluster: {
+          ...this.cluster,
+      }
     }
 
     this.emitterService.emitter.send(

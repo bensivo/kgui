@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { nanoid } from 'nanoid';
 import { EmitterService } from 'src/app/emitter/emitter.service';
-import { Cluster } from '../cluster/cluster.component';
+import { ClusterStore } from 'src/app/store/cluster.store';
 
 @Component({
   selector: 'app-add-cluster-component',
@@ -14,7 +15,10 @@ export class AddClusterComponent implements OnInit {
   @Input()
   formGroup!: FormGroup;
 
-  constructor(private emitterService: EmitterService, private router: Router,) { }
+  @Input()
+  clusterId?: string;
+
+  constructor(private emitterService: EmitterService, private router: Router, private clusterStore: ClusterStore) { }
 
 
   async ngOnInit(): Promise<void> {
@@ -29,9 +33,8 @@ export class AddClusterComponent implements OnInit {
   }
 
   submit() {
-    this.emitterService.emitter.send<Cluster>({
-      Topic: 'clusters.add',
-      Data: {
+      this.clusterStore.store.upsert({
+        id: this.clusterId ?? nanoid(),
         Name: this.formGroup.value.name,
         BootstrapServer: this.formGroup.value.bootstrapServer,
         SaslMechanism: this.formGroup.value.saslEnabled ? this.formGroup.value.saslMechanism : '',
@@ -40,7 +43,8 @@ export class AddClusterComponent implements OnInit {
         SSLEnabled: this.formGroup.value.sslEnabled,
         SSLCaCertificatePath: '', // TODO: implement
         SSLSkipVerification: this.formGroup.value.sslEnabled && this.formGroup.value.sslSkipVerification,
-      }
-    })
+    });
+
+    this.router.navigate(['/clusters'])
   }
 }

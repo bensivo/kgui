@@ -1,9 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { select } from '@ngneat/elf';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, sampleTime } from 'rxjs/operators';
-import { Cluster, ClusterStore } from 'src/app/store/cluster.store';
+import { ClusterStore } from 'src/app/store/cluster.store';
 import { Consumer, ConsumerStore } from 'src/app/store/consumer.store';
 import { Message, MessagesStore } from 'src/app/store/messages.store';
 
@@ -37,9 +36,7 @@ export class ConsumerContainer implements OnChanges {
     private formBuilder: FormBuilder,
   ) { }
 
-  cluster$: Observable<Cluster | undefined> = this.clusterStore.store.pipe(
-    select(s => s.active)
-  );
+  cluster$ = this.clusterStore.active$;
 
   consumer$: Observable<Consumer> = combineLatest([this.consumerId$, this.consumerStore.store.entities$]).pipe(
     map(([consumerId, consumers]) => {

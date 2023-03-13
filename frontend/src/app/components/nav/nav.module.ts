@@ -5,6 +5,8 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NavTreeModule } from 'src/app/nav-tree/nav-tree.module';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 
 @NgModule({
   declarations: [
@@ -12,10 +14,12 @@ import { NavTreeModule } from 'src/app/nav-tree/nav-tree.module';
   ],
   imports: [
     CommonModule,
-    NzMenuModule,
-    RouterModule,
-    NzIconModule,
     NavTreeModule,
+    NzIconModule,
+    NzMenuModule,
+    NzModalModule,
+    NzNotificationModule,
+    RouterModule,
   ],
   exports: [
     NavComponent

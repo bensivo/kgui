@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterStore } from 'src/app/store/cluster.store';
 
 @Component({
   selector: 'app-add-cluster',
   template: `
-  <app-add-cluster-component *ngIf="(formGroup$ | async) as formGroup" [formGroup]="formGroup"></app-add-cluster-component>
+  <app-add-cluster-component *ngIf="(data$ | async) as data" [formGroup]="data.formGroup" [clusterId]="data.clusterId"></app-add-cluster-component>
   `
 })
 export class AddClusterContainer{
@@ -17,9 +17,8 @@ export class AddClusterContainer{
 
   cluster$ = this.route.params.pipe(
     map((params) => {
-      const clusters = this.clusterStore.state.clusters;
-      console.log(clusters);
-      return clusters.find((c) => c.Name === params.name);
+      const clusters = this.clusterStore.store.entities;
+      return clusters.find((c) => c.id === params.id);
     })
   )
 
@@ -40,5 +39,15 @@ export class AddClusterContainer{
       return formGroup
     })
   );
+
+  data$ = combineLatest([
+    this.cluster$,
+    this.formGroup$,
+  ]).pipe(
+    map(([cluster, formGroup]) => ({
+      clusterId: cluster?.id,
+      formGroup,
+    }))
+  )
 
 }

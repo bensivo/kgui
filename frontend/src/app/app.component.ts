@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { StorageService } from './storage/storage.service';
 import { EmitterService } from './emitter/emitter.service';
-import { ClusterState, ClusterStore } from './store/cluster.store';
+import { ClusterStore } from './store/cluster.store';
 import { MessagesStore } from './store/messages.store';
 import { NavStore } from './store/nav.store';
 
@@ -27,23 +27,7 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     await this.emitterService.emitter.initialize();
     await this.messagesStore.init();
+    this.clusterStore.init();
     this.storageService.initialize();
-
-    this.emitterService.emitter.stream<any[]>('clusters.changed')
-      .subscribe((clusters: any[]) => {
-        let active = this.clusterStore.state.active;
-        if (!active && clusters.length > 0) {
-          active = clusters[0];
-        }
-        this.clusterStore.store.update((_state: ClusterState) => ({
-          clusters,
-          active,
-        }));
-      });
-
-    this.emitterService.emitter.send({
-      Topic: 'clusters.refresh',
-      Data: {},
-    });
   }
 }
