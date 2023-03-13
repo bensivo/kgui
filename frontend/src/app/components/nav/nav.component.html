@@ -1,57 +1,27 @@
-<div class="sidebar-logo">
-    <h1>KGui</h1>
-</div>
-<ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-    <li nz-menu-item ngMatchRouter>
-        <i nz-icon nzType="appstore"></i>
-        <span>
+<div class="nav-container">
+    <div class="sidebar-logo">
+        <h1>KGui</h1>
+    </div>
+    <ul nz-menu nzMode="inline">
+        <li nz-menu-item ngMatchRouter>
+            <i nz-icon nzType="appstore"></i>
+            <span>
             <a routerLink="/clusters">Clusters</a>
         </span>
-    </li>
+        </li>
 
-    <!-- <li nz-submenu nzIcon="api" nzTitle="Consumers">
-        <ul>
-            <a routerLink="/workspace">
-                <li *ngFor="let consumer of consumers$ | async" class="menu-item" (click)="onSelectConsumer(consumer)">
-                    <span> {{consumer.name}} </span>
+        <li nz-submenu nzIcon="folder" nzTitle="Collections">
+            <ul>
+                <li>
+                    <app-nav-tree></app-nav-tree>
                 </li>
-            </a>
 
-            <li class="menu-item" (click)="addConsumer()">
-                <span>
-                    Add Consumer +
-                </span>
-            </li>
-        </ul>
-    </li>
-
-    <li nz-submenu nzIcon="send" nzTitle="Producers">
-        <ul>
-            <a routerLink="/workspace">
-                <li *ngFor="let producer of producers$ | async" class="menu-item" (click)="onSelectProducer(producer)">
-                    <span> {{producer.name}} </span>
-                </li>
-            </a>
-            <li class="menu-item" (click)="addProducer()">
-                <span>
-                    Add Producer +
-                </span>
-            </li>
-        </ul>
-    </li> -->
-
-    <!-- WIP - tree-based navigation -->
-    <li nz-submenu nzIcon="folder" nzTitle="Collections">
-        <ul>
-            <li>
-                <app-nav-tree></app-nav-tree>
-            </li>
-
-            <li class="menu-item" (click)="addFolder()">
-                <span>
+                <li class="menu-item" (click)="addFolder()">
+                    <span>
                     Add Folder
                 </span>
-            </li>
-        </ul>
-    </li>
-</ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

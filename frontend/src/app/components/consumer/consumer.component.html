@@ -12,7 +12,7 @@
                     <label>Topic</label>
                 </div>
                 <div class="form-input">
-                    <input nz-input placeholder="Topic" formControlName="topic" />
+                    <input nz-input placeholder="Topic" formControlName="topic" autocomplete="off" autocapitalize="off" />
                 </div>
             </div>
 
@@ -37,7 +37,7 @@
                     <label *ngIf="i===0">Filters</label>
                 </div>
                 <div class="form-input filter-input">
-                    <input nz-input [formControlName]="i" />
+                    <input nz-input [formControlName]="i" autocomplete="off" autocapitalize="off" />
                     <div class="center-parent">
                         <i class="vcenter clickable" nz-icon nzType="minus-circle" nzTheme="outline" (click)="deleteFilter(i)"></i>
                     </div>

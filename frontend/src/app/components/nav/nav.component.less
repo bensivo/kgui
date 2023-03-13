@@ -1,38 +1,47 @@
-.sidebar-logo {
-    position: relative;
-    height: 64px;
-    padding-left: 24px;
-    overflow: hidden;
-    line-height: 64px;
+@import '../../../theme.less';
 
-    h1 {
-        margin: 0 0 0 20px;
-        color: #fff;
+.nav-container {
+    .sidebar-logo {
+        position: relative;
+        height: 64px;
+        padding-left: 24px;
+        overflow: hidden;
+        line-height: 64px;
+
+        h1 {
+            margin: 0 0 0 20px;
+            color: #fff;
+        }
     }
-}
 
-li.menu-item{
-    padding-left: 48px;
-    display: flex;
-    align-items: center;
-    margin-top: 4px;
-    line-height: 40px;
-    text-overflow: ellipsis;
-    text-decoration: none;
-
-    * {
-        color: rgba(255,255,255,0.65);
+    .ant-menu-inline.ant-menu-sub {
+        background-color: transparent;
     }
-  
-}
 
-li.menu-item:hover {
-    * {
-        color: white;
+    li.menu-item {
+        padding-left: 48px;
+        display: flex;
+        align-items: center;
+        margin-top: 4px;
+        line-height: 40px;
+        text-overflow: ellipsis;
+        text-decoration: none;
+
+        * {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
     }
-}
 
-app-nav-tree {
-    display: block;
-    margin: 1rem;
+    li.menu-item:hover {
+        * {
+            color: white;
+        }
+    }
+
+    app-nav-tree {
+        display: block;
+        margin-left: 2rem;
+        margin-right: 1rem;
+    }
 }

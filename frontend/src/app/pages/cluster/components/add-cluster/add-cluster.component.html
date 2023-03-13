@@ -5,7 +5,7 @@
                 Name
             </nz-form-label>
             <nz-form-control [nzSpan]="14">
-                <input nz-input formControlName="name">
+                <input nz-input formControlName="name" autocomplete="off" autocapitalize="off">
             </nz-form-control>
         </nz-form-item>
 
@@ -14,7 +14,7 @@
                 Bootstrap Server
             </nz-form-label>
             <nz-form-control [nzSpan]="14">
-                <input nz-input formControlName="bootstrapServer">
+                <input nz-input formControlName="bootstrapServer" autocomplete="off" autocapitalize="off">
             </nz-form-control>
         </nz-form-item>
 
@@ -42,11 +42,11 @@
             </nz-form-item>
 
             <nz-form-item>
-                <nz-form-label [nzSpan]="6" nzFor="saslUsername">
+                <nz-form-label [nzSpan]="6" nzFor="saslUsername" autocomplete="off" autocapitalize="off">
                     SASL Username
                 </nz-form-label>
                 <nz-form-control [nzSpan]="14">
-                    <input nz-input formControlName="saslUsername">
+                    <input nz-input formControlName="saslUsername" autocomplete="off" autocapitalize="off">
                 </nz-form-control>
             </nz-form-item>
 
@@ -55,7 +55,7 @@
                     SASL Password
                 </nz-form-label>
                 <nz-form-control [nzSpan]="14">
-                    <input nz-input formControlName="saslPassword">
+                    <input nz-input formControlName="saslPassword" autocomplete="off" autocapitalize="off">
                 </nz-form-control>
             </nz-form-item>
         </ng-container>

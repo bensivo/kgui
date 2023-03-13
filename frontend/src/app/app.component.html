@@ -1,5 +1,5 @@
 <nz-layout class="app">
-    <nz-sider class="sidebar" nzCollapsible [nzCollapsedWidth]="1" nzBreakpoint="lg" [nzCollapsed]="!(expanded$ | async)" (nzCollapsedChange)="onExpandedChange(!$event)">
+    <nz-sider class="sidebar" nzCollapsible [nzCollapsedWidth]="1" [nzTrigger]="null" nzBreakpoint="lg" [nzCollapsed]="!(expanded$ | async)" (nzCollapsedChange)="onExpandedChange(!$event)">
         <app-nav></app-nav>
     </nz-sider>
     <nz-layout>
