@@ -2,12 +2,15 @@
 A minimalist and simple kafka client application.
 
 Add Clusters
+
 ![](./media/add-cluster.gif)
 
 Consume Messages
+
 ![](./media/consume.gif)
 
 Produce Messages
+
 ![](./media/produce.gif)
 
 ## Run Kgui
