@@ -84,13 +84,14 @@ We use 'gon' to sign our wails application.
 
 Steps:
 
-1. Follow this guide to generate an apple developer certificate, adn add it to your local keystore
+1. Build the app with:  `wails build`
+2. Follow this guide to generate an apple developer certificate, adn add it to your local keystore
    - https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
-2. Update all the values in ./build/darwin/gon-sign.json
+3. Update all the values in ./build/darwin/gon-sign.json
    - APPLE_EMAIL - set the env variable
    - APPLE_PASSWORD - set the env variable
    - APPLICATION_IDENTITY - from `security find-identity -v -p codesigning`. Configured in step 1.
-3. Run gon
+4. Run gon
     ```
     gon -log-level=info ./build/darwin/gon-sign.json
     ```
@@ -99,11 +100,3 @@ Potential issues:
 - To sign the app, your system must trust the CA cert that apple used to generate your apple developer certificate. You can find all of Apple's certificates here: https://www.apple.com/certificateauthority/ 
   - Inspect your signing cert, and find the CA cert at apple.com. Then, make sure teh CA cert is installed on your machine under the 'system' keychain, and is trusted.
 
-# Development
-## Publish multi-platform docker image
-
-We use buildx to create and publish images for both arm and amd64 platforms at once.
-
-```
-docker buildx build -t bensivo/kgui:latest --platform=linux/arm64,linux/amd64 --push .
-```
