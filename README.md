@@ -76,3 +76,11 @@ Potential issues:
 - To sign the app, your system must trust the CA cert that apple used to generate your apple developer certificate. You can find all of Apple's certificates here: https://www.apple.com/certificateauthority/ 
   - Inspect your signing cert, and find the CA cert at apple.com. Then, make sure teh CA cert is installed on your machine under the 'system' keychain, and is trusted.
 
+# Development
+## Publish multi-platform docker image
+
+We use buildx to create and publish images for both arm and amd64 platforms at once.
+
+```
+docker buildx build -t bensivo/kgui:latest --platform=linux/arm64,linux/amd64 --push .
+```
