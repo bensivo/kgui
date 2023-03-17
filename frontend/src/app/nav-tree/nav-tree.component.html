@@ -26,7 +26,7 @@
 
 <nz-modal [(nzVisible)]="showRenameModal" nzTitle="Rename" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitRenameModal()">
     <ng-container *nzModalContent>
-        <form (submit)="onSubmitRenameModal($event)">
+        <form (submit)="onSubmitRenameModal($event)" spellcheck="false">
             <label>Name: </label>
             <input nz-input [formControl]="renameModalInput" />
         </form>

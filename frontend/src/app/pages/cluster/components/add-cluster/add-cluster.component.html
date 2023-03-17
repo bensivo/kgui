@@ -1,5 +1,5 @@
 <div id="add-cluster-container">
-    <form nz-form [formGroup]="formGroup" (keydown.enter)="$event.preventDefault()">
+    <form nz-form [formGroup]="formGroup" (keydown.enter)="$event.preventDefault()" spellcheck="false">
         <nz-form-item>
             <nz-form-label [nzSpan]="6" nzFor="name">
                 Name
@@ -42,7 +42,7 @@
             </nz-form-item>
 
             <nz-form-item>
-                <nz-form-label [nzSpan]="6" nzFor="saslUsername" autocomplete="off" autocapitalize="off">
+                <nz-form-label [nzSpan]="6" nzFor="saslUsername" autocomplete="off" autocapitalize="off" >
                     SASL Username
                 </nz-form-label>
                 <nz-form-control [nzSpan]="14">

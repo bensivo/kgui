@@ -1,0 +1,11 @@
+{
+    "source": ["./build/bin/kgui.app"],
+    "bundle_id": "app.kgui",
+    "apple_id": {
+        "username": "@env:APPLE_EMAIL",
+        "password": "@env:APPLE_PASSWORD"
+    },
+    "sign": {
+        "application_identity": "replaceme"
+    }
+}

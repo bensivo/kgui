@@ -1,12 +1,14 @@
 function produce() {
-    for i in {0..10}; do
-        echo "{\"partition\":$1, \"index\":$i}"| kcli p test -p $1
-        sleep .5
+    for i in {0..100}; do
+        date | kcli p datetime -p $1
+        sleep 1
     done
 }
 
-kcli t create test -p 3
+kcli t create datetime -p 1
 
-for partition in {0..1}; do
-	produce $partition
-done
+# for partition in {0..1}; do
+# 	produce $partition
+# done
+
+produce 0
