@@ -1,6 +1,15 @@
 # KGui
 A minimalist and simple kafka client application.
 
+Add Clusters
+![](./media/add-cluster.gif)
+
+Consume Messages
+![](./media/consume.gif)
+
+Produce Messages
+![](./media/produce.gif)
+
 ## Run Kgui
 
 Kgui can run in 2 different runtime environments:
@@ -9,9 +18,7 @@ Kgui can run in 2 different runtime environments:
 
 ### Webapp, using Docker
 ```
-docker build -t kgui .
-
-docker run -p 8080:8080 kgui
+docker run -p 8080:8080 bensivo/kgui:latest
 ```
 
 Then open your browser to http://localhost:8080/app
@@ -54,6 +61,19 @@ wails build
 ```
 
 Desktop mode has only been tested on MacOS.
+
+## Publish docker
+### Build and Publish Docker image
+We use docker buildx to publish a multi-platform image for x86 and arm processors.
+
+This command was tested using ubuntu, with the latest version of docker installed.
+
+```
+docker buildx create --driver docker-container  --name builder
+
+docker buildx build -t bensivo/kgui:latest --platform=linux/arm64,linux/amd64 --push .
+docker buildx build -t bensivo/kgui:<version> --platform=linux/arm64,linux/amd64 --push .
+```
 
 
 ## Build and Sign
