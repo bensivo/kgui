@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewEncapsulation  } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { StorageService } from './storage/storage.service';
 import { EmitterService } from './emitter/emitter.service';
@@ -9,7 +9,8 @@ import { NavStore } from './store/nav.store';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+  styleUrls: ['./app.component.less'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
 

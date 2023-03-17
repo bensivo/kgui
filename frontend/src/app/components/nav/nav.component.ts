@@ -20,6 +20,14 @@ export class NavComponent {
   showRenameModal = false;
   fileData: string = '';
 
+  get logoSrc(): string {
+    if (!!(window as any).runtime) {
+      return "/assets/color-logo-text-only.png"
+    } else {
+      return "/app/assets/color-logo-text-only.png"
+    }
+  }
+
   addFolder() {
     this.navStore.insertNode({
       id: nanoid(),

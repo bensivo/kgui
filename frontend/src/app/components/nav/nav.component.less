@@ -1,22 +1,29 @@
 @import '../../../theme.less';
 
+@background-color-nav: #141414;
+
 .nav-container {
+    background-color:@background-color-nav;
     .sidebar-logo {
         position: relative;
-        height: 64px;
-        padding-left: 24px;
-        overflow: hidden;
-        line-height: 64px;
-
-        h1 {
-            margin: 0 0 0 20px;
-            color: #fff;
+        padding: 10px;
+        height: 100px;
+        img {
+            max-width: 100%;
+            max-height: 100%;
         }
+        background-color: @background-color-nav;
     }
 
     .ant-menu-inline.ant-menu-sub {
         background-color: transparent;
+    
     }
+
+    .ant-menu-inline {
+        border:none;
+    }
+
 
     li.menu-item {
         padding-left: 48px;

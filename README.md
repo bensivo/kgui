@@ -1,13 +1,13 @@
 # KGui
-A desktop kafka client written using [Wails](https://wails.io).
+A minimalist and simple kafka client application.
 
 ## Run Kgui
 
-Kgui was designed for 2 runtime environments:
-- Angular webapp, with a golang backend
+Kgui can run in 2 different runtime environments:
+- Webapp, with a golang backend
 - Compiled desktop application (using Wails v2)
 
-### Webapp, hosted in Docker
+### Webapp, using Docker
 ```
 docker build -t kgui .
 
@@ -16,7 +16,7 @@ docker run -p 8080:8080 kgui
 
 Then open your browser to http://localhost:8080/app
 
-### Webapp, hosted locally 
+### Webapp, running natively
 
 In one terminal, compile the angular app with watch compilation:
 ```
