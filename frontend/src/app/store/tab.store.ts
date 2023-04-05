@@ -57,4 +57,10 @@ export class TabStore {
     get tabs$(): Observable<Tab[]> {
         return this.store.entities$
     }
+
+    clear() {
+        for(const tab of this.store.entities) {
+            this.removeTab(tab.id);
+        }
+    }
 }

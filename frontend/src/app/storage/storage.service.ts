@@ -5,6 +5,7 @@ import { ClusterStore, Cluster } from "../store/cluster.store";
 import { NavStore, NavState } from "../store/nav.store";
 import { Consumer, ConsumerStore } from "../store/consumer.store";
 import { Producer, ProducerStore } from "../store/producer.store";
+import { TabStore } from "../store/tab.store";
 
 export interface PersistedState {
     version: 1,
@@ -23,6 +24,7 @@ export class StorageService {
         private clusterStore: ClusterStore,
         private consumerStore: ConsumerStore,
         private producerStore: ProducerStore,
+        private tabStore: TabStore,
         private navStore: NavStore,
         private emitterService: EmitterService
     ) { }
@@ -65,6 +67,8 @@ export class StorageService {
     }
 
     load(state: PersistedState) {
+        this.tabStore.clear();
+
         console.log('Loading state', state);
         this.clusterStore.store.entities = state.clusters;
         this.consumerStore.store.entities = state.consumers;
