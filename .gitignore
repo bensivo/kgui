@@ -9,3 +9,5 @@ build/bin
 node_modules
 
 build/.DS_Store
+
+.DS_Store

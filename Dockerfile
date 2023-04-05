@@ -8,12 +8,7 @@ RUN npm ci
 ADD ./frontend /app
 RUN npm run build
 
-
-# FROM nginx:alpine
-# COPY --from=build /app/dist /usr/share/nginx/html
-
-FROM golang:1.17.3-alpine
-
+FROM golang:1.20.2-alpine3.17 as golang 
 WORKDIR /app
 COPY --from=angular /app/dist/app /app/frontend/dist/app
 
@@ -26,6 +21,11 @@ COPY ./cmd ./cmd
 
 RUN go build -o kgui /app/cmd/kgui/main.go 
 
-EXPOSE 8080
+FROM alpine:3.17
+WORKDIR /app
 
+COPY --from=angular /app/dist/app /app/frontend/dist/app
+COPY --from=golang /app/kgui /app/kgui
+
+EXPOSE 8080
 CMD ["./kgui"]
