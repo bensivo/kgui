@@ -6,10 +6,10 @@ import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dro
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ConsumerStore } from '../store/consumer.store';
-import { NavNode, NavStore } from '../store/nav.store';
-import { ProducerStore } from '../store/producer.store';
-import { Tab, TabStore } from '../store/tab.store';
+import { ConsumerStore } from '../../store/consumer.store';
+import { NavNode, NavStore } from '../../store/nav.store';
+import { ProducerStore } from '../../store/producer.store';
+import { Tab, TabStore } from '../../store/tab.store';
 
 
 @Component({

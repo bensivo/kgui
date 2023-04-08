@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule,APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,20 +9,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderModule } from './components/header/header.module';
 import { NavModule } from './components/nav/nav.module';
-import { IconsProviderModule } from './icons-provider.module';
 import { EmitterModule } from './emitter/emitter.module';
+import { IconsProviderModule } from './icons-provider.module';
 
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
-import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { AddClusterModule } from './components/add-cluster/add-cluster.module';
+import { ClusterModule } from './components/cluster/cluster.module';
 import { TabContentModule } from './components/tab-content/tab-content.module';
-import { NavTreeModule } from './nav-tree/nav-tree.module';
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,7 +39,8 @@ registerLocaleData(en);
     EmitterModule,
     NavModule,
     TabContentModule,
-    NavTreeModule,
+    AddClusterModule,
+    ClusterModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }
