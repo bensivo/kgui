@@ -1,10 +1,17 @@
 <div class="nav-container">
     <div class="sidebar-logo">
-        <img [src]="logoSrc" >
+        <img [src]="logoSrc">
         <!-- TODO: in browser, this needs the /app prefix. In wails it needs to not have the prefix -->
         <!-- <img src="/app/assets/color-logo-text-only.png"> -->
     </div>
     <ul nz-menu nzMode="inline">
+        <li nz-menu-item ngMatchRouter>
+            <i nz-icon nzType="block"></i>
+            <span>
+            <a routerLink="/workspaces">Workspaces</a>
+        </span>
+        </li>
+
         <li nz-menu-item ngMatchRouter>
             <i nz-icon nzType="appstore"></i>
             <span>

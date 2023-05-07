@@ -1,15 +1,1 @@
-<nz-layout class="app">
-    <nz-sider class="sidebar" nzCollapsible [nzCollapsedWidth]="1" [nzTrigger]="null" nzBreakpoint="lg" [nzCollapsed]="!(expanded$ | async)" (nzCollapsedChange)="onExpandedChange(!$event)">
-        <app-nav></app-nav>
-    </nz-sider>
-    <nz-layout>
-        <nz-header id="nz-header">
-            <app-header></app-header>
-        </nz-header>
-        <nz-content>
-            <div class="inner-content">
-                <router-outlet></router-outlet>
-            </div>
-        </nz-content>
-    </nz-layout>
-</nz-layout>
+<router-outlet></router-outlet>

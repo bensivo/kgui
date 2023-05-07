@@ -1,8 +1,6 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NgModule } from '@angular/core';
+import { NgZorroModule } from 'src/app/ng-zorro/ng-zorro.module';
 import { TabsComponent } from './tabs.component';
 import { TabsContainer } from './tabs.container';
 
@@ -13,9 +11,7 @@ import { TabsContainer } from './tabs.container';
   ],
   imports: [
     CommonModule,
-    NzIconModule,
-    NzSelectModule,
-    NzTabsModule,
+    NgZorroModule,
   ],
   exports: [
     TabsContainer

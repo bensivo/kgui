@@ -3,34 +3,49 @@ import { RouterModule, Routes } from '@angular/router';
 import { AddClusterContainer } from './components/add-cluster/add-cluster.container';
 import { ClusterComponent } from './components/cluster/cluster.component';
 import { TabContentContainer } from './components/tab-content/tabs.container';
+import { WorkspacesComponent } from './components/workspaces/workspaces.component';
+import { LayoutFullscreenComponent } from './layout/layout-fullscreen/layout-fullscreen.component';
+import { LayoutWithSidebarComponent } from './layout/layout-with-sidebar/layout-with-sidebar.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/clusters' },
+  { path: '', pathMatch: 'full', redirectTo: '/workspaces' },
   {
-    path: 'clusters',
+    path: '',
+    component: LayoutFullscreenComponent,
     children: [
       {
-        path: '',
+        path: 'workspaces',
+        component: WorkspacesComponent,
+      }
+    ]
+  },
+  {
+    path: '',
+    component: LayoutWithSidebarComponent,
+    children: [
+      {
+        path: 'clusters',
         component: ClusterComponent,
       },
       {
-        path: 'add',
+        path: 'clusters/add',
         component: AddClusterContainer,
       },
       {
-        path: 'edit/:id',
+        path: 'clusters/edit/;id',
         component: AddClusterContainer,
       },
+      {
+        path: 'workspace',
+        pathMatch: 'full',
+        component: TabContentContainer,
+      }
     ]
-  },
-  { 
-    path: 'workspace' ,
-    component: TabContentContainer,
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: true})],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

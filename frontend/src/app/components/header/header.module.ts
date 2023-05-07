@@ -1,11 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './header.component';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgZorroModule } from 'src/app/ng-zorro/ng-zorro.module';
 import { TabsModule } from '../tabs/tabs.module';
+import { HeaderComponent } from './header.component';
 
 
 
@@ -15,8 +13,7 @@ import { TabsModule } from '../tabs/tabs.module';
   ],
   imports: [
     CommonModule,
-    NzIconModule,
-    NzSelectModule,
+    NgZorroModule,
     ReactiveFormsModule,
     TabsModule,
   ],
