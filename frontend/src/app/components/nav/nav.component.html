@@ -1,17 +1,8 @@
 <div class="nav-container">
     <div class="sidebar-logo">
         <img [src]="logoSrc">
-        <!-- TODO: in browser, this needs the /app prefix. In wails it needs to not have the prefix -->
-        <!-- <img src="/app/assets/color-logo-text-only.png"> -->
     </div>
     <ul nz-menu nzMode="inline">
-        <li nz-menu-item ngMatchRouter>
-            <i nz-icon nzType="block"></i>
-            <span>
-            <a routerLink="/workspaces">Workspaces</a>
-        </span>
-        </li>
-
         <li nz-menu-item ngMatchRouter>
             <i nz-icon nzType="appstore"></i>
             <span>
@@ -31,14 +22,13 @@
             </ul>
         </li>
 
-
-        <li nz-submenu nzIcon="file" nzTitle="Save / Load" *ngIf="isBrowserRuntime()">
+        <li nz-submenu nzIcon="block" nzTitle="Workspace">
             <ul>
                 <li class="menu-item clickable" (click)="saveToFile()">
-                    Save to File
+                    Save to file
                 </li>
                 <li class="menu-item clickable" (click)="openLoadDialog()">
-                    Load from File
+                    Load from file
                 </li>
             </ul>
         </li>

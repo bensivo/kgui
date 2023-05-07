@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { NgZorroModule } from '../../ng-zorro/ng-zorro.module';
 import { WorkspacesComponent } from './workspaces.component';
-
 
 
 @NgModule({
@@ -9,7 +9,8 @@ import { WorkspacesComponent } from './workspaces.component';
     WorkspacesComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    NgZorroModule,
   ],
   exports: [
     WorkspacesComponent

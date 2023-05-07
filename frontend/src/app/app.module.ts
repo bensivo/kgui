@@ -18,6 +18,7 @@ import { NgZorroModule } from './ng-zorro/ng-zorro.module';
 import { NavModule } from './components/nav/nav.module';
 import { HeaderModule } from './components/header/header.module';
 import { FormsModule } from '@angular/forms';
+import { WorkspacesModule } from './components/workspaces/workspaces.module';
 registerLocaleData(en);
 
 @NgModule({
@@ -37,6 +38,7 @@ registerLocaleData(en);
     RouterModule,
     HeaderModule,
     NgZorroModule,
+    WorkspacesModule,
     ClusterModule,
   ],
   providers: [

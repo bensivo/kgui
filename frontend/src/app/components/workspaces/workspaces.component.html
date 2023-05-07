@@ -1,1 +1,19 @@
-<p>asldkfj</p>
+<div class="workspaces">
+    <div class="img-container">
+        <img [src]="logoSrc">
+    </div>
+
+    <div class="button-container">
+        <button nz-button nzType="primary" (click)="onClickNewWorkspace()">Create new Workspace</button>
+
+        <button nz-button nzType="primary" (click)="onClickOpenWorkspace()">Open Workspace</button>
+    </div>
+</div>
+
+<nz-modal [(nzVisible)]="showModal" nzTitle="Load from file" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitModal()">
+    <ng-container *nzModalContent>
+        <form (submit)="onSubmitModal($event)" spellcheck="false">
+            <input nz-input type="file" (change)="onFileUpload($event)" />
+        </form>
+    </ng-container>
+</nz-modal>
