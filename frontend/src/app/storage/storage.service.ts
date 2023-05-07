@@ -34,7 +34,14 @@ export class StorageService {
             this.save();
         });
 
-        this.emitterService.emitter.stream<PersistedState>('load.requested').subscribe((data) => {
+        this.emitterService.emitter.stream<PersistedState>('load.requested').subscribe(() => {
+            this.emitterService.emitter.send({
+                Topic: 'load.requested',
+                Data: {},
+            });
+        });
+
+        this.emitterService.emitter.stream<PersistedState>('load.data').subscribe((data) => {
             this.load(data);
         });
     }
@@ -64,6 +71,13 @@ export class StorageService {
             element.setAttribute('download', 'project.kgui');
             element.click();
         }
+    }
+
+    requestLoad() {
+        this.emitterService.emitter.send({
+            Topic: 'load.requested',
+            Data: {},
+        });
     }
 
     load(state: PersistedState) {

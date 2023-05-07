@@ -22,14 +22,12 @@ func main() {
 	appMenu := menu.NewMenu()
 	fileMenu := appMenu.AddSubmenu("File")
 	fileMenu.AddText("Open File", keys.CmdOrCtrl("o"), func(data *menu.CallbackData) {
-		// TODO: we don't have to do this in main.go, if we put the app variable somewhere
 		payload, err := app.Open()
 		if err != nil {
 			log.Error(err)
 			return
 		}
-
-		app.emitter.Emit("load.requested", payload)
+		app.emitter.Emit("load.data", payload)
 	})
 	fileMenu.AddText("Save File", keys.CmdOrCtrl("s"), func(data *menu.CallbackData) {
 		payload := map[string]interface{}{}

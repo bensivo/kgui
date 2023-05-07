@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { StorageService } from 'src/app/storage/storage.service';
 import { NavStore } from 'src/app/store/nav.store';
+import * as wails from '../../../../wailsjs/go/main/App';
 
 @Component({
   selector: 'app-nav',
@@ -17,7 +18,7 @@ export class NavComponent {
     private notification: NzNotificationService,
   ) { }
 
-  showRenameModal = false;
+  showModal = false;
   fileData: string = '';
 
   get logoSrc(): string {
@@ -46,8 +47,15 @@ export class NavComponent {
     this.storageService.save();
   }
 
-  openLoadDialog() {
-    this.showRenameModal = true;
+  async openLoadDialog() {
+    if (!!(window as any).runtime) {
+      // If running in wails desktop env
+      const output = await wails.Open()
+      this.storageService.load(output as any);
+    } else {
+      // If running in webapp env
+      this.showModal= true;
+    }
   }
 
   onFileUpload(e: Event) {
@@ -73,7 +81,7 @@ export class NavComponent {
   }
 
   onCancelModal() {
-    this.showRenameModal = false;
+    this.showModal = false;
   }
 
   onSubmitModal(e?: any) {
@@ -84,6 +92,6 @@ export class NavComponent {
     const data = JSON.parse(this.fileData);
     this.storageService.load(data);
 
-    this.showRenameModal = false;
+    this.showModal = false;
   }
 }

@@ -1,23 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as wails from '../../../../wailsjs/go/main/App';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { StorageService } from 'src/app/storage/storage.service';
+import { EmitterService } from 'src/app/emitter/emitter.service';
+import { PersistedState, StorageService } from 'src/app/storage/storage.service';
 
 @Component({
   selector: 'app-workspaces',
   templateUrl: './workspaces.component.html',
   styleUrls: ['./workspaces.component.less']
 })
-export class WorkspacesComponent {
+export class WorkspacesComponent implements OnInit {
 
   fileData: string = '';
   showModal: boolean = false;
 
   constructor(
     private storageService: StorageService,
+    private emitterService: EmitterService,
     private notification: NzNotificationService,
-    private router:Router,
+    private router: Router,
   ) { }
+
+  ngOnInit(): void {
+    this.emitterService.emitter.stream<any>('load.data').subscribe(() => {
+      this.router.navigateByUrl('/clusters');
+    });
+  }
 
   get logoSrc(): string {
     if (!!(window as any).runtime) {
@@ -40,7 +49,7 @@ export class WorkspacesComponent {
           }
 
           this.fileData = dataStr;
-        }catch(e) {
+        } catch (e) {
           console.error(e);
           this.notification.create('error', 'Error', 'Failed to parse file');
         }
@@ -49,7 +58,7 @@ export class WorkspacesComponent {
     }
   }
 
-  onClickNewWorkspace(){
+  onClickNewWorkspace() {
     this.storageService.load({
       version: 1,
       clusters: [],
@@ -64,8 +73,16 @@ export class WorkspacesComponent {
     this.router.navigateByUrl('/clusters')
   }
 
-  onClickOpenWorkspace(){
-    this.showModal = true;
+  async  onClickOpenWorkspace() {
+    if (!!(window as any).runtime) {
+      // If running in wails desktop env
+      const output = await wails.Open()
+      this.storageService.load(output as any);
+      this.router.navigateByUrl('/clusters')
+    } else {
+      // If running in webapp env
+      this.showModal = true;
+    }
   }
 
   onSubmitModal(e?: any) {
