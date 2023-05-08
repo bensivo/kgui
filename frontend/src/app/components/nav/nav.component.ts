@@ -15,11 +15,7 @@ export class NavComponent {
   constructor(
     private navStore: NavStore,
     private storageService: StorageService,
-    private notification: NzNotificationService,
   ) { }
-
-  showModal = false;
-  fileData: string = '';
 
   get logoSrc(): string {
     if (!!(window as any).runtime) {
@@ -54,44 +50,7 @@ export class NavComponent {
       this.storageService.load(output as any);
     } else {
       // If running in webapp env
-      this.showModal= true;
+      await this.storageService.loadFile();
     }
-  }
-
-  onFileUpload(e: Event) {
-    const file = (e.target as HTMLInputElement)?.files?.[0];
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const dataStr = reader?.result?.toString();
-          if (!dataStr) {
-            return;
-          }
-
-          this.fileData = dataStr;
-        }catch(e) {
-          console.error(e);
-          this.notification.create('error', 'Error', 'Failed to parse file');
-        }
-      };
-      reader.readAsText(file);
-    }
-  }
-
-  onCancelModal() {
-    this.showModal = false;
-  }
-
-  onSubmitModal(e?: any) {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const data = JSON.parse(this.fileData);
-    this.storageService.load(data);
-
-    this.showModal = false;
   }
 }

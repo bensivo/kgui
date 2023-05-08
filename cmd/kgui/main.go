@@ -9,6 +9,7 @@ import (
 	"gitlab.com/bensivo/kgui/internal/controller"
 	"gitlab.com/bensivo/kgui/internal/emitter"
 	"gitlab.com/bensivo/kgui/internal/logger"
+	"gitlab.com/bensivo/kgui/internal/storage"
 )
 
 func main() {
@@ -18,6 +19,7 @@ func main() {
 	})
 
 	logger.Init()
+	storage.Init()
 	emitter := emitter.NewWebsocketEmitter(router)
 	messageController := controller.NewMessageController(emitter)
 

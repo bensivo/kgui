@@ -29,6 +29,7 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
 	logger.Init()
+	storage.Init()
 
 	a.emitter = emitter.NewEventsEmitter(a.ctx)
 

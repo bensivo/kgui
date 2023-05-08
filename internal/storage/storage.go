@@ -5,21 +5,28 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gitlab.com/bensivo/kgui/internal/logger"
 )
 
-func Save(ctx context.Context, data map[string]interface{}) {
+var lastFilepath = ""
+
+func Init() {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
+	lastFilepath = path.Join(home, "project.kgui")
+}
+
+func Save(ctx context.Context, data map[string]interface{}) {
 	file, err := runtime.SaveFileDialog(ctx, runtime.SaveDialogOptions{
-		DefaultDirectory: home,
-		DefaultFilename:  "project.kgui",
+		DefaultDirectory: path.Dir(lastFilepath),
+		DefaultFilename:  path.Base(lastFilepath),
 		Title:            "Save",
 	})
 	if err != nil {
@@ -28,6 +35,10 @@ func Save(ctx context.Context, data map[string]interface{}) {
 	}
 
 	logger.Info("Selected file: " + file)
+	if file != "" {
+		lastFilepath = file
+	}
+
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		log.Println(err)
@@ -42,22 +53,21 @@ func Save(ctx context.Context, data map[string]interface{}) {
 }
 
 func Open(ctx context.Context) (map[string]interface{}, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
 	file, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
-		DefaultDirectory: home,
-		DefaultFilename:  "project.kgui",
-		Title:            "Save",
+		DefaultDirectory: path.Dir(lastFilepath),
+		DefaultFilename:  path.Base(lastFilepath),
+		Title:            "Open",
 	})
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	logger.Info(file)
+	logger.Info("Selected file: " + file)
+	if file != "" {
+		lastFilepath = file
+	}
+
 	bytes, err := os.ReadFile(file)
 	if err != nil {
 		log.Println(err)

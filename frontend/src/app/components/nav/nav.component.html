@@ -33,12 +33,4 @@
             </ul>
         </li>
     </ul>
-
-    <nz-modal [(nzVisible)]="showModal" nzTitle="Load from file" (nzOnCancel)="onCancelModal()" (nzOnOk)="onSubmitModal()">
-        <ng-container *nzModalContent>
-            <form (submit)="onSubmitModal($event)" spellcheck="false">
-                <input nz-input type="file" (change)="onFileUpload($event)" />
-            </form>
-        </ng-container>
-    </nz-modal>
 </div>

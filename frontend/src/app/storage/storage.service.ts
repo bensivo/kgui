@@ -20,6 +20,8 @@ export interface PersistedState {
 })
 export class StorageService {
 
+    private filename: string = 'project.kgui';
+
     constructor(
         private clusterStore: ClusterStore,
         private consumerStore: ConsumerStore,
@@ -46,8 +48,11 @@ export class StorageService {
         });
     }
 
+    setFilename(filename: string) {
+        this.filename = filename;
+    }
 
-    save() {
+    async save() {
         const state: PersistedState = {
             version: 1,
             nav: this.navStore.store.state,
@@ -62,23 +67,35 @@ export class StorageService {
             // If running in wails desktop env
             wails.Save(state);
         } else {
-            // If running in web browser env
+            // // If running in web browser env
             const data = JSON.stringify(state);
-            const encoded = 'data:text/json;charset=utf-8,' + encodeURIComponent(data);
+            const fileHandle = await (window as any).showSaveFilePicker({ 
+                startIn: 'downloads',
+                suggestedName: this.filename
 
-            var element = document.createElement('a');
-            element.setAttribute('href', encoded);
-            element.setAttribute('download', 'project.kgui');
-            element.click();
+            });
+            const writable = await fileHandle.createWritable();
+            await writable.write(data);
+            await writable.close();
         }
     }
 
-    requestLoad() {
-        this.emitterService.emitter.send({
-            Topic: 'load.requested',
-            Data: {},
-        });
+    async loadFile() {
+        const fileHandles = await (window as any).showOpenFilePicker({
+            startIn: 'downloads',
+          });
+          if (fileHandles.length > 0) {
+            const file = await fileHandles[0].getFile();
+            this.setFilename(file.name);
+            const contents = await file.text();
+            const data = JSON.parse(contents);
+            this.load(data);
+          } else {
+            throw new Error('No files selected')
+          }
+
     }
+
 
     load(state: PersistedState) {
         this.tabStore.clear();
